@@ -24,7 +24,7 @@ const TimelineElement: React.FC<TimelineElementProps> = ({ date, jobRole, compan
 const Experience = () => {
     return (
         <section>
-            <h1 className=" sm:px-16 xl:px-48 mb-4 text-4xl font-extrabold tracking-light leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Experience</h1>
+            <h1 className="sm:px-16 xl:px-48 mb-4 text-4xl font-extrabold tracking-light leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Experience</h1>
             <div className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
                 <ol className="relative border-s border-gray-200 dark:border-gray-700">
                     <TimelineElement 
