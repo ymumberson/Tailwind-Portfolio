@@ -32,9 +32,9 @@ const Experience = () => {
                         jobRole="Computer Science Msci" 
                         company="Swansea University" 
                         notes={[
-                            "Conducting research on advanced topics such as simulating global illumination via photon mapping, and simulating social network generation via agent-based city simulations",
-                            "Designing data visualisation both individually and in groups, starting from analysing the problem and ending in implementing the solution",
-                            "Applying machine learning to advanced areas such as identifying objects in a room through point-clouds taken using the Xbox Kinect"
+                            "Conducting research on advanced topics such as simulating global illumination via photon mapping, and simulating social network generation via agent-based city simulations.",
+                            "Designing data visualisation both individually and in groups, starting from analysing the problem and ending in implementing the solution.",
+                            "Applying machine learning to advanced areas such as identifying objects in a room through point-clouds taken using the Xbox Kinect."
                         ]}
                     />
                     <TimelineElement 
@@ -42,9 +42,9 @@ const Experience = () => {
                         jobRole="Teaching Assistant" 
                         company="Swansea University" 
                         notes={[
-                            "Lab demonstrator for a module on video games programming and a module on mobile development",
-                            "Explain difficult concepts from lectures to students, and help them with coursework difficulties",
-                            "Debug students' code on the fly, and give one-to-one assistance"
+                            "Lab demonstrator for a module on video games programming and a module on mobile development.",
+                            "Explain difficult concepts from lectures to students, and help them with coursework difficulties.",
+                            "Debug students' code on the fly, and give one-to-one assistance."
                         ]}
                     />
                     <TimelineElement 
@@ -52,9 +52,9 @@ const Experience = () => {
                         jobRole="Graduate Software Engineer" 
                         company="VACAC" 
                         notes={[
-                            "Develop virtual experiences in Unity",
-                            "Develop automation tools in Python for 3D animation",
-                            "Create 3D animations in Blender"
+                            "Develop virtual experiences in Unity.",
+                            "Develop automation tools in Python for 3D animation.",
+                            "Create 3D animations in Blender."
                         ]}
                     />
                 </ol>

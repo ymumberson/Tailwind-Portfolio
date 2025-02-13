@@ -20,7 +20,7 @@ const Overview = () => {
         <section className="py-10">
             <h1 className=" sm:px-16 xl:px-48 mb-4 text-4xl font-extrabold tracking-light leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Overview</h1>
             <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt quo est earum, hic minus cupiditate ullam ipsum eaque inventore tempora eius labore nisi quam, aspernatur accusantium vel nulla? At, reiciendis?
+            Graduate software engineer at VACAC. Passionate about software development, with experience in C, C++, C#, and Java. Often push myself outside of my comfort zone, and keep trying new ideas until I solve the problem. Work great in a team, always willing to do my part and discuss the pros and cons of ideas.
             </p>
             <div className="sm:px-16 xl:px-48 grid grid-cols-2 md:grid-cols-3 gap-4">
                 <TechCard techName="Unity" techIcon={IconBrandUnity}/>
