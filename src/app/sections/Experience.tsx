@@ -13,7 +13,7 @@ const TimelineElement: React.FC<TimelineElementProps> = ({ date, jobRole, compan
             <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"/>
             <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-white">{date}</time>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{jobRole}</h3>
-            <h3 className="mb-1 text-sm font-normal leading-none text-gray-400">{company}</h3>
+            <h3 className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-white">{company}</h3>
             <ul className="mx-5 list-disc mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
                 {notes.map(elem => (<li key={elem}>{elem}</li>))}
             </ul>
