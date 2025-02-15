@@ -7,16 +7,17 @@ import { IconChevronLeft, IconChevronRight, IconRefresh} from "@tabler/icons-rea
 
 interface SquareProps {
     value: string;
+    currentPlayer: string;
     onSquareClicked: React.MouseEventHandler;
 }
 
-const Square: React.FC<SquareProps> = ({ value, onSquareClicked }) => {
+const Square: React.FC<SquareProps> = ({ value, currentPlayer, onSquareClicked }) => {
     return (
         <button 
-            className="border aspect-square w-24"
+            className={`border aspect-square w-24 text-4xl group`}
             onClick={onSquareClicked}
         >
-            {value}
+            <span className={`${(value) ? "" : "opacity-0 group-hover:opacity-50 transition-opacity duration-25"}`}>{value ? value : currentPlayer}</span>
         </button>
     );
 }
@@ -73,7 +74,7 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
                 <div className={`grid grid-cols-3 max-w-72 bg-white dark:bg-gray-800`}>
                     {
                         squares.map((elem, index) => (
-                            <Square key={index} value={elem} onSquareClicked={() => handleClick(index)}/>
+                            <Square key={index} value={elem} currentPlayer={xIsNext ? "X" : "O"} onSquareClicked={() => handleClick(index)}/>
                         ))
                     }
                 </div>
