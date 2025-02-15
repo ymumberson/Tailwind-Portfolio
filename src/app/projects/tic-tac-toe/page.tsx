@@ -51,7 +51,9 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay }) => {
 
     return (
         <>
-            <h2 className="p-2 mb-10 text-center bg-gray-100 text-gray-800 rounded-sm dark:bg-gray-700 dark:text-gray-300">{status}</h2>
+            <div className={`mb-10 rounded-sm p-0.5 ${(winner) ? CalculateWinnerClassName(winner) : ""}`}>
+                <h2 className="p-2 text-center bg-gray-100 text-gray-800 rounded-sm dark:bg-gray-700 dark:text-gray-300">{status}</h2>
+            </div>
             <div className="grid grid-cols-3 max-w-72">
                 {
                     squares.map((elem, index) => (
@@ -81,6 +83,17 @@ function CalculateWinner(squares: Array<string>) {
         }
       }
       return null;
+}
+
+function CalculateWinnerClassName(winner: String) {
+    if (winner) {
+        if (winner === "X") {
+            return "bg-gradient-to-br from-cyan-500 to-blue-500";
+        }
+        else {
+            return "bg-gradient-to-br from-purple-500 to-pink-500";
+        }
+    }
 }
 
 export default function TicTacToe() {
@@ -115,7 +128,7 @@ export default function TicTacToe() {
 
     return (
         <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
-            <div className="flex flex-col sm:flex-row justify-center sm:gap-10 mb-0">
+            <div className="flex flex-col sm:flex-row justify-center sm:gap-10 mb-0 p-0.5 ">
                 <div className="flex-shrink-0">
                     <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay}/>            
                 </div>
