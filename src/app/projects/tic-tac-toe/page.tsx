@@ -52,7 +52,7 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay }) => {
     return (
         <>
             <h2>{status}</h2>
-            <div className="grid grid-cols-3">
+            <div className="grid grid-cols-3 max-w-72">
                 {
                     squares.map((elem, index) => (
                         <Square key={index} value={elem} onSquareClicked={() => handleClick(index)}/>
@@ -115,11 +115,11 @@ export default function TicTacToe() {
 
     return (
         <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
-            <div className="flex justify-center gap-10 mb-0">
+            <div className="flex flex-col md:flex-row justify-center md:gap-10 mb-0">
                 <div className="flex-shrink-0 mb-10">
                     <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay}/>            
                 </div>
-                <ol className="mt-6">{moves}</ol>
+                <ol className="md:mt-6">{moves}</ol>
             </div>
         </Project>
     );
