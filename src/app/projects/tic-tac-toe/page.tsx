@@ -107,7 +107,7 @@ export default function TicTacToe() {
             description = "Go to game start";
         }
         return (
-            <li key={move} className="mb-1">
+            <li key={move} className="text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
                 <button onClick={() => JumpTo(move)}>{description}</button>
             </li>
         )
@@ -116,10 +116,10 @@ export default function TicTacToe() {
     return (
         <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
             <div className="flex flex-col sm:flex-row justify-center sm:gap-10 mb-0">
-                <div className="flex-shrink-0 mb-10">
+                <div className="flex-shrink-0">
                     <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay}/>            
                 </div>
-                <ol className="sm:mt-6">{moves}</ol>
+                <ol className="sm:mt-7">{moves}</ol>
             </div>
         </Project>
     );
