@@ -10,15 +10,16 @@ interface SquareProps {
     currentPlayer: string;
     onSquareClicked: React.MouseEventHandler;
     winningSquare: boolean;
+    gameOver: boolean;
 }
 
-const Square: React.FC<SquareProps> = ({ value, currentPlayer, onSquareClicked, winningSquare }) => {
+const Square: React.FC<SquareProps> = ({ value, currentPlayer, onSquareClicked, winningSquare, gameOver }) => {
     return (
         <button 
             className={`border aspect-square w-25 sm:w-24 text-4xl group ${winningSquare ? "font-bold" : ""}`}
             onClick={onSquareClicked}
         >
-            <span className={`${(value) ? "" : "opacity-0 group-hover:opacity-50 transition-opacity duration-25"}`}>{value ? value : currentPlayer}</span>
+            <span className={`${(value || gameOver) ? "" : "opacity-0 group-hover:opacity-50 transition-opacity duration-25"}`}>{value ? value : (!gameOver) ? currentPlayer : ""}</span>
         </button>
     );
 }
@@ -50,10 +51,13 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
     const winningSquares = CalculateWinner(squares);
     const winner = (winningSquares) ? squares[winningSquares[0]]: null;
     let status;
+    let gameOver = false;
     if (winner) {
         status = `Winner: ${winner}`;
+        gameOver = true;
     } else if (squares.every(elem => elem != "")) {
         status = `Game Over!`;
+        gameOver = true;
     } else {
         status = `Next player is: ${xIsNext ? "X" : "O"}`;
     }
@@ -78,7 +82,7 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
                 <div className={`grid grid-cols-3 bg-white dark:bg-gray-800`}>
                     {
                         squares.map((elem, index) => (
-                            <Square key={index} value={elem} currentPlayer={xIsNext ? "X" : "O"} onSquareClicked={() => handleClick(index)} winningSquare={winner ? winningSquares ? winningSquares.includes(index) : false : false}/>
+                            <Square key={index} value={elem} currentPlayer={xIsNext ? "X" : "O"} onSquareClicked={() => handleClick(index)} winningSquare={winner ? winningSquares ? winningSquares.includes(index) : false : false} gameOver={gameOver}/>
                         ))
                     }
                 </div>
