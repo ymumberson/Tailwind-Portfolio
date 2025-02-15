@@ -3,6 +3,7 @@
 import Project from "@/app/components/Project";
 import React from "react";
 import { useState } from "react";
+import { IconChevronLeft, IconChevronRight, IconRefresh} from "@tabler/icons-react";
 
 interface SquareProps {
     value: string;
@@ -24,9 +25,12 @@ interface BoardProps {
     xIsNext: boolean;
     squares: Array<string>;
     handlePlay: Function;
+    onPrevious: Function;
+    onNext: Function;
+    onReset: Function;
 }
 
-const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay }) => {
+const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious, onNext, onReset }) => {
     function handleClick(index: number) {
         if (squares[index] != "" || CalculateWinner(squares))
             return;
@@ -51,8 +55,19 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay }) => {
 
     return (
         <>
-            <div className={`mb-10 rounded-sm p-0.5 ${(winner) ? CalculateWinnerClassName(winner) : ""}`}>
+            <div className={`mb-5 rounded-sm p-0.5 ${(winner) ? CalculateWinnerClassName(winner) : ""}`}>
                 <h2 className="p-2 text-center bg-gray-100 text-gray-800 rounded-sm dark:bg-gray-700 dark:text-gray-300">{status}</h2>
+            </div>
+            <div className="flex flex-row mb-5 justify-center gap-2">
+                <button onClick={() => onPrevious()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+                    <IconChevronLeft size={30}/>
+                </button>
+                <button onClick={() => onNext()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+                    <IconChevronRight size={30}/>
+                </button>
+                <button onClick={() => onReset()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+                    <IconRefresh size={30}/>
+                </button>
             </div>
             <div className={`rounded-sm p-0.5 ${(winner) ? CalculateWinnerClassName(winner) : ""}`}>
                 <div className={`grid grid-cols-3 max-w-72 bg-white dark:bg-gray-800`}>
@@ -114,6 +129,21 @@ export default function TicTacToe() {
         setCurrentMove(nextMove);
     }
 
+    function JumpToPrevious() {
+        if (currentMove > 0)
+            JumpTo(currentMove-1);
+    }
+
+    function JumpToNext() {
+        if (currentMove < history.length-1)
+            JumpTo(currentMove+1);
+    }
+
+    function ResetGame() {
+        setHistory([Array(9).fill("")]);
+        setCurrentMove(0);
+    }
+
     const moves = history.map((squares, move) => {
         let description;
         if (move > 0) {
@@ -132,7 +162,7 @@ export default function TicTacToe() {
         <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
             <div className="flex flex-col sm:flex-row justify-center sm:gap-10 mb-0 p-0.5 ">
                 <div className="flex-shrink-0">
-                    <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay}/>            
+                    <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay} onPrevious={JumpToPrevious} onNext={JumpToNext} onReset={ResetGame}/>            
                 </div>
                 <ol className="">{moves}</ol>
             </div>
