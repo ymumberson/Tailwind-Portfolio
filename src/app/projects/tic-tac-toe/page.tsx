@@ -12,7 +12,7 @@ interface SquareProps {
 const Square: React.FC<SquareProps> = ({ value, onSquareClicked }) => {
     return (
         <button 
-            className="border aspect-square"
+            className="border aspect-square w-24"
             onClick={onSquareClicked}
         >
             {value}
@@ -52,7 +52,7 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay }) => {
     return (
         <>
             <h2>{status}</h2>
-            <div className="grid grid-cols-3 max-w-xs">
+            <div className="grid grid-cols-3">
                 {
                     squares.map((elem, index) => (
                         <Square key={index} value={elem} onSquareClicked={() => handleClick(index)}/>
@@ -107,7 +107,7 @@ export default function TicTacToe() {
             description = "Go to game start";
         }
         return (
-            <li key={move}>
+            <li key={move} className="mb-1">
                 <button onClick={() => JumpTo(move)}>{description}</button>
             </li>
         )
@@ -115,11 +115,11 @@ export default function TicTacToe() {
 
     return (
         <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
-            <div className="">
-                <div className="">
+            <div className="flex justify-center gap-10 mb-0">
+                <div className="flex-shrink-0 mb-10">
                     <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay}/>            
                 </div>
-                <ol className="">{moves}</ol>
+                <ol className="mt-6">{moves}</ol>
             </div>
         </Project>
     );
