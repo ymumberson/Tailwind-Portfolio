@@ -54,12 +54,14 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay }) => {
             <div className={`mb-10 rounded-sm p-0.5 ${(winner) ? CalculateWinnerClassName(winner) : ""}`}>
                 <h2 className="p-2 text-center bg-gray-100 text-gray-800 rounded-sm dark:bg-gray-700 dark:text-gray-300">{status}</h2>
             </div>
-            <div className="grid grid-cols-3 max-w-72">
-                {
-                    squares.map((elem, index) => (
-                        <Square key={index} value={elem} onSquareClicked={() => handleClick(index)}/>
-                    ))
-                }
+            <div className={`rounded-sm p-0.5 ${(winner) ? CalculateWinnerClassName(winner) : ""}`}>
+                <div className={`grid grid-cols-3 max-w-72 bg-white dark:bg-gray-800`}>
+                    {
+                        squares.map((elem, index) => (
+                            <Square key={index} value={elem} onSquareClicked={() => handleClick(index)}/>
+                        ))
+                    }
+                </div>
             </div>
         </>
     );
