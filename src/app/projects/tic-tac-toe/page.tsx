@@ -51,7 +51,7 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay }) => {
 
     return (
         <>
-            <h2>{status}</h2>
+            <h2 className="p-2 mb-10 text-center bg-gray-100 text-gray-800 rounded-sm dark:bg-gray-700 dark:text-gray-300">{status}</h2>
             <div className="grid grid-cols-3 max-w-72">
                 {
                     squares.map((elem, index) => (
