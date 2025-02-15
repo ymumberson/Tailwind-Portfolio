@@ -20,10 +20,13 @@ const Square: React.FC<SquareProps> = ({ value, onSquareClicked }) => {
     );
 }
 
-const Board = () => {
-    const [xIsNext, setXIsNext] = useState(true);
-    const [squares, setSquares] = useState(Array(9).fill(""));
+interface BoardProps {
+    xIsNext: boolean;
+    squares: Array<string>;
+    handlePlay: Function;
+}
 
+const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay }) => {
     function handleClick(index: number) {
         if (squares[index] != "" || CalculateWinner(squares))
             return;
@@ -35,8 +38,7 @@ const Board = () => {
             nextSquares[index] = "O"
         }
 
-        setSquares(nextSquares);
-        setXIsNext(!xIsNext);
+        handlePlay(nextSquares);
     }
 
     const winner = CalculateWinner(squares);
@@ -82,9 +84,43 @@ function CalculateWinner(squares: Array<string>) {
 }
 
 export default function TicTacToe() {
+    const [history, setHistory] = useState([Array(9).fill("")]);
+    const [currentMove, setCurrentMove] = useState(0);
+    const xIsNext = currentMove % 2 === 0;
+    const currentSquares = history[currentMove];
+
+    function HandlePlay(nextSquares: Array<string>) {
+        const nextHistory = [...history.slice(0, currentMove+1), nextSquares];
+        setHistory(nextHistory);
+        setCurrentMove(nextHistory.length-1);
+    }
+
+    function JumpTo(nextMove: number) {
+        setCurrentMove(nextMove);
+    }
+
+    const moves = history.map((squares, move) => {
+        let description;
+        if (move > 0) {
+            description = "Go to move #" + move;
+        } else {
+            description = "Go to game start";
+        }
+        return (
+            <li key={move}>
+                <button onClick={() => JumpTo(move)}>{description}</button>
+            </li>
+        )
+    })
+
     return (
         <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
-            <Board />
+            <div className="">
+                <div className="">
+                    <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay}/>            
+                </div>
+                <ol className="">{moves}</ol>
+            </div>
         </Project>
     );
 }
