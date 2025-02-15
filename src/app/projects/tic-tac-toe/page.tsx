@@ -50,6 +50,8 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
     let status;
     if (winner) {
         status = `Winner: ${winner}`;
+    } else if (squares.every(elem => elem != "")) {
+        status = `Game Over!`;
     } else {
         status = `Next player is: ${xIsNext ? "X" : "O"}`;
     }
