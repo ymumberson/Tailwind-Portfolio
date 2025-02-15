@@ -15,7 +15,7 @@ interface SquareProps {
 const Square: React.FC<SquareProps> = ({ value, currentPlayer, onSquareClicked, winningSquare }) => {
     return (
         <button 
-            className={`border aspect-square w-24 text-4xl group ${winningSquare ? "font-bold" : ""}`}
+            className={`border aspect-square w-25 sm:w-24 text-4xl group ${winningSquare ? "font-bold" : ""}`}
             onClick={onSquareClicked}
         >
             <span className={`${(value) ? "" : "opacity-0 group-hover:opacity-50 transition-opacity duration-25"}`}>{value ? value : currentPlayer}</span>
@@ -75,7 +75,7 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
                 </button>
             </div>
             <div className={`rounded-sm p-0.5 ${(winner) ? CalculateWinnerClassName(winner) : ""}`}>
-                <div className={`grid grid-cols-3 max-w-72 bg-white dark:bg-gray-800`}>
+                <div className={`grid grid-cols-3 bg-white dark:bg-gray-800`}>
                     {
                         squares.map((elem, index) => (
                             <Square key={index} value={elem} currentPlayer={xIsNext ? "X" : "O"} onSquareClicked={() => handleClick(index)} winningSquare={winner ? winningSquares ? winningSquares.includes(index) : false : false}/>
@@ -165,7 +165,7 @@ export default function TicTacToe() {
 
     return (
         <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
-            <div className="flex flex-col sm:flex-row justify-center sm:gap-10 mb-0 p-0.5 ">
+            <div className="flex flex-col sm:flex-row justify-center sm:gap-10 mb-0 p-0.5">
                 <div className="flex-shrink-0">
                     <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay} onPrevious={JumpToPrevious} onNext={JumpToNext} onReset={ResetGame}/>            
                 </div>
