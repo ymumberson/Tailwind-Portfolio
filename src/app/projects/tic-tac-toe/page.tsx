@@ -119,7 +119,7 @@ export default function TicTacToe() {
                 <div className="flex-shrink-0">
                     <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay}/>            
                 </div>
-                <ol className="sm:mt-7">{moves}</ol>
+                <ol className="">{moves}</ol>
             </div>
         </Project>
     );
