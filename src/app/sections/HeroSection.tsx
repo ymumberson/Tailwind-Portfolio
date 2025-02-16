@@ -1,6 +1,6 @@
 import React from "react";
 import Card from "./../components/Card";
-import { IconBrandGithub } from "@tabler/icons-react";
+import { IconBrandGithub, IconBrandLinkedin } from "@tabler/icons-react";
 
 //https://flowbite.com/blocks/marketing/hero/
 const HeroSection = () => {
@@ -13,11 +13,11 @@ const HeroSection = () => {
             </p>
         </div>
         <div className="flex justify-center gap-2">
-            <a href="https://github.com/ymumberson" className="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 mb-2 gap-1">
-                <IconBrandGithub size={20}/>
-                Github
+            <a href="https://www.linkedin.com/in/yoshanmumberson/" className="text-white bg-[#004182] hover:bg-[#004182]/90 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#004182]/90 mb-2 gap-1">
+                <IconBrandLinkedin size={20}/>
+                LinkedIn
             </a>
-            <a href="https://github.com/ymumberson" className="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 mb-2 gap-1">
+            <a href="https://github.com/ymumberson" className="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#24292F]/60 mb-2 gap-1">
                 <IconBrandGithub size={20}/>
                 Github
             </a>
