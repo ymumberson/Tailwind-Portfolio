@@ -161,7 +161,7 @@ export default function TicTacToe() {
             description = "Go to game start";
         }
         return (
-            <li key={move} className={` hover:text-white border border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 rounded-lg px-5 py-2 text-center me-2 mb-2 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 font-medium text-sm ${(currentMove === move) ? "bg-gray-800 text-white dark:bg-gray-700" : "text-gray-900 dark:text-gray-400"}`}>
+            <li key={move} className={` hover:text-white border border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 rounded-lg px-5 py-2 text-center mb-2 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 font-medium text-sm ${(currentMove === move) ? "bg-gray-800 text-white dark:bg-gray-700" : "text-gray-900 dark:text-gray-400"}`}>
                 <button onClick={() => JumpTo(move)}>{description}</button>
             </li>
         )
