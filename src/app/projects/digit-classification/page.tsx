@@ -36,21 +36,21 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width }) => {
     const [begin, setBegin] = useState<Vec2>({x: 0, y: 0});
 
     const handleMouseDown: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
-        console.log("Mouse down!");
+        // console.log("Mouse down!");
         setBegin({x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY});
         setMouseDown(true);
         setLines([]);
     };
     
     const handleMouseUp: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
-        console.log("Mouse up!");
+        // console.log("Mouse up!");
         setMouseDown(false);
         let newStrokes = [...strokes, {lines: lines}];
         setStrokes(newStrokes);
     };
     
     const handleMouseMove: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
-        console.log("Mouse move!");
+        // console.log("Mouse move!");
 
         if (!mouseDown)
             return;
