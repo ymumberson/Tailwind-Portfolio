@@ -20,12 +20,17 @@ interface SetLine {
     (start: Vec2, end: Vec2): void;
 }
 
+interface Stroke {
+    lines: Line[];
+}
+
 interface DigitCanvasProps {
     width: number;
 }
 
 const DigitCanvas: React.FC<DigitCanvasProps> = ({ width }) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
+    const [strokes, setStrokes] = useState<Stroke[]>([]);
     const [lines, setLines] = useState<Line[]>([]);
     const [mouseDown, setMouseDown] = useState(false);
     const [begin, setBegin] = useState<Vec2>({x: 0, y: 0});
@@ -34,11 +39,14 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width }) => {
         console.log("Mouse down!");
         setBegin({x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY});
         setMouseDown(true);
+        setLines([]);
     };
     
     const handleMouseUp: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
         console.log("Mouse up!");
         setMouseDown(false);
+        let newStrokes = [...strokes, {lines: lines}];
+        setStrokes(newStrokes);
     };
     
     const handleMouseMove: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
@@ -55,15 +63,17 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width }) => {
     };
 
     const onUndo = () => {
-        if (lines.length === 0)
+        if (strokes.length === 0)
             return;
 
-        let newLines = lines.slice(0, lines.length-1);
-        setLines(newLines);
+        let newStrokes = strokes.slice(0, strokes.length-1);
+        setStrokes(newStrokes);
+        setLines([]);
     }
 
     const onReset = () => {
         setBegin({x: 0, y: 0});
+        setStrokes([]);
         setLines([]);
     }
 
@@ -71,13 +81,24 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width }) => {
         if (canvasRef != null) {
             const context = canvasRef!.current!.getContext('2d');
             context?.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height)
-            lines.forEach((line, index) => {
-                context?.beginPath();
-                context?.moveTo(line.start.x, line.start.y);
-                context?.lineTo(line.end.x, line.end.y);
-                context?.stroke();
+            strokes.forEach(stroke => {
+                stroke.lines.forEach(line => {
+                    if (context)
+                        DrawLine(line, context);
+                })    
+            })
+            lines.forEach(line => {
+                if (context)
+                    DrawLine(line, context);
             })
         }
+    }
+
+    const DrawLine = (line: Line, context: CanvasRenderingContext2D) => {
+        context?.beginPath();
+        context?.moveTo(line.start.x, line.start.y);
+        context?.lineTo(line.end.x, line.end.y);
+        context?.stroke();
     }
     
     useEffect(() => {
