@@ -94,7 +94,7 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, canvasRef }) => {
 
     const DrawLine = (line: Line, context: CanvasRenderingContext2D) => {
         context?.beginPath();
-        context.lineWidth = 1;
+        context.lineWidth = 2;
         context?.moveTo(line.start.x, line.start.y);
         context?.lineTo(line.end.x, line.end.y);
         context?.stroke();
@@ -160,8 +160,8 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef }) => {
             const imageData = context.getImageData(0, 0, canvasRef.current!.width, canvasRef.current!.height);
             const pixels: number[] = [];
             for (let i=0; i<imageData.data.length; i += 4) {
-                const grayscale = imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2];
-                pixels.push(grayscale / 255.0);
+                const grayscale = ((imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]) * imageData.data[i + 3]) / 3.0;
+                pixels.push(255.0 - (grayscale / 255.0));
             }
 
             const inputTensor = tf.tensor(pixels, [1, 28, 28, 1]);
@@ -179,7 +179,9 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef }) => {
                 if (y > x)
                     maxIndex = i;
             }
-            setPrediction(maxIndex.toString() + " | " + predictions.join(", "));
+            setPrediction(maxIndex.toString());
+
+            // setPrediction(pixels.join(', '));
         }
     }
 
