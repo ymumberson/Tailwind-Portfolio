@@ -74,6 +74,7 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setU
         setBegin({x: 0, y: 0});
         setStrokes([]);
         setLines([]);
+        setUpdatePrediction(true);
     }
 
     const Draw = () => {
@@ -136,6 +137,21 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setU
     );
 }
 
+interface PredictionClassProps {
+    classID: string;
+    predictionValue: number;
+    highestPrediction: boolean;
+}
+
+const PredictionClass: React.FC<PredictionClassProps> = ({ classID, predictionValue, highestPrediction }) => {
+    return (
+        <div className={`flex flex-row gap-2 border bg-gray-100 text-gray-800 text-sm px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-300 ${highestPrediction ? "font-bold" : "font-medium"}`}>
+            <span className="">{classID}</span>
+            <span>{predictionValue}</span>
+        </div>
+    )
+}
+
 interface PredictionCanvasProps {
     canvasRef: React.RefObject<HTMLCanvasElement | null>;
     updatePrediction: boolean;
@@ -143,7 +159,7 @@ interface PredictionCanvasProps {
 }
 
 const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePrediction, setUpdatePrediction }) => {
-    const [prediction, setPrediction] = useState("No prediction!");
+    const [predictions, setPredictions] = useState<PredictionClassProps[]>(Array.from({ length: 9}, (_, index) => ({ classID: index.toString(), predictionValue: 0, highestPrediction: false })));
     const [model, setModel] = useState<tf.LayersModel>();
 
     useEffect(() => {
@@ -199,28 +215,36 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePr
             const prediction = await model.predict(inputTensor);
 
             const predictionString = prediction.toString();
-            const predictions = predictionString.slice(14, predictionString.length-3).split(',');
+            const predictionValues = predictionString.slice(14, predictionString.length-3).split(',');
 
-            let maxIndex = 0;
-            for (let i=1; i<predictions.length; ++i) {
-                let x: number = +predictions[maxIndex];
-                let y: number = +predictions[i];
+            let newPredictions: PredictionClassProps[] = []
+            let maxPredictionIndex = 0;
+            for (let i=0; i<predictionValues.length; ++i) {
+                let y: number = +predictionValues[i];
+                let predictionClassProp: PredictionClassProps = {classID: i.toString(), predictionValue: y, highestPrediction: false};
+                newPredictions.push(predictionClassProp);
 
-                if (y > x)
-                    maxIndex = i;
+                let maxPrediction: number = +predictionValues[maxPredictionIndex];
+                if (y > maxPrediction)
+                    maxPredictionIndex = i;
             }
-            setPrediction(maxIndex.toString());
-
-            // setPrediction(pixels.join(', '));
+            newPredictions[maxPredictionIndex].highestPrediction = true;
+            setPredictions(newPredictions);
 
             setUpdatePrediction(false);
         }
     }
 
     return (
-        <div className="flex flex-col justify-top ml-10">
-            {model ? <p>Model Loaded Successfully</p> : <p>Loading Model...</p>}
-            <p className="flex">{prediction}</p>
+        <div className="flex flex-col justify-top mt-5 w-auto md:mt-0 md:ml-10">
+            {/* {model ? <p>Model Loaded Successfully</p> : <p>Loading Model...</p>} */}
+            <div className="flex flex-col">
+                {
+                    predictions.map((prediction, index) => (
+                        <PredictionClass key={index} classID={prediction.classID} predictionValue={prediction.predictionValue} highestPrediction={prediction.highestPrediction}/>
+                    ))
+                }
+            </div>
         </div>
     );
 }
@@ -231,7 +255,7 @@ const DigitClassification = () => {
 
     return (
         <Project className="flex flex-col md:flex-row" name="Digit Classification" description="Attempting to classify hand-drawn digits">
-            <DigitCanvas width={28} scale={10} canvasRef={canvasRef} setUpdatePrediction={setUpdatePrediction}/>
+            <DigitCanvas width={28} scale={11} canvasRef={canvasRef} setUpdatePrediction={setUpdatePrediction}/>
             <PredictionCanvas canvasRef={canvasRef} updatePrediction={updatePrediction} setUpdatePrediction={setUpdatePrediction}/>
         </Project>
     );
