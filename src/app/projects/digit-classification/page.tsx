@@ -29,9 +29,10 @@ interface DigitCanvasProps {
     width: number;
     scale: number;
     canvasRef: React.RefObject<HTMLCanvasElement | null>;
+    setUpdatePrediction: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef }) => {
+const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setUpdatePrediction }) => {
     const [strokes, setStrokes] = useState<Stroke[]>([]);
     const [lines, setLines] = useState<Line[]>([]);
     const [mouseDown, setMouseDown] = useState(false);
@@ -100,6 +101,7 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef }) =>
         context?.moveTo(line.start.x, line.start.y);
         context?.lineTo(line.end.x, line.end.y);
         context?.stroke();
+        setUpdatePrediction(true);
     }
     
     useEffect(() => {
@@ -119,7 +121,7 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef }) =>
                 onMouseMove={handleMouseMove}
             >
             </canvas>
-            <div className="flex flex-row mb-5 justify-center gap-2">
+            <div className="flex flex-row justify-center gap-2 mt-5">
                 <button onClick={() => onUndo()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
                     <IconChevronLeft size={30}/>
                 </button>
@@ -136,9 +138,11 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef }) =>
 
 interface PredictionCanvasProps {
     canvasRef: React.RefObject<HTMLCanvasElement | null>;
+    updatePrediction: boolean;
+    setUpdatePrediction: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef }) => {
+const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePrediction, setUpdatePrediction }) => {
     const [prediction, setPrediction] = useState("No prediction!");
     const [model, setModel] = useState<tf.LayersModel>();
 
@@ -152,6 +156,10 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef }) => {
             }
         })();
     }, []);
+
+    useEffect(() => {
+        MakePrediction();
+    }, [updatePrediction]);
 
     const MakePrediction = async () => {
         if (model && canvasRef) {
@@ -204,13 +212,14 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef }) => {
             setPrediction(maxIndex.toString());
 
             // setPrediction(pixels.join(', '));
+
+            setUpdatePrediction(false);
         }
     }
 
     return (
-        <div>
+        <div className="flex flex-col justify-top ml-10">
             {model ? <p>Model Loaded Successfully</p> : <p>Loading Model...</p>}
-            <button onClick={() => MakePrediction()} className="border rounded-lg p-1">Make Prediction</button>
             <p className="flex">{prediction}</p>
         </div>
     );
@@ -218,11 +227,12 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef }) => {
 
 const DigitClassification = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
+    const [updatePrediction, setUpdatePrediction] = useState(false);
 
     return (
-        <Project name="Digit Classification" description="Attempting to classify hand-drawn digits">
-            <DigitCanvas width={28} scale={5} canvasRef={canvasRef}/>
-            <PredictionCanvas canvasRef={canvasRef}/>
+        <Project className="flex flex-col md:flex-row" name="Digit Classification" description="Attempting to classify hand-drawn digits">
+            <DigitCanvas width={28} scale={10} canvasRef={canvasRef} setUpdatePrediction={setUpdatePrediction}/>
+            <PredictionCanvas canvasRef={canvasRef} updatePrediction={updatePrediction} setUpdatePrediction={setUpdatePrediction}/>
         </Project>
     );
 }
