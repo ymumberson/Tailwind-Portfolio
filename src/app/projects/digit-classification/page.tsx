@@ -38,23 +38,41 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setU
     const [mouseDown, setMouseDown] = useState(false);
     const [begin, setBegin] = useState<Vec2>({x: 0, y: 0});
 
+    const handleTouchStart: React.TouchEventHandler<HTMLCanvasElement> | undefined = (e) => {
+        drawStart({x: e.touches[0].clientX, y: e.touches[0].clientY});
+    };
     const handleMouseDown: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
-        setBegin({x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY});
+        drawStart({x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY});
+    };
+    const drawStart = ({ x, y }: Vec2) => {
+        setBegin({x, y});
         setMouseDown(true);
         setLines([]);
-    };
+    }
     
+    const handleTouchEnd: React.TouchEventHandler<HTMLCanvasElement> | undefined = (e) => {
+        drawEnd();
+    };
     const handleMouseUp: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
+        drawEnd();
+    };
+    const drawEnd = () => {
         setMouseDown(false);
         let newStrokes = [...strokes, {lines: lines}];
         setStrokes(newStrokes);
     };
     
+    const handleTouchMove: React.TouchEventHandler<HTMLCanvasElement> | undefined = (e) => {
+        drawMove({x: e.touches[0].clientX, y: e.touches[0].clientY});
+    };
     const handleMouseMove: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
+        drawMove({x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY});
+    };
+    const drawMove = ({ x, y }: Vec2) => {
         if (!mouseDown)
             return;
 
-        var end = {x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY};
+        var end = {x, y};
         var line = {start: begin, end: end};
         let newLines = [...lines, line];
         setLines(newLines);
@@ -118,8 +136,11 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setU
                 height={width * scale}
                 className="border"
                 onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
                 onMouseUp={handleMouseUp}
+                onTouchEnd={handleTouchEnd}
                 onMouseMove={handleMouseMove}
+                onTouchMove={handleTouchMove}
             >
             </canvas>
             <div className="flex flex-row justify-center gap-2 mt-5">
