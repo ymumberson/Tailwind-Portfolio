@@ -27,10 +27,11 @@ interface Stroke {
 
 interface DigitCanvasProps {
     width: number;
+    scale: number;
     canvasRef: React.RefObject<HTMLCanvasElement | null>;
 }
 
-const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, canvasRef }) => {
+const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef }) => {
     const [strokes, setStrokes] = useState<Stroke[]>([]);
     const [lines, setLines] = useState<Line[]>([]);
     const [mouseDown, setMouseDown] = useState(false);
@@ -77,8 +78,8 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, canvasRef }) => {
     const Draw = () => {
         if (canvasRef != null) {
             const context = canvasRef!.current!.getContext('2d');
-            context!.fillStyle = 'white'; // Example color
-            context!.fillRect(0, 0, 28, 28);
+            context!.fillStyle = 'white';
+            context!.fillRect(0, 0, canvasRef!.current!.width, canvasRef!.current!.height);
             strokes.forEach(stroke => {
                 stroke.lines.forEach(line => {
                     if (context)
@@ -94,7 +95,8 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, canvasRef }) => {
 
     const DrawLine = (line: Line, context: CanvasRenderingContext2D) => {
         context?.beginPath();
-        context.lineWidth = 2;
+        context.lineCap = 'round';
+        context.lineWidth = scale;
         context?.moveTo(line.start.x, line.start.y);
         context?.lineTo(line.end.x, line.end.y);
         context?.stroke();
@@ -109,8 +111,8 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, canvasRef }) => {
             <canvas
                 ref={canvasRef}
                 id="DigitCanvas" 
-                width={width} 
-                height={width} 
+                width={width * scale} 
+                height={width * scale}
                 className="border"
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}
@@ -158,10 +160,30 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef }) => {
                 return;
 
             const imageData = context.getImageData(0, 0, canvasRef.current!.width, canvasRef.current!.height);
-            const pixels: number[] = [];
+            const pixels = new Array(28*28).fill(0);
+            const scaleX = (canvasRef.current!.width / 28);
+            const scaleY = (canvasRef.current!.height / 28);
             for (let i=0; i<imageData.data.length; i += 4) {
-                const grayscale = ((imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]) * imageData.data[i + 3]) / 3.0;
-                pixels.push(255.0 - (grayscale / 255.0));
+                const r = imageData.data[i];
+                const g = imageData.data[i + 1];
+                const b = imageData.data[i + 2];
+                const a = imageData.data[i + 3];
+
+                const grayscale = (r + g + b) / 3;
+
+                const x = (i / 4) % canvasRef.current!.width;
+                const y = Math.floor((i / 4) / canvasRef.current!.width);
+
+                const gridX = Math.floor(x / scaleX);
+                const gridY = Math.floor(y / scaleY);
+
+                const index = gridY * 28 + gridX;
+
+                pixels[index] += ((1 - (grayscale / 255.0)) / (scaleX * scaleY)) * 255;
+
+                // const pixelValue = (1 - (grayscale / 255.0)) * 255;
+                // if (pixelValue > pixels[index])
+                //     pixels[index] = pixelValue;
             }
 
             const inputTensor = tf.tensor(pixels, [1, 28, 28, 1]);
@@ -197,9 +219,11 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef }) => {
 const DigitClassification = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
+    const scale = window.innerWidth / 60;
+
     return (
         <Project name="Digit Classification" description="Attempting to classify hand-drawn digits">
-            <DigitCanvas width={28} canvasRef={canvasRef}/>
+            <DigitCanvas width={28} scale={scale} canvasRef={canvasRef}/>
             <PredictionCanvas canvasRef={canvasRef}/>
         </Project>
     );
