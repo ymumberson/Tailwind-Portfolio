@@ -219,11 +219,9 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef }) => {
 const DigitClassification = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
-    const scale = window.innerWidth / 60;
-
     return (
         <Project name="Digit Classification" description="Attempting to classify hand-drawn digits">
-            <DigitCanvas width={28} scale={scale} canvasRef={canvasRef}/>
+            <DigitCanvas width={28} scale={5} canvasRef={canvasRef}/>
             <PredictionCanvas canvasRef={canvasRef}/>
         </Project>
     );
