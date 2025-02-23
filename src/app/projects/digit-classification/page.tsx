@@ -189,7 +189,7 @@ interface PredictionClassProps {
 
 const PredictionClass: React.FC<PredictionClassProps> = ({ classID, predictionValue, highestPrediction }) => {
     return (
-        <div className={`flex flex-row gap-2 border bg-gray-100 text-gray-800 text-sm px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-300 ${highestPrediction ? "font-bold" : "font-medium"}`}>
+        <div className={`border flex flex-row gap-2 bg-gray-100 text-gray-800 text-sm px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-300 ${highestPrediction ? "font-bold border-gray-500 dark:border-white" : "font-medium dark:border-gray-500"}`}>
             <span className="">{classID}</span>
             <span>{predictionValue}</span>
         </div>
