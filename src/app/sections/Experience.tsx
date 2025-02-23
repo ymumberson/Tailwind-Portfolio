@@ -27,14 +27,14 @@ const Experience = () => {
             <h1 className="sm:px-16 xl:px-48 mb-4 text-4xl font-extrabold tracking-light leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Experience</h1>
             <div className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
                 <ol className="relative border-s border-gray-200 dark:border-gray-700">
-                    <TimelineElement 
-                        date="September 2019 - June 2023" 
-                        jobRole="Computer Science Msci" 
-                        company="Swansea University" 
+                <TimelineElement 
+                        date="October 2023 - Present" 
+                        jobRole="Software Engineer" 
+                        company="VACAC" 
                         notes={[
-                            "Conducting research on advanced topics such as simulating global illumination via photon mapping, and simulating social network generation via agent-based city simulations.",
-                            "Designing data visualisation both individually and in groups, starting from analysing the problem and ending in implementing the solution.",
-                            "Applying machine learning to advanced areas such as identifying objects in a room through point-clouds taken using the Xbox Kinect."
+                            "Develop virtual experiences in Unity.",
+                            "Develop automation tools in Python for 3D animation.",
+                            "Create 3D animations in Blender."
                         ]}
                     />
                     <TimelineElement 
@@ -48,13 +48,13 @@ const Experience = () => {
                         ]}
                     />
                     <TimelineElement 
-                        date="October 2023 - Present" 
-                        jobRole="Graduate Software Engineer" 
-                        company="VACAC" 
+                        date="September 2019 - June 2023" 
+                        jobRole="Computer Science Msci" 
+                        company="Swansea University" 
                         notes={[
-                            "Develop virtual experiences in Unity.",
-                            "Develop automation tools in Python for 3D animation.",
-                            "Create 3D animations in Blender."
+                            "Conducting research on advanced topics such as simulating global illumination via photon mapping, and simulating social network generation via agent-based city simulations.",
+                            "Designing data visualisation both individually and in groups, starting from analysing the problem and ending in implementing the solution.",
+                            "Applying machine learning to advanced areas such as identifying objects in a room through point-clouds taken using the Xbox Kinect."
                         ]}
                     />
                 </ol>
