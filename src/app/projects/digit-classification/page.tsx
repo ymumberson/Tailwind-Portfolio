@@ -38,8 +38,15 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setU
     const [mouseDown, setMouseDown] = useState(false);
     const [begin, setBegin] = useState<Vec2>({x: 0, y: 0});
 
+    const getTouchPosition = (e: React.TouchEvent<HTMLCanvasElement>) : Vec2 => {
+        const rect = canvasRef.current?.getBoundingClientRect();
+        if (rect)
+            return {x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top};
+        return {x: 0, y: 0};
+    }
+
     const handleTouchStart: React.TouchEventHandler<HTMLCanvasElement> | undefined = (e) => {
-        drawStart({x: e.touches[0].clientX, y: e.touches[0].clientY});
+        drawStart(getTouchPosition(e));
     };
     const handleMouseDown: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
         drawStart({x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY});
@@ -63,7 +70,7 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setU
     };
     
     const handleTouchMove: React.TouchEventHandler<HTMLCanvasElement> | undefined = (e) => {
-        drawMove({x: e.touches[0].clientX, y: e.touches[0].clientY});
+        drawMove(getTouchPosition(e));
     };
     const handleMouseMove: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
         drawMove({x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY});
@@ -126,6 +133,22 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setU
     useEffect(() => {
         Draw();
     }, [lines]);
+
+    React.useEffect(() => {
+        const canvasElement = canvasRef.current;
+
+        const prevent = (e: TouchEvent) => e.preventDefault();
+    
+        canvasElement!.addEventListener('touchmove', prevent, { passive: false });
+        canvasElement!.addEventListener('touchstart', prevent, { passive: false });
+        canvasElement!.addEventListener('touchend', prevent, { passive: false });
+    
+        return () => {
+          canvasElement!.removeEventListener('touchmove', prevent);
+          canvasElement!.removeEventListener('touchstart', prevent);
+          canvasElement!.removeEventListener('touchend', prevent);
+        };
+      }, [canvasRef]);
 
     return (
         <div>
