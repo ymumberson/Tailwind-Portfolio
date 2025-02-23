@@ -188,6 +188,8 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePr
             try {
                 const loadedModel = await tf.loadLayersModel("/Digit_NN_tfjs/model.json");
                 setModel(loadedModel);
+                setUpdatePrediction(true);
+                MakePrediction();
             } catch (error) {
                 console.error("Error loading model:", error)
             }
@@ -195,7 +197,8 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePr
     }, []);
 
     useEffect(() => {
-        MakePrediction();
+        if (updatePrediction)
+            MakePrediction();
     }, [updatePrediction]);
 
     const MakePrediction = async () => {
