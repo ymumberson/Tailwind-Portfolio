@@ -301,7 +301,7 @@ const DigitClassification = () => {
     const [updatePrediction, setUpdatePrediction] = useState(false);
 
     return (
-        <Project className="flex flex-col md:flex-row" name="Digit Classification" description="Attempting to classify hand-drawn digits">
+        <Project className="flex flex-col md:flex-row" name="Digit Classification" description="Attempting to classify hand-drawn digits by using a Neural Network trained on the MNIST hand-drawn digits dataset. Digits can be from 0 to 9, however, the model will always predict one of these values. This is the reason that even the empty canvas predicts to a digit.">
             <DigitCanvas width={28} scale={11} canvasRef={canvasRef} setUpdatePrediction={setUpdatePrediction}/>
             <PredictionCanvas canvasRef={canvasRef} updatePrediction={updatePrediction} setUpdatePrediction={setUpdatePrediction}/>
         </Project>
