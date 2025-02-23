@@ -1,8 +1,6 @@
 import React from "react";
-import Card from "./../components/Card";
 import { IconBrandGithub, IconBrandLinkedin } from "@tabler/icons-react";
 
-//https://flowbite.com/blocks/marketing/hero/
 const HeroSection = () => {
     return (
     <section className="">
