@@ -104,7 +104,7 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setU
 
     const Draw = () => {
         if (canvasRef != null) {
-            const context = canvasRef!.current!.getContext('2d');
+            const context = canvasRef!.current!.getContext('2d', { willReadFrequently: true });
             context!.fillStyle = 'white';
             context!.fillRect(0, 0, canvasRef!.current!.width, canvasRef!.current!.height);
             strokes.forEach(stroke => {
@@ -226,7 +226,7 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePr
 
     const MakePrediction = async () => {
         if (model && canvasRef) {
-            const context = canvasRef!.current!.getContext('2d');
+            const context = canvasRef!.current!.getContext('2d', { willReadFrequently: true });
             if (!context)
                 return;
 
