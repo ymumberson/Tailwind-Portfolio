@@ -41,12 +41,25 @@ const Weather = (obj: any) => {
 
     return (
         <div className="">
-            <div className="flex flex-row items-center">
+            <div className="inline-block mt-5">
                 <h1 className="mb-0 text-3xl font-bold text-gray-900 dark:text-white">{obj.data.name}</h1>
-                <img src={`https://openweathermap.org/img/wn/${obj.data.weather[0].icon}@2x.png`}></img>
+                <p className="text-right">{Math.floor(KelvinToCelsius(obj.data.main.temp))}&#8451; ({Math.floor(KelvinToCelsius(obj.data.main.feels_like))}&#8451;)</p>
+                {/* <div className="flex flex-row justify-between mb-3">
+                    <p>{new Date().toLocaleTimeString()}</p>
+                    <p>{Math.floor(KelvinToCelsius(obj.data.main.temp))}&#8451; ({Math.floor(KelvinToCelsius(obj.data.main.feels_like))}&#8451;)</p>
+                </div> */}
+                <p>{obj.data.weather[0].main}: {obj.data.weather[0].description}</p>
+                <p>Sunrise: {new Date(obj.data.sys.sunrise * 1000).toLocaleTimeString()}</p>
+                <p>Sunset: {new Date(obj.data.sys.sunset * 1000).toLocaleTimeString()}</p>
+                <p>dt: {obj.data.dt}</p>
+                <p>Wind: {obj.data.wind.speed}m/s</p>
+                <p>Clouds: {obj.data.clouds.all}</p>
+                {obj.data.rain && <p>Rain: {obj.data.rain["1h"]}</p>}
+                {obj.data.snow && <p>Snow: {obj.data.snow["1h"]}</p>}
             </div>
-            <p>{Math.floor(KelvinToCelsius(obj.data.main.temp))}&#8451; ({Math.floor(KelvinToCelsius(obj.data.main.feels_like))}&#8451;)</p>
-            <p>{obj.data.weather[0].main}: {obj.data.weather[0].description}</p>
+            <div className="inline-block align-top items-baseline ml-10">
+                <img className="border rounded-full" src={`https://openweathermap.org/img/wn/${obj.data.weather[0].icon}@2x.png`}></img>
+            </div>
         </div>
     );
 }
