@@ -34,6 +34,23 @@ const ErrorMsg = ( error: any ) => {
     );
 }
 
+const Weather = (obj: any) => {
+    const KelvinToCelsius = (kelvin: number) => {
+        return kelvin - 273.15;
+    }
+
+    return (
+        <div className="">
+            <div className="flex flex-row items-center">
+                <h1 className="mb-0 text-3xl font-bold text-gray-900 dark:text-white">{obj.data.name}</h1>
+                <img src={`https://openweathermap.org/img/wn/${obj.data.weather[0].icon}@2x.png`}></img>
+            </div>
+            <p>{Math.floor(KelvinToCelsius(obj.data.main.temp))}&#8451; ({Math.floor(KelvinToCelsius(obj.data.main.feels_like))}&#8451;)</p>
+            <p>{obj.data.weather[0].main}: {obj.data.weather[0].description}</p>
+        </div>
+    );
+}
+
 const ApiFetching = () => {
     const { data, error } = useSWR('dataKey', fetchData);
 
@@ -41,7 +58,7 @@ const ApiFetching = () => {
         <Project name="API Fetching" description="Fetching various bits of data from different APIs.">
             {error && <ErrorMsg error={error} />}
             {!error && !data && <Loading />}
-            {!error && data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+            {!error && data && <Weather data={data} />}
         </Project>
     );
 }
