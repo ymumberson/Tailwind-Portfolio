@@ -14,13 +14,33 @@ const fetchData = async () => {
     return response.json();
 }
 
+const Loading = () => {
+    return (
+        <div role="status" className="max-w-sm animate-pulse">
+            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[275px] mb-2.5"></div>
+            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[250px] mb-2.5"></div>
+            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[380px] mb-2.5"></div>
+            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+            <span className="sr-only">Loading...</span>
+        </div>
+    );
+}
+
+const ErrorMsg = ( error: any ) => {
+    return (
+        <p>{error.message}</p>
+    );
+}
+
 const ApiFetching = () => {
     const { data, error } = useSWR('dataKey', fetchData);
 
     return (
         <Project name="API Fetching" description="Fetching various bits of data from different APIs.">
-            {error && <p>{error.message}</p>}
-            {!error && !data && <p>Loading!</p>}
+            {error && <ErrorMsg error={error} />}
+            {!error && !data && <Loading />}
             {!error && data && <pre>{JSON.stringify(data, null, 2)}</pre>}
         </Project>
     );
