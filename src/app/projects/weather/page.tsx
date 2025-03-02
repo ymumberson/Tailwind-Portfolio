@@ -8,8 +8,6 @@ import { IconSunrise, IconSunset, IconWind, IconCloud, IconDroplet, IconSnowflak
 const fetchData = async () => {
     const lat = "52.1951";
     const lon = "0.1313";
-    // const lat = "35.9078";
-    // const lon = "127.7669";
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.OPEN_WEATHER_API_KEY}`);
     if (!response.ok) {
         throw new Error('Network response was not okay');
