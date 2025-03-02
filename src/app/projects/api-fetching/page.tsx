@@ -3,10 +3,13 @@
 import Project from "@/app/components/Project";
 import React from "react";
 import useSWR from "swr";
+import { IconSunrise, IconSunset, IconWind, IconCloud, IconDroplet, IconSnowflake } from "@tabler/icons-react";
 
 const fetchData = async () => {
     const lat = "52.1951";
     const lon = "0.1313";
+    // const lat = "35.9078";
+    // const lon = "127.7669";
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.OPEN_WEATHER_API_KEY}`);
     if (!response.ok) {
         throw new Error('Network response was not okay');
@@ -34,31 +37,42 @@ const ErrorMsg = ( error: any ) => {
     );
 }
 
+interface WeatherBadgeProps {
+    weatherIcon: React.ComponentType<any>;
+    text: string;
+}
+const WeatherBadge: React.FC<WeatherBadgeProps> = ({ weatherIcon: IconComponent, text }) => {
+    return (
+        <div className="flex flex-row gap-2 items-center">
+            <IconComponent/>
+            <span>{text}</span>
+        </div>
+    )
+}
+
 const Weather = (obj: any) => {
     const KelvinToCelsius = (kelvin: number) => {
         return kelvin - 273.15;
     }
 
     return (
-        <div className="">
-            <div className="inline-block mt-5">
+        <div className="flex justify-center">
+            <div className="mt-5">
                 <h1 className="mb-0 text-3xl font-bold text-gray-900 dark:text-white">{obj.data.name}</h1>
-                <p className="text-right">{Math.floor(KelvinToCelsius(obj.data.main.temp))}&#8451; ({Math.floor(KelvinToCelsius(obj.data.main.feels_like))}&#8451;)</p>
-                {/* <div className="flex flex-row justify-between mb-3">
-                    <p>{new Date().toLocaleTimeString()}</p>
-                    <p>{Math.floor(KelvinToCelsius(obj.data.main.temp))}&#8451; ({Math.floor(KelvinToCelsius(obj.data.main.feels_like))}&#8451;)</p>
-                </div> */}
                 <p>{obj.data.weather[0].main}: {obj.data.weather[0].description}</p>
-                <p>Sunrise: {new Date(obj.data.sys.sunrise * 1000).toLocaleTimeString()}</p>
-                <p>Sunset: {new Date(obj.data.sys.sunset * 1000).toLocaleTimeString()}</p>
-                <p>dt: {obj.data.dt}</p>
-                <p>Wind: {obj.data.wind.speed}m/s</p>
-                <p>Clouds: {obj.data.clouds.all}</p>
-                {obj.data.rain && <p>Rain: {obj.data.rain["1h"]}</p>}
-                {obj.data.snow && <p>Snow: {obj.data.snow["1h"]}</p>}
+                <p className="">{Math.floor(KelvinToCelsius(obj.data.main.temp))}&#8451; ({Math.floor(KelvinToCelsius(obj.data.main.feels_like))}&#8451;)</p>
+                <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm md:my-4 dark:bg-gray-700"/>
+                <div className="grid grid-cols-2">
+                    <WeatherBadge weatherIcon={IconSunrise} text={new Date(obj.data.sys.sunrise * 1000).toLocaleTimeString()}/>
+                    <WeatherBadge weatherIcon={IconSunset} text={new Date(obj.data.sys.sunset * 1000).toLocaleTimeString()}/>
+                    <WeatherBadge weatherIcon={IconWind} text={obj.data.wind.speed + "m/s"}/>
+                    <WeatherBadge weatherIcon={IconCloud} text={obj.data.clouds.all}/>
+                    <WeatherBadge weatherIcon={IconDroplet} text={obj.data.rain ? obj.data.rain["1h"] : "N/A"}/>
+                    <WeatherBadge weatherIcon={IconSnowflake} text={obj.data.snow ? obj.data.snow["1h"] : "N/A"}/>
+                </div>
             </div>
-            <div className="inline-block align-top items-baseline ml-10">
-                <img className="border rounded-full" src={`https://openweathermap.org/img/wn/${obj.data.weather[0].icon}@2x.png`}></img>
+            <div className="align-top items-baseline ml-10">
+                <img className="rounded-xl" src={`https://openweathermap.org/img/wn/${obj.data.weather[0].icon}@2x.png`}></img>
             </div>
         </div>
     );
