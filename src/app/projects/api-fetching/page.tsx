@@ -56,8 +56,9 @@ const Weather = (obj: any) => {
     }
 
     return (
-        <div className="flex justify-center">
-            <div className="mt-5">
+        <div className="flex flex-col items-center">
+            <img className="rounded-xl" src={`https://openweathermap.org/img/wn/${obj.data.weather[0].icon}@2x.png`}></img>
+            <div className="">
                 <h1 className="mb-0 text-3xl font-bold text-gray-900 dark:text-white">{obj.data.name}</h1>
                 <p>{obj.data.weather[0].main}: {obj.data.weather[0].description}</p>
                 <p className="">{Math.floor(KelvinToCelsius(obj.data.main.temp))}&#8451; ({Math.floor(KelvinToCelsius(obj.data.main.feels_like))}&#8451;)</p>
@@ -70,9 +71,6 @@ const Weather = (obj: any) => {
                     <WeatherBadge weatherIcon={IconDroplet} text={obj.data.rain ? obj.data.rain["1h"] : "N/A"}/>
                     <WeatherBadge weatherIcon={IconSnowflake} text={obj.data.snow ? obj.data.snow["1h"] : "N/A"}/>
                 </div>
-            </div>
-            <div className="align-top items-baseline ml-10">
-                <img className="rounded-xl" src={`https://openweathermap.org/img/wn/${obj.data.weather[0].icon}@2x.png`}></img>
             </div>
         </div>
     );
