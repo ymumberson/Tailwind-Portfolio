@@ -80,7 +80,7 @@ const ApiFetching = () => {
     const { data, error } = useSWR('dataKey', fetchData);
 
     return (
-        <Project name="API Fetching" description="Fetching various bits of data from different APIs.">
+        <Project name="Weather" description="Fetching current weather data from https://openweathermap.org/ and displaying it.">
             {error && <ErrorMsg error={error} />}
             {!error && !data && <Loading />}
             {!error && data && <Weather data={data} />}

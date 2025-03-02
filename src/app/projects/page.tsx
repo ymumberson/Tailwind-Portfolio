@@ -8,7 +8,7 @@ export default function Projects() {
         <div className="flex flex-col items-center gap-2">
             <Card title="Tic-Tac-Toe" href="/projects/tic-tac-toe" hrefText="See project" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe" />
             <Card title="Digit Classification" href="/projects/digit-classification" hrefText="See project" description="Attempting to classify hand-drawn digits by using a Neural Network trained on the MNIST hand-drawn digits dataset. Digits can be from 0 to 9, however, the model will always predict one of these values. This is the reason that even the empty canvas predicts to a digit." />
-            <Card title="API Fetching" href="/projects/api-fetching" hrefText="See project" description="Fetching various bits of data from different APIs." />
+            <Card title="Weather" href="/projects/weather" hrefText="See project" description="Fetching current weather data from https://openweathermap.org/ and displaying it." />
         </div>
       </div>
     );
