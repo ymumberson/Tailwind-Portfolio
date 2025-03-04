@@ -4,6 +4,7 @@ import Project from "@/app/components/Project";
 import React from "react";
 import useSWR from "swr";
 import { IconSunrise, IconSunset, IconWind, IconCloud, IconDroplet, IconSnowflake } from "@tabler/icons-react";
+import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from "recharts";
 
 const fetchData = async () => {
     const lat = "52.1951";
@@ -37,15 +38,28 @@ const ErrorMsg = ( error: any ) => {
 
 const HourlyForecast = (hourly: any) => {
     hourly = hourly.hourly;
+    
+    const chartData = [];
+    for (let i=0; i<hourly.length; ++i) {
+        chartData.push({
+            name: new Date(hourly[i].dt * 1000).getHours(),
+            temp: Math.floor(KelvinToCelsius(hourly[i].temp)),
+            feels_like: Math.floor(KelvinToCelsius(hourly[i].feels_like))
+        });
+    }
 
     return (
         <div>
-            {hourly.map((hour: any) => (
-                <div className="flex flex-row gap-2">
-                    <p>{new Date(hour.dt * 1000).toLocaleTimeString()}</p>
-                    <p>{Math.floor(KelvinToCelsius(hour.temp))}</p>
-                </div>
-            ))}
+            <LineChart width={600} height={250} data={chartData}>
+                {/* <CartesianGrid strokeDasharray="3 3" /> */}
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <ReferenceLine y={0} strokeDasharray="3 3"/>
+                <Line type="monotone" dataKey="temp" stroke="#8884d8" />
+                <Line type="monotone" dataKey="feels_like" stroke="#82ca9d" />
+            </LineChart>
             {/* <pre>{JSON.stringify(hourly, null, 2)}</pre> */}
         </div>
     );
