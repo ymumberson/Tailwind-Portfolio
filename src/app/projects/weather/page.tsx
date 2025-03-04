@@ -40,7 +40,7 @@ const HourlyForecast = (hourly: any) => {
     hourly = hourly.hourly;
     
     const chartData = [];
-    for (let i=0; i<hourly.length; ++i) {
+    for (let i=0; i<24; ++i) {
         chartData.push({
             name: new Date(hourly[i].dt * 1000).getHours(),
             temp: Math.floor(KelvinToCelsius(hourly[i].temp)),
