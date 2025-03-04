@@ -4,7 +4,7 @@ import Project from "@/app/components/Project";
 import React from "react";
 import useSWR from "swr";
 import { IconSunrise, IconSunset, IconWind, IconCloud, IconDroplet, IconSnowflake } from "@tabler/icons-react";
-import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 const fetchData = async () => {
     const lat = "52.1951";
@@ -49,8 +49,9 @@ const HourlyForecast = (hourly: any) => {
     }
 
     return (
-        <div>
-            <LineChart width={600} height={250} data={chartData}>
+        <div className="w-full h-80">
+        <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 {/* <CartesianGrid strokeDasharray="3 3" /> */}
                 <XAxis dataKey="name" />
                 <YAxis />
@@ -61,6 +62,7 @@ const HourlyForecast = (hourly: any) => {
                 <Line type="monotone" dataKey="feels_like" stroke="#82ca9d" />
             </LineChart>
             {/* <pre>{JSON.stringify(hourly, null, 2)}</pre> */}
+        </ResponsiveContainer>
         </div>
     );
 }
