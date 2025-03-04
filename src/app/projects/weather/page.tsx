@@ -35,6 +35,22 @@ const ErrorMsg = ( error: any ) => {
     );
 }
 
+const HourlyForecast = (hourly: any) => {
+    hourly = hourly.hourly;
+
+    return (
+        <div>
+            {hourly.map((hour: any) => (
+                <div className="flex flex-row gap-2">
+                    <p>{new Date(hour.dt * 1000).toLocaleTimeString()}</p>
+                    <p>{Math.floor(KelvinToCelsius(hour.temp))}</p>
+                </div>
+            ))}
+            {/* <pre>{JSON.stringify(hourly, null, 2)}</pre> */}
+        </div>
+    );
+}
+
 interface WeatherBadgeProps {
     weatherIcon: React.ComponentType<any>;
     text: string;
@@ -48,43 +64,55 @@ const WeatherBadge: React.FC<WeatherBadgeProps> = ({ weatherIcon: IconComponent,
     )
 }
 
-const Weather = (obj: any) => {
-    const KelvinToCelsius = (kelvin: number) => {
-        return kelvin - 273.15;
-    }
+const CurrentWeather = (current: any) => {
+    current = current.current;
 
     return (
         <div className="flex flex-col items-center">
-            <img className="rounded-xl" src={`https://openweathermap.org/img/wn/${obj.data.weather[0].icon}@2x.png`}></img>
+            <img className="rounded-xl" src={`https://openweathermap.org/img/wn/${current.weather[0].icon}@2x.png`}></img>
             <div className="">
-                <h1 className="mb-0 text-3xl font-bold text-gray-900 dark:text-white">Cambridge</h1>
-                <p>{obj.data.weather[0].main}: {obj.data.weather[0].description}</p>
-                <p className="">{Math.floor(KelvinToCelsius(obj.data.temp))}&#8451; ({Math.floor(KelvinToCelsius(obj.data.feels_like))}&#8451;)</p>
+                <h1 className="mb-0 text-3xl font-bold text-gray-900 dark:text-white">Cambridge District</h1>
+                <p>{current.weather[0].main}: {current.weather[0].description}</p>
+                <p className="">{Math.floor(KelvinToCelsius(current.temp))}&#8451; ({Math.floor(KelvinToCelsius(current.feels_like))}&#8451;)</p>
                 <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm md:my-4 dark:bg-gray-700"/>
                 <div className="grid grid-cols-2">
-                    <WeatherBadge weatherIcon={IconSunrise} text={new Date(obj.data.sunrise * 1000).toLocaleTimeString()}/>
-                    <WeatherBadge weatherIcon={IconSunset} text={new Date(obj.data.sunset * 1000).toLocaleTimeString()}/>
-                    <WeatherBadge weatherIcon={IconWind} text={obj.data.wind_speed + "m/s"}/>
-                    <WeatherBadge weatherIcon={IconCloud} text={obj.data.clouds}/>
-                    <WeatherBadge weatherIcon={IconDroplet} text={obj.data.rain ? obj.data.rain["1h"] : "N/A"}/>
-                    <WeatherBadge weatherIcon={IconSnowflake} text={obj.data.snow ? obj.data.snow["1h"] : "N/A"}/>
+                    <WeatherBadge weatherIcon={IconSunrise} text={new Date(current.sunrise * 1000).toLocaleTimeString()}/>
+                    <WeatherBadge weatherIcon={IconSunset} text={new Date(current.sunset * 1000).toLocaleTimeString()}/>
+                    <WeatherBadge weatherIcon={IconWind} text={current.wind_speed + "m/s"}/>
+                    <WeatherBadge weatherIcon={IconCloud} text={current.clouds}/>
+                    <WeatherBadge weatherIcon={IconDroplet} text={current.rain ? current.rain["1h"] : "N/A"}/>
+                    <WeatherBadge weatherIcon={IconSnowflake} text={current.snow ? current.snow["1h"] : "N/A"}/>
                 </div>
             </div>
-            {/* <pre>{JSON.stringify(obj, null, 2)}</pre> */}
+            {/* <pre>{JSON.stringify(current, null, 2)}</pre> */}
         </div>
     );
 }
 
-const ApiFetching = () => {
+const Weather = (data: any) => {
+    return (
+        <div>
+            <CurrentWeather current={data.data.current}/>
+            <HourlyForecast hourly={data.data.hourly}/>
+            {/* <pre>{JSON.stringify(data.data, null, 2)}</pre> */}
+        </div>
+    )
+}
+
+const KelvinToCelsius = (kelvin: number) => {
+    return kelvin - 273.15;
+}
+
+const WeatherPage = () => {
     const { data, error } = useSWR('dataKey', fetchData);
 
     return (
         <Project name="Weather" description="Fetching current weather data from https://openweathermap.org/ and displaying it.">
             {error && <ErrorMsg error={error} />}
             {!error && !data && <Loading />}
-            {!error && data && <Weather data={data.current} />}
+            {!error && data && <Weather data={data}/>}
         </Project>
     );
 }
 
-export default ApiFetching;
+export default WeatherPage;
