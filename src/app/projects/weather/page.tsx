@@ -44,25 +44,33 @@ const HourlyForecast = (hourly: any) => {
         chartData.push({
             name: new Date(hourly[i].dt * 1000).getHours(),
             temp: Math.floor(KelvinToCelsius(hourly[i].temp)),
-            feels_like: Math.floor(KelvinToCelsius(hourly[i].feels_like))
+            feels_like: Math.floor(KelvinToCelsius(hourly[i].feels_like)),
+            humidity: hourly[i].humidity,
+            clouds: hourly[i].clouds,
+            wind_speed: hourly[i].wind_speed,
+            rain: hourly[i].rain ? hourly[i].rain["1h"] : null,
+            snow: hourly[i].snow ? hourly[i].snow["1h"] : null,
         });
     }
 
     return (
-        <div className="w-full h-80">
-        <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                {/* <CartesianGrid strokeDasharray="3 3" /> */}
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <ReferenceLine y={0} strokeDasharray="3 3"/>
-                <Line type="monotone" dataKey="temp" stroke="#8884d8" />
-                <Line type="monotone" dataKey="feels_like" stroke="#82ca9d" />
-            </LineChart>
+        <div className="mt-5 w-full h-80">
+            <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                    {/* <CartesianGrid strokeDasharray="3 3" /> */}
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    {/* <Tooltip /> */}
+                    <Legend />
+                    <ReferenceLine y={0} strokeDasharray="3 3"/>
+                    <Line type="monotone" dataKey="temp" stroke="#8884d8" dot={false}/>
+                    <Line type="monotone" dataKey="feels_like" stroke="#82ca9d" dot={false}/>
+                    {/* <Line type="monotone" dataKey="clouds" dot={false}/> */}
+                    <Line type="monotone" dataKey="rain" dot={false}/>
+                    <Line type="monotone" dataKey="snow" dot={false}/>
+                </LineChart>
+            </ResponsiveContainer>
             {/* <pre>{JSON.stringify(hourly, null, 2)}</pre> */}
-        </ResponsiveContainer>
         </div>
     );
 }
