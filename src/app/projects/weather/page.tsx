@@ -36,6 +36,34 @@ const ErrorMsg = ( error: any ) => {
     );
 }
 
+const DailyForecast = (daily: any, className: string = "") => {
+    daily = daily.daily;
+    const dateOptions: Intl.DateTimeFormatOptions = {
+        weekday: 'short',
+        day: '2-digit',
+    };
+
+    // const FormatDate = (date: Date) => {
+    //     return 
+    // }
+
+    return (
+        <div className="flex flex-col justify-center gap-1 mt-5 sm:mt-0">
+            {
+                daily.map((day: any, index: number) => (
+                    <div key={index} className="flex flex-row items-center gap-2 h-8 justify-center sm:justify-normal">
+                        <span className="w-15">{new Date(day.dt * 1000).toLocaleDateString(undefined, dateOptions)}</span>
+                        <img width="50" height="50" className="rounded-xl object-cover" src={`https://openweathermap.org/img/wn/${day.weather[0].icon}.png`}></img>
+                        <span>{Math.floor(KelvinToCelsius(day.temp.day))}&#8451;</span>
+                        <span>{day.weather[0].main}</span>
+                    </div>
+                ))
+            }
+            {/* <pre>{JSON.stringify(daily, null, 2)}</pre> */}
+        </div>
+    );
+}
+
 const HourlyForecast = (hourly: any) => {
     hourly = hourly.hourly;
     
@@ -99,7 +127,7 @@ const CurrentWeather = (current: any) => {
                 <p>{current.weather[0].main}: {current.weather[0].description}</p>
                 <p className="">{Math.floor(KelvinToCelsius(current.temp))}&#8451; ({Math.floor(KelvinToCelsius(current.feels_like))}&#8451;)</p>
                 <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm md:my-4 dark:bg-gray-700"/>
-                <div className="grid grid-cols-2">
+                <div className="grid grid-cols-2 justify-items-center">
                     <WeatherBadge weatherIcon={IconSunrise} text={new Date(current.sunrise * 1000).toLocaleTimeString()}/>
                     <WeatherBadge weatherIcon={IconSunset} text={new Date(current.sunset * 1000).toLocaleTimeString()}/>
                     <WeatherBadge weatherIcon={IconWind} text={current.wind_speed + "m/s"}/>
@@ -116,8 +144,14 @@ const CurrentWeather = (current: any) => {
 const Weather = (data: any) => {
     return (
         <div>
-            <CurrentWeather current={data.data.current}/>
+            <div className="flex flex-col sm:flex-row justify-center gap-2">
+                <CurrentWeather current={data.data.current}/>
+                <hr className="hidden sm:block w-1 h-72 my-auto mx-4 bg-gray-100 border-0 rounded-sm md:mx-4 dark:bg-gray-700"/>
+                <DailyForecast daily={data.data.daily}/>
+            </div>
+            {/* <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm md:my-4 dark:bg-gray-700"/> */}
             <HourlyForecast hourly={data.data.hourly}/>
+            {/* <DailyForecast daily={data.data.daily}/> */}
             {/* <pre>{JSON.stringify(data.data, null, 2)}</pre> */}
         </div>
     )
