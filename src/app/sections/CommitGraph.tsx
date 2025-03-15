@@ -20,21 +20,34 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
     const hasFetchedData = useRef(false);
 
     const fetchCommitsForRepository = async (owner: string, repo: string) => {
-        // /repos/{owner}/{repo}/commits
+        let pageNumber = 1;
+        let hasMorePages = true;
+
         try {
-            const response = await axios.get<Repository[]>(`https://api.github.com/repos/${owner}/${repo}/commits`,
-            {
-                params: {
-                    author: username,
-                    per_page: 100, // Note: Does not currently account for more than 100 commits
-                },
-                headers: {
-                    Authorization: `${process.env.GITHUB_READ_API_KEY}`,
-                },
-            })
-            // let prevCommitsPerDay = commitsPerDay;
-            setCommitsPerDay(prevCommitsPerDay => prevCommitsPerDay + response.data.length);
-            // console.log(`Commits in repo ${repo}: ${response.data.length}`);
+            while (hasMorePages) {
+                const response = await axios.get<Repository[]>(`https://api.github.com/repos/${owner}/${repo}/commits`,
+                {
+                    params: {
+                        author: username,
+                        per_page: 100,
+                        page: pageNumber,
+                    },
+                    headers: {
+                        Authorization: `${process.env.GITHUB_READ_API_KEY}`,
+                    },
+                })
+
+                if (response.headers['link'] && response.headers['link'].includes('rel="next"')) {
+                    // console.log(`Repository ${repo} has more than 100 commits!`);
+                    hasMorePages = true;
+                    pageNumber += 1;
+                } else {
+                    hasMorePages = false;
+                }
+
+                setCommitsPerDay(prevCommitsPerDay => prevCommitsPerDay + response.data.length);
+                // console.log(`Commits in repo ${repo}: ${response.data.length}`);
+            }
         } catch (error: any) {
             setError(error.message);
         }
