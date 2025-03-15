@@ -2,6 +2,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from 'axios';
 import { IconUser } from "@tabler/icons-react";
+import CalendarHeatmap from 'react-calendar-heatmap';
+import 'react-calendar-heatmap/dist/styles.css';
 
 interface UserProfilePhotoProps {
     username: string;
@@ -91,9 +93,29 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
         return <p>Error: {error}</p>
 
     return (
-        <div>
-            <pre>{JSON.stringify(commitsPerDay, null, 2)}</pre>
-        </div>
+        <section className="w-full mx-auto max-w-screen-xl">
+            <CalendarHeatmap
+                startDate={new Date(new Date().setFullYear(new Date().getFullYear() - 1))}
+                endDate={new Date()}
+                values={
+                    Object.keys(commitsPerDay).map((date) => ({
+                        date: date,
+                        count: commitsPerDay[date],
+                    }))
+                }
+                classForValue={(value) => {
+                    if (!value || value.count === 0)
+                      return "color-github-0";
+                    if (value.count <= 4)
+                        return "color-github-1";
+                    if (value.count <= 9)
+                        return "color-github-2";
+                    if (value.count <= 19)
+                        return "color-github-3";
+                    return "color-github-4";
+                  }}
+            />
+        </section>
     );
 }
 
