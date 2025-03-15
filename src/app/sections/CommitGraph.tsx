@@ -24,6 +24,10 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
         try {
             const response = await axios.get<Repository[]>(`https://api.github.com/repos/${owner}/${repo}/commits`,
             {
+                params: {
+                    author: username,
+                    per_page: 100, // Note: Does not currently account for more than 100 commits
+                },
                 headers: {
                     Authorization: `${process.env.GITHUB_READ_API_KEY}`,
                 },
