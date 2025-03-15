@@ -13,10 +13,9 @@ interface Repository {
 }
 
 const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
-    const [repositories, setRepositories] = useState<Repository[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [commitsPerDay, setCommitsPerDay] = useState(0);
+    const [commitsPerDay, setCommitsPerDay] = useState<Record<string, number>>({});
     const hasFetchedData = useRef(false);
 
     const fetchCommitsForRepository = async (owner: string, repo: string) => {
@@ -38,15 +37,19 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
                 })
 
                 if (response.headers['link'] && response.headers['link'].includes('rel="next"')) {
-                    // console.log(`Repository ${repo} has more than 100 commits!`);
                     hasMorePages = true;
                     pageNumber += 1;
                 } else {
                     hasMorePages = false;
                 }
 
-                setCommitsPerDay(prevCommitsPerDay => prevCommitsPerDay + response.data.length);
-                // console.log(`Commits in repo ${repo}: ${response.data.length}`);
+                response.data.forEach((commit: any) => {
+                    let commitDate = new Date(commit.commit.author.date).toDateString();
+                    setCommitsPerDay((prevCommitsPerDay) => ({
+                        ...prevCommitsPerDay,
+                        [commitDate]: (prevCommitsPerDay[commitDate] || 0) + 1,
+                    }));
+                })
             }
         } catch (error: any) {
             setError(error.message);
@@ -68,9 +71,7 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
                         Authorization: `${process.env.GITHUB_READ_API_KEY}`,
                     },
                 })
-                // setRepositories(response.data.map((repo: any) => { return {owner: repo.owner.login, name: repo.name} }));
                 response.data.forEach((repo: any) => {
-                    // console.log(`Fetching commits in repo ${repo}`);
                     fetchCommitsForRepository(repo.owner.login, repo.name);
                 })
             } catch (error: any) {
@@ -91,13 +92,7 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
 
     return (
         <div>
-            <span>Total Commits: {commitsPerDay}</span>
-            {
-                repositories.map((repo: any, index: number) => (
-                    <p key={index}>{repo.owner}: {repo.name}</p>
-                    // <pre>{JSON.stringify(repo.owner, null, 2)}</pre>
-                ))
-            }
+            <pre>{JSON.stringify(commitsPerDay, null, 2)}</pre>
         </div>
     );
 }
