@@ -86,14 +86,25 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
         fetchUserData();
     }, [])
 
-    if (isLoading)
-        return <p>Loading...</p>
+    if (isLoading) {
+        return <div className="w-full max-w-screen-sm md:max-w-screen-md animate-pulse"> 
+            <CalendarHeatmap
+                startDate={new Date(new Date().setFullYear(new Date().getFullYear() - 1))}
+                endDate={new Date()}
+                values={[]}
+                gutterSize={2}
+                classForValue={(value) => {
+                    return "fill-white dark:fill-gray-800";
+                }}
+            />
+        </div>
+    }
 
     if (error)
         return <p>Error: {error}</p>
 
     return (
-        <section className="w-full mx-auto max-w-screen-xl">
+        <section className="w-full max-w-screen-sm md:max-w-screen-md">
             <CalendarHeatmap
                 startDate={new Date(new Date().setFullYear(new Date().getFullYear() - 1))}
                 endDate={new Date()}
@@ -103,16 +114,18 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
                         count: commitsPerDay[date],
                     }))
                 }
+                gutterSize={2}
                 classForValue={(value) => {
                     if (!value || value.count === 0)
-                      return "color-github-0";
+                    //   return "color-github-0";
+                      return "fill-white dark:fill-gray-800";
                     if (value.count <= 4)
-                        return "color-github-1";
+                        return "color-github-1 duration-150 ease-in-out";
                     if (value.count <= 9)
-                        return "color-github-2";
+                        return "color-github-2 duration-150 ease-in-out";
                     if (value.count <= 19)
-                        return "color-github-3";
-                    return "color-github-4";
+                        return "color-github-3 duration-150 ease-in-out";
+                    return "color-github-4 duration-150 ease-in-out";
                   }}
             />
         </section>
