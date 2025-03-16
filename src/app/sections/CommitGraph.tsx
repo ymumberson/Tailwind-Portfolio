@@ -94,7 +94,7 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
                 values={[]}
                 gutterSize={2}
                 classForValue={(value) => {
-                    return "fill-white dark:fill-gray-800";
+                    return "fill-gray-100 dark:fill-gray-800";
                 }}
             />
         </div>
@@ -117,8 +117,7 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
                 gutterSize={2}
                 classForValue={(value) => {
                     if (!value || value.count === 0)
-                    //   return "color-github-0";
-                      return "fill-white dark:fill-gray-800";
+                      return "fill-gray-100 dark:fill-gray-800";
                     if (value.count <= 4)
                         return "color-github-1 duration-150 ease-in-out";
                     if (value.count <= 9)
