@@ -9,6 +9,7 @@ export default function Projects() {
             <Card title="Tic-Tac-Toe" href="/projects/tic-tac-toe" hrefText="See project" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe" />
             <Card title="Digit Classification" href="/projects/digit-classification" hrefText="See project" description="Attempting to classify hand-drawn digits by using a Neural Network trained on the MNIST hand-drawn digits dataset. Digits can be from 0 to 9, however, the model will always predict one of these values. This is the reason that even the empty canvas predicts to a digit." />
             <Card title="Weather" href="/projects/weather" hrefText="See project" description="Fetching current weather data from https://openweathermap.org/ and displaying it." />
+            <Card title="Idle Game" href="/projects/idle-game" hrefText="See project" description="Small idle game to learn about cookies." />
         </div>
       </div>
     );
