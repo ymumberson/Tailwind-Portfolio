@@ -23,7 +23,7 @@ const Loading = () => {
 const idleGame = () => {
     const [currency, setCurrency] = useState(-1);
     const [clickAmount, setClickAmount] = useState(1);
-    const [idleAmount, setIdleAmount] = useState(1);
+    const [idleAmount, setIdleAmount] = useState(0);
 
     const idleAmountRef = useRef(idleAmount);
     useEffect(() => {
@@ -66,8 +66,10 @@ const idleGame = () => {
                     <div>Currency: {currency}</div>
                     <div>Idle Amount: {idleAmount}</div>
                     <div>Click Amount: {clickAmount}</div>
-                    <button onClick={() => incrementCounter(clickAmount)}>Click</button>
-                    <button onClick={() => setIdleAmount(old => {return old+1;})}>Increment Idle</button>
+                    <button onClick={() => incrementCounter(clickAmount)} className="px-1 border rounded-lg">Click</button>
+                    <button onClick={() => setClickAmount(old => {return old+0.1;})} className="px-1 border rounded-lg">Increment Click</button>
+                    <button onClick={() => setIdleAmount(old => {return old+0.01;})} className="px-1 border rounded-lg">Increment Idle</button>
+                    <button onClick={() => setCurrency(0)} className="px-1 border rounded-lg">Reset</button>
                 </div>
             }
         </Project>
