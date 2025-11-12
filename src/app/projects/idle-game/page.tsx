@@ -6,9 +6,23 @@ import { useEffect, useState } from "react";
 
 const SAVE_DATA_COOKIE = "IdleGameSaveData";
 
+const Loading = () => {
+    return (
+        <div role="status" className="max-w-sm animate-pulse">
+            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[275px] mb-2.5"></div>
+            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[250px] mb-2.5"></div>
+            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[380px] mb-2.5"></div>
+            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+            <span className="sr-only">Loading...</span>
+        </div>
+    );
+}
+
 const idleGame = () => {
     const [cookies, setCookies] = useState(-1);
-    const [counter, setCounter] = useState(0);
+
 
     useEffect(() => {
         if (cookies === -1) {
@@ -25,16 +39,19 @@ const idleGame = () => {
         }
     }, [cookies]);
 
-    async function btnClick() {
-        setCounter(counter+1);
-        setCookies(cookies+1);
+    async function incrementCounter(amount: number) { //TODO: Account for race conditions?
+        setCookies(cookies+amount);
     }
     
     return (
         <Project name={"Idle Game"} description={"This is a small project to learn about cookies."} >
-            <div>Total: {cookies}</div>
-            <div>This session: {counter}</div>
-            <button onClick={btnClick}>Click</button>
+            {cookies === -1 && <Loading/>}
+            {cookies != -1 &&
+                <div>
+                    <div>Total: {cookies}</div>
+                    <button onClick={() => incrementCounter(1)}>Click</button>
+                </div>
+            }
         </Project>
     );
 }
