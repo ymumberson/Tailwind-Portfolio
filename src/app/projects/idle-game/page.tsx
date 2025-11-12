@@ -2,9 +2,9 @@
 
 import Project from "@/app/components/Project";
 import { getCookie, setCookie } from "./cookieReader";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const SAVE_DATA_COOKIE = "IdleGameSaveData";
+const SAVE_DATA_COOKIE_CURRENCY = "IdleGameCookieCurrency";
 
 const Loading = () => {
     return (
@@ -21,35 +21,53 @@ const Loading = () => {
 }
 
 const idleGame = () => {
-    const [cookies, setCookies] = useState(-1);
+    const [currency, setCurrency] = useState(-1);
+    const [clickAmount, setClickAmount] = useState(1);
+    const [idleAmount, setIdleAmount] = useState(1);
+
+    const idleAmountRef = useRef(idleAmount);
+    useEffect(() => {
+        idleAmountRef.current = idleAmount;
+    }, [idleAmount])
 
 
     useEffect(() => {
-        if (cookies === -1) {
+        if (currency === -1) {
             async function fetchCookies() {
-                const cookiesFetch = await getCookie(SAVE_DATA_COOKIE);
-                setCookies(+cookiesFetch);
+                const cookiesFetch = await getCookie(SAVE_DATA_COOKIE_CURRENCY);
+                setCurrency(+cookiesFetch);
             }
             fetchCookies();
         } else {
             async function setCookies() {
-                await setCookie(SAVE_DATA_COOKIE, cookies.toString());
+                await setCookie(SAVE_DATA_COOKIE_CURRENCY, currency.toString());
             }
             setCookies();
         }
-    }, [cookies]);
+    }, [currency]);
 
     async function incrementCounter(amount: number) { //TODO: Account for race conditions?
-        setCookies(cookies+amount);
+        setCurrency(oldValue => {return oldValue+amount});
     }
-    
+
+    useEffect(() => {
+        var passivGenerator = setInterval(function(){
+            incrementCounter(idleAmountRef.current);
+        }, 1000);
+
+        return () => clearInterval(passivGenerator);
+    }, []);
+
     return (
         <Project name={"Idle Game"} description={"This is a small project to learn about cookies."} >
-            {cookies === -1 && <Loading/>}
-            {cookies != -1 &&
+            {currency === -1 && <Loading/>}
+            {currency != -1 &&
                 <div>
-                    <div>Total: {cookies}</div>
-                    <button onClick={() => incrementCounter(1)}>Click</button>
+                    <div>Currency: {currency}</div>
+                    <div>Idle Amount: {idleAmount}</div>
+                    <div>Click Amount: {clickAmount}</div>
+                    <button onClick={() => incrementCounter(clickAmount)}>Click</button>
+                    <button onClick={() => setIdleAmount(old => {return old+1;})}>Increment Idle</button>
                 </div>
             }
         </Project>
