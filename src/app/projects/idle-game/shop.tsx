@@ -13,10 +13,15 @@ interface IUpgrade {
     numberOwned: number;
 }
 
+const CalculateUpgradeCost = (upgrade: IUpgrade) => {
+    const COST_MULTIPLIER = 1.05;
+    return Math.ceil(upgrade.cost + upgrade.cost * upgrade.numberOwned**COST_MULTIPLIER);
+}
+
 const Upgrade: React.FC<{upgrade: IUpgrade, onBuy: () => void}> = ({upgrade, onBuy}) => {
     return (
         <button onClick={onBuy} className="px-1 border rounded-lg">
-            {upgrade.name} | Cost: {upgrade.cost} | Increment: {upgrade.idleIncrement} | Count: {upgrade.numberOwned}
+            {upgrade.name} | Cost: {CalculateUpgradeCost(upgrade)} | Increment: {upgrade.idleIncrement} | Count: {upgrade.numberOwned}
         </button>
     );
 }
@@ -100,8 +105,9 @@ const Shop = () => {
     const buyUpgrade = (index: number) => {
         let newUpgrades = upgrades.slice();
         let upgrade = newUpgrades[index];
-        if (balance >= upgrade.cost) {
-            setBalance((currentBalance: number) => currentBalance - upgrade.cost);
+        let cost = CalculateUpgradeCost(upgrade);
+        if (balance >= cost) {
+            setBalance((currentBalance: number) => currentBalance - cost);
             setClickIncrement((currentClickIncrement: number) => currentClickIncrement + upgrade.clickIncrement);
             setIdleIncrement((currentIdleIncrement: number) => currentIdleIncrement + upgrade.idleIncrement);
             upgrade.numberOwned += 1;
