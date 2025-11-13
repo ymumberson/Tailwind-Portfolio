@@ -8,18 +8,12 @@ import Shop from "./shop";
 const IdleGame = () => {
     return (
         <Project name={"Idle Game"} description={"This is a small project to learn about cookies."} >
-            <GameProvider>
-                <ClickWindow />
-                <Shop />
+            <GameProvider className="flex">
+                <ClickWindow className="w-[65%]"/>
+                <Shop className="w-[35%]"/>
             </GameProvider>
         </Project>
     );
 }
 
 export default IdleGame;
-
-/*
-todo list:
-- Shop
-    - Increment prices of purchases
-*/

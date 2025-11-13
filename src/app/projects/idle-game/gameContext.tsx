@@ -15,7 +15,7 @@ interface IGameContext {
 
 const GameContext = createContext<IGameContext | null>(null);
 
-export const GameProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
+export const GameProvider: React.FC<{children: React.ReactNode, className: string}> = ({children, className=""}) => {
     const [balance, setBalance] = useState(-1);
     const [clickIncrement, setClickIncrement] = useState(1);
     const [idleIncrement, setIdleIncrement] = useState(0);
@@ -57,7 +57,7 @@ export const GameProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         <GameContext.Provider
             value={{ balance, setBalance, clickIncrement, setClickIncrement, idleIncrement, setIdleIncrement, incrementBalance }}
         >
-            {children}
+            <div className={className}>{children}</div>
         </GameContext.Provider>
     );
 };

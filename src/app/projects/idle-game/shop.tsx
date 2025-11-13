@@ -20,13 +20,16 @@ const CalculateUpgradeCost = (upgrade: IUpgrade) => {
 
 const Upgrade: React.FC<{upgrade: IUpgrade, onBuy: () => void}> = ({upgrade, onBuy}) => {
     return (
-        <button onClick={onBuy} className="px-1 border rounded-lg">
+        <button
+            onClick={onBuy}
+            className="px-1 border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 active:opacity-90"
+        >
             {upgrade.name} | Cost: {CalculateUpgradeCost(upgrade)} | Increment: {upgrade.idleIncrement} | Count: {upgrade.numberOwned}
         </button>
     );
 }
 
-const Shop = () => {
+const Shop = ({ className="" }) => {
     const { balance, setBalance, idleIncrement, setIdleIncrement, clickIncrement, setClickIncrement, incrementBalance} = useGame();
     
     const [savedUpgrades, setSavedUpgrades] = useState<IUpgrade[]>([]);
@@ -116,7 +119,7 @@ const Shop = () => {
     };
 
     return (
-        <div>
+        <div className={className}>
             <p>Shop</p>
             {(savedUpgrades.length === 0) && <Loading />}
             {(savedUpgrades.length > 0) &&
