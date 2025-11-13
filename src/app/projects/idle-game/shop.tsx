@@ -14,8 +14,8 @@ interface IUpgrade {
 }
 
 const CalculateUpgradeCost = (upgrade: IUpgrade) => {
-    const COST_MULTIPLIER = 1.05;
-    return Math.ceil(upgrade.cost + upgrade.cost * upgrade.numberOwned**COST_MULTIPLIER);
+    const COST_MULTIPLIER = 1.5;
+    return Math.ceil(upgrade.cost * COST_MULTIPLIER**upgrade.numberOwned);
 }
 
 const Upgrade: React.FC<{upgrade: IUpgrade, onBuy: () => void}> = ({upgrade, onBuy}) => {
@@ -49,21 +49,21 @@ const Shop = () => {
             name: "Banana",
             cost: 100,
             clickIncrement: 0,
-            idleIncrement: 1,
+            idleIncrement: 1.5,
             numberOwned: 0
         },
         {
             name: "Cherry",
             cost: 1000,
             clickIncrement: 0,
-            idleIncrement: 10,
+            idleIncrement: 25,
             numberOwned: 0
         },
         {
             name: "Dragon Fruit",
             cost: 10000,
             clickIncrement: 0,
-            idleIncrement: 100,
+            idleIncrement: 400,
             numberOwned: 0
         },
     ]);
