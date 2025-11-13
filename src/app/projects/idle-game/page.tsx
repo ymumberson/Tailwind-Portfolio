@@ -17,3 +17,9 @@ const IdleGame = () => {
 }
 
 export default IdleGame;
+
+/*
+todo list:
+- Shop
+    - Increment prices of purchases
+*/

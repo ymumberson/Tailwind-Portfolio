@@ -9,5 +9,4 @@ export async function getCookie(cookieName: string) {
 export async function setCookie(cookieName: string, cookieValue: string) {
     const cookiesData = await cookies();
     cookiesData.set(cookieName, cookieValue);
-    console.log("Set cookie to value: " + cookieValue);
 }
