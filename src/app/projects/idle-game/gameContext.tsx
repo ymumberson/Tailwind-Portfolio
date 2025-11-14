@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { getCookie, setCookie } from "./cookieReader";
+import { IUpgrade } from "./upgrades";
+import { UpgradeManager } from "./upgradeManager";
 
 const SAVE_DATA_COOKIE_BALANCE = "IdleGameCookieBalance";
 
@@ -11,6 +13,8 @@ interface IGameContext {
     idleIncrement: number;
     setIdleIncrement: React.Dispatch<React.SetStateAction<number>>;
     incrementBalance: (amount: number) => void;
+    upgrades: IUpgrade[];
+    setUpgrades: React.Dispatch<React.SetStateAction<IUpgrade[]>>;
 }
 
 const GameContext = createContext<IGameContext | null>(null);
@@ -19,6 +23,7 @@ export const GameProvider: React.FC<{children: React.ReactNode, className: strin
     const [balance, setBalance] = useState(-1);
     const [clickIncrement, setClickIncrement] = useState(1);
     const [idleIncrement, setIdleIncrement] = useState(0);
+    const [upgrades, setUpgrades] = useState<IUpgrade[]>([]);
 
     const idleAmountRef = useRef(idleIncrement);
     useEffect(() => {
@@ -45,18 +50,19 @@ export const GameProvider: React.FC<{children: React.ReactNode, className: strin
         setBalance(oldValue => {return oldValue+amount});
     }
 
-    useEffect(() => {
-        var passivGenerator = setInterval(function(){
-            incrementBalance(idleAmountRef.current);
-        }, 1000);
+    // useEffect(() => {
+    //     var passivGenerator = setInterval(function(){
+    //         incrementBalance(idleAmountRef.current);
+    //     }, 1000);
 
-        return () => clearInterval(passivGenerator);
-    }, []);
+    //     return () => clearInterval(passivGenerator);
+    // }, []);
 
     return (
         <GameContext.Provider
-            value={{ balance, setBalance, clickIncrement, setClickIncrement, idleIncrement, setIdleIncrement, incrementBalance }}
+            value={{ balance, setBalance, clickIncrement, setClickIncrement, idleIncrement, setIdleIncrement, incrementBalance, upgrades, setUpgrades }}
         >
+            <UpgradeManager />
             <div className={className}>{children}</div>
         </GameContext.Provider>
     );
