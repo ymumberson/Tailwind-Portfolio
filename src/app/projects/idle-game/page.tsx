@@ -8,9 +8,9 @@ import Shop from "./shop";
 const IdleGame = () => {
     return (
         <Project name={"Idle Game"} description={"This is a small project to learn about cookies."} >
-            <GameProvider className="flex">
-                <ClickWindow className="w-[65%]"/>
-                <Shop className="w-[35%]"/>
+            <GameProvider className="flex flex-col md:flex-row">
+                <ClickWindow className="md:w-[65%]"/>
+                <Shop className="md:w-[35%]"/>
             </GameProvider>
         </Project>
     );
