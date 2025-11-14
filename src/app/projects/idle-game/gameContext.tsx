@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, RefObject, useContext, useEffect, useRef, useState } from "react";
 import { getCookie, setCookie } from "./cookieReader";
 import { IUpgrade } from "./upgrades";
 import { UpgradeManager } from "./upgradeManager";
@@ -15,6 +15,7 @@ interface IGameContext {
     incrementBalance: (amount: number) => void;
     upgrades: IUpgrade[];
     setUpgrades: React.Dispatch<React.SetStateAction<IUpgrade[]>>;
+    upgradeTimers: RefObject<Record<string, number>>;
 }
 
 const GameContext = createContext<IGameContext | null>(null);
@@ -24,6 +25,7 @@ export const GameProvider: React.FC<{children: React.ReactNode, className: strin
     const [clickIncrement, setClickIncrement] = useState(1);
     const [idleIncrement, setIdleIncrement] = useState(0);
     const [upgrades, setUpgrades] = useState<IUpgrade[]>([]);
+    const upgradeTimers = useRef<Record<string, number>>({});
 
     const idleAmountRef = useRef(idleIncrement);
     useEffect(() => {
@@ -58,9 +60,26 @@ export const GameProvider: React.FC<{children: React.ReactNode, className: strin
     //     return () => clearInterval(passivGenerator);
     // }, []);
 
+    // useEffect(() => {
+    //     var timerInterval = setInterval(function(){
+    //         let upgradesCpy = upgrades.slice();
+    //         upgradesCpy.map((upgrade: IUpgrade) => {
+    //             if (upgrade.numberOwned > 0) {
+    //                 upgrade.idleCurrentTime += (1 / upgrade.idleCompletionDuration);
+    //                 if (upgrade.idleCurrentTime >= 100) {
+    //                     upgrade.idleCurrentTime = 0;
+    //                 }
+    //             }
+    //         })
+    //         setUpgrades(upgradesCpy);
+    //     }, 10);
+
+    //     return () => clearInterval(timerInterval);
+    // }, []);
+
     return (
         <GameContext.Provider
-            value={{ balance, setBalance, clickIncrement, setClickIncrement, idleIncrement, setIdleIncrement, incrementBalance, upgrades, setUpgrades }}
+            value={{ balance, setBalance, clickIncrement, setClickIncrement, idleIncrement, setIdleIncrement, incrementBalance, upgrades, setUpgrades, upgradeTimers }}
         >
             <UpgradeManager />
             <div className={className}>{children}</div>

@@ -4,7 +4,7 @@ export interface IUpgrade {
     clickIncrement: number;
     idleIncrement: number;
     idleCompletionDuration: number;
-    idleCurrentTme: number;
+    idleCurrentTime: number;
     numberOwned: number;
 }
 
@@ -16,7 +16,7 @@ export const DEFAULT_UPGRADES =
         clickIncrement: 0.1,
         idleIncrement: 0,
         idleCompletionDuration: 0,
-        idleCurrentTme: 0,
+        idleCurrentTime: 0,
         numberOwned: 0
     },
     {
@@ -25,7 +25,7 @@ export const DEFAULT_UPGRADES =
         clickIncrement: 0,
         idleIncrement: 0.1,
         idleCompletionDuration: 1,
-        idleCurrentTme: 0,
+        idleCurrentTime: 0,
         numberOwned: 0
     },
     {
@@ -34,7 +34,7 @@ export const DEFAULT_UPGRADES =
         clickIncrement: 0,
         idleIncrement: 1.5,
         idleCompletionDuration: 2,
-        idleCurrentTme: 0,
+        idleCurrentTime: 0,
         numberOwned: 0
     },
     {
@@ -43,7 +43,7 @@ export const DEFAULT_UPGRADES =
         clickIncrement: 0,
         idleIncrement: 25,
         idleCompletionDuration: 3,
-        idleCurrentTme: 0,
+        idleCurrentTime: 0,
         numberOwned: 0
     },
     {
@@ -52,7 +52,7 @@ export const DEFAULT_UPGRADES =
         clickIncrement: 0,
         idleIncrement: 400,
         idleCompletionDuration: 4,
-        idleCurrentTme: 0,
+        idleCurrentTime: 0,
         numberOwned: 0
     },
 ]
