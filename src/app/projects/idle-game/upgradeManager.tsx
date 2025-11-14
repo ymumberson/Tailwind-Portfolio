@@ -14,23 +14,24 @@ export const calculateUpgradeIdleGeneration = (upgrade: IUpgrade) => {
     return upgrade.numberOwned * upgrade.idleIncrement;
 }
 
-async function loadUpgrades(setClickIncrement: Dispatch<SetStateAction<number>>, setUpgrades: Dispatch<SetStateAction<IUpgrade[]>>, upgradeTimers: RefObject<Record<string, number>>) {
+async function loadUpgrades(setClickIncrement: Dispatch<SetStateAction<number>>, setUpgrades: Dispatch<SetStateAction<IUpgrade[]>>, upgradeTimers: Record<string, number>, setUpgradeTimers: Dispatch<SetStateAction<Record<string, number>>>) {
     const cookiesFetch = await getCookie(SAVE_DATA_COOKIE_UPGRADES);
     const parsedJson = cookiesFetch ? JSON.parse(cookiesFetch) : [];
     
     let loadedUpgrades = DEFAULT_UPGRADES;
     let loadedClickIncrement = 0;
+    let newUpgradeTimers: Record<string, number> = {};
     parsedJson.forEach((upgrade: IUpgrade) => {
         let loadedUpgrade = loadedUpgrades.find(elem => elem.name === upgrade.name);
         if (loadedUpgrade) {
             loadedUpgrade.numberOwned = upgrade.numberOwned;
             loadedClickIncrement += upgrade.numberOwned * upgrade.clickIncrement;
-            upgradeTimers.current[upgrade.name] = 0;
+            newUpgradeTimers[upgrade.name] = 0;
         }
     })
-    
-    setClickIncrement((currentClickIncrement: number) => currentClickIncrement + loadedClickIncrement);
 
+    setUpgradeTimers(newUpgradeTimers);
+    setClickIncrement((currentClickIncrement: number) => currentClickIncrement + loadedClickIncrement);
     setUpgrades(loadedUpgrades);
 }
 
@@ -39,35 +40,40 @@ async function saveUpgrades(upgrades: IUpgrade[]) {
 }
 
 export const UpgradeManager = () => {
-    const { setClickIncrement, incrementBalance , upgrades, setUpgrades, upgradeTimers} = useGame();
+    const { setClickIncrement, incrementBalance , upgrades, setUpgrades, upgradeTimers, setUpgradeTimers} = useGame();
 
     const upgradesRef = useRef<IUpgrade[]>([]);
+    const upgradeTimersRef = useRef<Record<string, number>>(upgradeTimers);
     
     useEffect(() => {
         upgradesRef.current = upgrades;
         if (upgrades.length === 0) {
-            loadUpgrades(setClickIncrement, setUpgrades, upgradeTimers);
+            loadUpgrades(setClickIncrement, setUpgrades, upgradeTimers, setUpgradeTimers);
         } else {
             saveUpgrades(upgrades);
         }
     }, [upgrades]);
 
     useEffect(() => {
+        upgradeTimersRef.current = upgradeTimers;
+    }, [upgradeTimers]);
+
+    useEffect(() => {
         var timerInterval = setInterval(function(){
+            let upgradeTimersCpy: Record<string, number> = {...upgradeTimersRef.current};
             upgradesRef.current.forEach((upgrade: IUpgrade) => {
-                let timer = upgradeTimers.current[upgrade.name];
+                let timer = upgradeTimersCpy[upgrade.name];
                 if (timer != undefined && upgrade.numberOwned > 0) {
-                    timer += (10.0 / upgrade.idleCompletionDuration);
+                    timer += (1.0 / upgrade.idleCompletionDuration);
                     if (timer >= 100) {
                         timer = 0;
                         incrementBalance(calculateUpgradeIdleGeneration(upgrade));
                     }
                 }
-                upgradeTimers.current[upgrade.name] = timer;
+                upgradeTimersCpy[upgrade.name] = timer;
             });
-
-            // Doesn't update the UI currently.
-        }, 100);
+            setUpgradeTimers(upgradeTimersCpy);
+        }, 10);
 
         return () => clearInterval(timerInterval);
     }, []);

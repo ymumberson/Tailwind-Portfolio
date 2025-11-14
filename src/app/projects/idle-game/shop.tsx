@@ -5,8 +5,7 @@ import Loading from "./loadingIndicator";
 import { calculateUpgradeCost } from "./upgradeManager";
 import { IUpgrade } from "./upgrades";
 
-const Upgrade: React.FC<{upgrade: IUpgrade, onBuy: () => void, upgradeTimers: RefObject<Record<string, number>>}> = ({upgrade, onBuy, upgradeTimers}) => {
-
+const Upgrade: React.FC<{upgrade: IUpgrade, onBuy: () => void, upgradeTimers: Record<string, number>}> = ({upgrade, onBuy, upgradeTimers}) => {
     return (
         <button
             onClick={onBuy}
@@ -16,7 +15,7 @@ const Upgrade: React.FC<{upgrade: IUpgrade, onBuy: () => void, upgradeTimers: Re
             <div className="max-w-sm bg-gray-300 rounded-full h-2">
                 <div
                 className="bg-blue-500 h-2 rounded-full"
-                style={{ width: `${upgradeTimers.current[upgrade.name] != undefined ? upgradeTimers.current[upgrade.name] : 0}%` }}
+                style={{ width: `${upgradeTimers[upgrade.name] != undefined ? upgradeTimers[upgrade.name] : 0}%` }}
                 ></div>
             </div>
         </button>
@@ -37,6 +36,8 @@ const Shop = ({ className="" }) => {
         }
         setUpgrades(newUpgrades);
     };
+
+    
 
     return (
         <div className={className}>
