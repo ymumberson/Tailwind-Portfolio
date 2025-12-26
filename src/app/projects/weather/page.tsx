@@ -5,6 +5,7 @@ import React from "react";
 import useSWR from "swr";
 import { IconSunrise, IconSunset, IconWind, IconCloud, IconDroplet, IconSnowflake } from "@tabler/icons-react";
 import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { KelvinToCelsius } from "./utils";
 
 const fetchData = async () => {
     const lat = "52.1951";
@@ -142,10 +143,6 @@ const Weather = (data: any) => {
             <HourlyForecast hourly={data.data.hourly}/>
         </div>
     )
-}
-
-export const KelvinToCelsius = (kelvin: number) => {
-    return kelvin - 273.15;
 }
 
 const WeatherPage = () => {

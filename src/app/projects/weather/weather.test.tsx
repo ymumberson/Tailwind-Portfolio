@@ -1,4 +1,4 @@
-import { KelvinToCelsius } from './page';
+import { KelvinToCelsius } from './utils';
 
 describe('Weather tests', () => {
     it('should handle temperature conversion', () => {
