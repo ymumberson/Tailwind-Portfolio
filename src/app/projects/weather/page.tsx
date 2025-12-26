@@ -43,10 +43,6 @@ const DailyForecast = (daily: any, className: string = "") => {
         day: '2-digit',
     };
 
-    // const FormatDate = (date: Date) => {
-    //     return 
-    // }
-
     return (
         <div className="flex flex-col justify-center gap-1 mt-5 sm:mt-0">
             {
@@ -59,7 +55,6 @@ const DailyForecast = (daily: any, className: string = "") => {
                     </div>
                 ))
             }
-            {/* <pre>{JSON.stringify(daily, null, 2)}</pre> */}
         </div>
     );
 }
@@ -85,20 +80,16 @@ const HourlyForecast = (hourly: any) => {
         <div className="mt-5 w-full h-80">
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                    {/* <CartesianGrid strokeDasharray="3 3" /> */}
                     <XAxis dataKey="name" />
                     <YAxis />
-                    {/* <Tooltip /> */}
                     <Legend />
                     <ReferenceLine y={0} strokeDasharray="3 3"/>
                     <Line type="monotone" dataKey="temp" stroke="#8884d8" dot={false}/>
                     <Line type="monotone" dataKey="feels_like" stroke="#82ca9d" dot={false}/>
-                    {/* <Line type="monotone" dataKey="clouds" dot={false}/> */}
                     <Line type="monotone" dataKey="rain" dot={false}/>
                     <Line type="monotone" dataKey="snow" dot={false}/>
                 </LineChart>
             </ResponsiveContainer>
-            {/* <pre>{JSON.stringify(hourly, null, 2)}</pre> */}
         </div>
     );
 }
@@ -136,7 +127,6 @@ const CurrentWeather = (current: any) => {
                     <WeatherBadge weatherIcon={IconSnowflake} text={current.snow ? current.snow["1h"] : "N/A"}/>
                 </div>
             </div>
-            {/* <pre>{JSON.stringify(current, null, 2)}</pre> */}
         </div>
     );
 }
@@ -149,10 +139,7 @@ const Weather = (data: any) => {
                 <hr className="hidden sm:block w-1 h-72 my-auto mx-4 bg-gray-100 border-0 rounded-sm md:mx-4 dark:bg-gray-700"/>
                 <DailyForecast daily={data.data.daily}/>
             </div>
-            {/* <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm md:my-4 dark:bg-gray-700"/> */}
             <HourlyForecast hourly={data.data.hourly}/>
-            {/* <DailyForecast daily={data.data.daily}/> */}
-            {/* <pre>{JSON.stringify(data.data, null, 2)}</pre> */}
         </div>
     )
 }
