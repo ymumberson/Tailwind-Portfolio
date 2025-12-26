@@ -144,7 +144,7 @@ const Weather = (data: any) => {
     )
 }
 
-const KelvinToCelsius = (kelvin: number) => {
+export const KelvinToCelsius = (kelvin: number) => {
     return kelvin - 273.15;
 }
 
