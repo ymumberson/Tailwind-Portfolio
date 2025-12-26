@@ -170,9 +170,6 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setU
                 <button onClick={() => onUndo()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
                     <IconChevronLeft size={30}/>
                 </button>
-                {/* <button onClick={() => {}} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
-                    <IconChevronRight size={30}/>
-                </button> */}
                 <button onClick={() => onReset()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
                     <IconRefresh size={30}/>
                 </button>
@@ -251,10 +248,6 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePr
                 const index = gridY * 28 + gridX;
 
                 pixels[index] += ((1 - (grayscale / 255.0)) / (scaleX * scaleY)) * 255;
-
-                // const pixelValue = (1 - (grayscale / 255.0)) * 255;
-                // if (pixelValue > pixels[index])
-                //     pixels[index] = pixelValue;
             }
 
             const inputTensor = tf.tensor(pixels, [1, 28, 28, 1]);
@@ -284,7 +277,6 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePr
 
     return (
         <div className="flex flex-col justify-top mt-5 w-auto md:mt-0 md:ml-10">
-            {/* {model ? <p>Model Loaded Successfully</p> : <p>Loading Model...</p>} */}
             <div className="flex flex-col">
                 {
                     predictions.map((prediction, index) => (
