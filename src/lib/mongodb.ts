@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === "development") {
   // is preserved across module reloads caused by HMR (Hot Module Replacement).
   let globalWithMongo = global as typeof globalThis & {
     _mongoClient?: MongoClient;
-    _mongoClientPromise: Promise<MongoClient>
+    _mongoClientPromise?: Promise<MongoClient>
   }
 
   if (!globalWithMongo._mongoClientPromise) {
@@ -32,9 +32,11 @@ if (process.env.NODE_ENV === "development") {
   clientPromise = client.connect();
 }
 
-const connectedClient = await clientPromise;
-const db = connectedClient.db("atlas-rose-dog");
+// Get the client and database without awaiting at module load time
+const getDb = async () => {
+  const connectedClient = await clientPromise;
+  return connectedClient.db("atlas-rose-dog");
+};
 
-// Export a module-scoped MongoClient. By doing this in a
-// separate module, the client can be shared across functions.
-export default db;
+// Export a function that returns the database connection
+export default { getDb };
