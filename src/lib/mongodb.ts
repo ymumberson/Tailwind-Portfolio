@@ -35,7 +35,8 @@ if (process.env.NODE_ENV === "development") {
 // Get the client and database without awaiting at module load time
 const getDb = async () => {
   const connectedClient = await clientPromise;
-  return connectedClient.db("atlas-rose-dog");
+  // return connectedClient.db("atlas-rose-dog");
+  return connectedClient.db("sample_mflix");
 };
 
 // Export a function that returns the database connection
