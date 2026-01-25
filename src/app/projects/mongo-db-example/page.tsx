@@ -1,8 +1,8 @@
 'use client';
 import Project from "@/app/components/Project";
-import React from "react";
+import React, { useEffect } from "react";
 import { testDatabaseConnection } from "@/app/api/requests/testconnection";
-import { Movie, getAllMovies, getLimitedMovies } from "@/app/api/requests/find";
+import { Movie, getAllMovies, getLimitedMovies, getMovieCount } from "@/app/api/requests/find";
 
 const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
     const [imageError, setImageError] = React.useState(false);
@@ -31,45 +31,68 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
 }
 
 const MongoDbExample = () => {
-    const [response, setResponse] = React.useState<string>("");
     const [loading, setLoading] = React.useState<boolean>(false);
-    const [movies, setMovies] = React.useState<Movie[]>([]);
-
-    async function handleTestConnection() {
-        setLoading(true);
-        setResponse("Awaiting connection to MongoDB...");
-        const isConnected = await testDatabaseConnection();
-            if (isConnected) {
-                setResponse("Connected to MongoDB successfully!");
-            } else {
-                setResponse("Failed to connect to MongoDB.");
-            }
-        setLoading(false);
-    };
+    const [error, setError] = React.useState<string | null>(null);
+    const [movies, setMovies] = React.useState<Movie[]>();
+    const [pageNumber, setPageNumber] = React.useState<number>(1);
+    const [totalPages, setTotalPages] = React.useState<number>(0);
+    const MOVIES_PER_PAGE = 5;
 
     async function handleGetMovies() {
         setLoading(true);
-        setResponse("Fetching movies from MongoDB...");
-        const movies = await getLimitedMovies(5);
+        const movies = await getLimitedMovies(MOVIES_PER_PAGE, pageNumber);
         if (movies) {
-            setResponse(`Fetched ${movies.length} movies from MongoDB.`);
             setMovies(movies);
+            setError(null);
         } else {
-            setResponse("Failed to fetch movies from MongoDB.");
+            setError("Failed to fetch movies from MongoDB.");
         }
         setLoading(false);
     };
+    
+    async function calculateTotalPages() {
+        const movieCount = await getMovieCount();
+        if (movieCount !== null) {
+            setTotalPages(Math.ceil(movieCount / MOVIES_PER_PAGE));
+        } else {
+            setError("Failed to fetch movie count.");
+        }
+    }
+
+    useEffect(() => {
+        handleGetMovies();
+        calculateTotalPages();
+    }, []);
+
+    function previousPage() {
+        if (totalPages > 0 && pageNumber > 1) {
+            setPageNumber((pageNumber: number) => pageNumber - 1);
+            handleGetMovies();
+        }
+    }
+
+    function nextPage() {
+        if (totalPages > 0 && pageNumber < totalPages) {
+            setPageNumber((pageNumber: number) => pageNumber + 1);
+            handleGetMovies();
+        }
+    }
 
     return (
         <Project name="MongoDB Example" description="This uses the MonboDB Atlas integration from Vercel to read and display data from MongoDB">
             <div className="flex flex-col">
-                <button onClick={handleTestConnection} disabled={loading}>Test Connection</button>
-                <button onClick={handleGetMovies} disabled={loading}>Get Movies</button>
-                <p>{response}</p>
+                <div className="flex flex-row gap-3">
+                    <button onClick={previousPage}>Previous</button>
+                    <p>{pageNumber} / {totalPages}</p>
+                    <button onClick={nextPage}>Next</button>
+                </div>
                 <div className="flex flex-col gap-4">
-                {movies && movies.map((movie: Movie, index: number) => {
-                    return <MovieCard key={index} movie={movie} />
-                })}
+                {loading && !error &&<p>Loading movies...</p>}
+                {!loading && error && <p className="text-red-500">{error}</p>}
+                {!loading && !error && movies && 
+                    movies.map((movie: Movie, index: number) => {
+                        return <MovieCard key={index} movie={movie} />
+                    })}
                 </div>
             </div>
         </Project>
