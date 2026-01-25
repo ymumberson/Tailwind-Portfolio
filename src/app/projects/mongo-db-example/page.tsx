@@ -4,6 +4,8 @@ import React, { useEffect } from "react";
 import { testDatabaseConnection } from "@/app/api/requests/testconnection";
 import { Movie, getAllMovies, getLimitedMovies, getMovieCount } from "@/app/api/requests/find";
 
+const MOVIES_PER_PAGE = 5;
+
 const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
     const [imageError, setImageError] = React.useState(false);
 
@@ -17,7 +19,7 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
                     onError={() => setImageError(true)}
                 />
             ) : (
-                <div className="w-48 h-72 border rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-48 h-72 border rounded-md flex items-center justify-center flex-shrink-0">
                     <span className="text-gray-600">No Image</span>
                 </div>
             )}
@@ -30,17 +32,33 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
     );
 }
 
+const LoadingMovies = () => {
+    const dummyMovies: Movie[] = Array.from({ length: MOVIES_PER_PAGE }, (_, index) => ({
+        title: `Loading Title ${index + 1}`,
+        year: 0,
+        poster: '',
+        plot: 'Loading plot...'
+    }));
+
+    return (
+        <div className="flex flex-col gap-4">
+            {dummyMovies.map((movie: Movie, index: number) => {
+                return <MovieCard key={index} movie={movie} />
+            })}
+        </div>
+    );
+}
+
 const MongoDbExample = () => {
     const [loading, setLoading] = React.useState<boolean>(false);
     const [error, setError] = React.useState<string | null>(null);
     const [movies, setMovies] = React.useState<Movie[]>();
     const [pageNumber, setPageNumber] = React.useState<number>(1);
     const [totalPages, setTotalPages] = React.useState<number>(0);
-    const MOVIES_PER_PAGE = 5;
 
-    async function handleGetMovies() {
+    async function handleGetMovies(currentPageNumber: number = 1) {
         setLoading(true);
-        const movies = await getLimitedMovies(MOVIES_PER_PAGE, pageNumber);
+        const movies = await getLimitedMovies(MOVIES_PER_PAGE, currentPageNumber);
         if (movies) {
             setMovies(movies);
             setError(null);
@@ -66,15 +84,17 @@ const MongoDbExample = () => {
 
     function previousPage() {
         if (totalPages > 0 && pageNumber > 1) {
-            setPageNumber((pageNumber: number) => pageNumber - 1);
-            handleGetMovies();
+            const newPageNumber = pageNumber - 1;
+            setPageNumber(newPageNumber);
+            handleGetMovies(newPageNumber);
         }
     }
 
     function nextPage() {
         if (totalPages > 0 && pageNumber < totalPages) {
-            setPageNumber((pageNumber: number) => pageNumber + 1);
-            handleGetMovies();
+            const newPageNumber = pageNumber + 1;
+            setPageNumber(newPageNumber);
+            handleGetMovies(newPageNumber);
         }
     }
 
@@ -82,12 +102,12 @@ const MongoDbExample = () => {
         <Project name="MongoDB Example" description="This uses the MonboDB Atlas integration from Vercel to read and display data from MongoDB">
             <div className="flex flex-col">
                 <div className="flex flex-row gap-3">
-                    <button onClick={previousPage}>Previous</button>
-                    <p>{pageNumber} / {totalPages}</p>
-                    <button onClick={nextPage}>Next</button>
+                    <button onClick={previousPage} disabled={loading}>Previous</button>
+                    <p>{pageNumber} / {totalPages > 0 ? totalPages : 1}</p>
+                    <button onClick={nextPage} disabled={loading}>Next</button>
                 </div>
                 <div className="flex flex-col gap-4">
-                {loading && !error &&<p>Loading movies...</p>}
+                {loading && !error && <LoadingMovies />}
                 {!loading && error && <p className="text-red-500">{error}</p>}
                 {!loading && !error && movies && 
                     movies.map((movie: Movie, index: number) => {

@@ -40,8 +40,9 @@ export async function getLimitedMovies(limit: number, pageNumber: number): Promi
         const database = await db.getDb();
         const query = {};
         const projectFields = { _id: 0, title: 1, year: 1, poster: 1, plot: 1 };
+        const sortFields = {};
         let moviesCollection: Collection = database.collection('movies');
-        let movies: Movie[] = await moviesCollection.find(query).project(projectFields).limit(limit).skip((pageNumber-1)*limit).toArray() as Movie[];
+        let movies: Movie[] = await moviesCollection.find(query).sort(sortFields).project(projectFields).limit(limit).skip((pageNumber-1)*limit).toArray() as Movie[];
         return movies;
     } catch (e) {
         console.error("Failed to fetch movies: ", e);
