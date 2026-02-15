@@ -57,14 +57,21 @@ export async function getMoviesPaged(limit: number, pageNumber: number): Promise
             .skip((sanitizedPageNumber - 1) * sanitizedLimit)
             .toArray();
         
-        const movies: Movie[] = documents.map((doc: any) => ({
-            _id: doc._id ? String(doc._id) : undefined,
-            title: doc.title,
-            year: doc.year,
-            poster: doc.poster,
-            plot: doc.plot,
-        }));
+        const movies: Movie[] = documents.map((doc: any) => {
+            const title: string = typeof doc.title === "string" ? doc.title : "Untitled";
+            const yearValue = typeof doc.year === "number" ? doc.year : Number(doc.year);
+            const year: number = Number.isFinite(yearValue) ? yearValue : 0;
+            const poster: string = typeof doc.poster === "string" ? doc.poster : "";
+            const plot: string = typeof doc.plot === "string" ? doc.plot : "";
 
+            return {
+                _id: doc._id ? String(doc._id) : undefined,
+                title,
+                year,
+                poster,
+                plot,
+            };
+        });
         return movies;
     } catch (e) {
         console.error(`Failed to fetch documents from ${MOVIES_COLLECTION}: `, e);
