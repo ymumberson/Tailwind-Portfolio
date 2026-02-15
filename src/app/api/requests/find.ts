@@ -19,9 +19,15 @@ export async function getMoviesCollectionCount(): Promise<number | null> {
 
 export async function getMoviesPaged(limit: number, pageNumber: number): Promise<object[] | null> {
     try {
+        // Validate inputs are numbers
+        if (typeof limit !== 'number' || typeof pageNumber !== 'number' || !isFinite(limit) || !isFinite(pageNumber)) {
+            console.error('Invalid input: limit and pageNumber must be finite numbers');
+            return null;
+        }
+        
         // Validate and sanitize inputs
-        const sanitizedLimit = Math.min(Math.max(1, Math.floor(limit)), MAX_LIMIT);
-        const sanitizedPageNumber = Math.max(1, Math.floor(pageNumber));
+        const sanitizedLimit = Math.min(Math.max(1, Math.floor(Math.abs(limit))), MAX_LIMIT);
+        const sanitizedPageNumber = Math.max(1, Math.floor(Math.abs(pageNumber)));
         
         // Log warnings if inputs were modified
         if (sanitizedLimit !== limit) {
