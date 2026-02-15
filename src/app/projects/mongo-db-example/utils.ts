@@ -1,5 +1,5 @@
 "use client";
-import { getMoviesCollectionCount, getMoviesPaged } from "@/app/api/requests/find";
+import { getMoviesCollectionCount as getMoviesCollectionCountFromDb, getMoviesPaged as getMoviesPagedFromDb } from "@/app/api/requests/find";
 
 export interface Movie {
     _id?: string;
@@ -11,16 +11,16 @@ export interface Movie {
 
 export async function getMovieCount(): Promise<number | null> {
     try {
-        return await getMoviesCollectionCount();
+        return await getMoviesCollectionCountFromDb();
     } catch (e) {
         console.error("Failed to fetch movie count: ", e);
         return null;
     }
 }
 
-export async function fetchMoviesPaged(limit: number, pageNumber: number): Promise<Movie[] | null> {
+export async function getMoviesPaged(limit: number, pageNumber: number): Promise<Movie[] | null> {
     try {
-        return await getMoviesPaged(limit, pageNumber) as Movie[];
+        return await getMoviesPagedFromDb(limit, pageNumber) as Movie[];
     } catch (e) {
         console.error("Failed to fetch movies: ", e);
         return null;
