@@ -23,6 +23,14 @@ export async function getMoviesPaged(limit: number, pageNumber: number): Promise
         const sanitizedLimit = Math.min(Math.max(1, Math.floor(limit)), MAX_LIMIT);
         const sanitizedPageNumber = Math.max(1, Math.floor(pageNumber));
         
+        // Log warnings if inputs were modified
+        if (sanitizedLimit !== limit) {
+            console.warn(`Limit was sanitized from ${limit} to ${sanitizedLimit}. Maximum allowed limit is ${MAX_LIMIT}.`);
+        }
+        if (sanitizedPageNumber !== pageNumber) {
+            console.warn(`Page number was sanitized from ${pageNumber} to ${sanitizedPageNumber}. Minimum page number is 1.`);
+        }
+        
         const database = await db.getDb(ALLOWED_DB);
         const collection = database.collection(ALLOWED_COLLECTION);
         
