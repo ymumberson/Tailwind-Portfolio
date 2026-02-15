@@ -13,7 +13,7 @@ export async function getMovieCount(): Promise<number | null> {
     return await getCollectionCount(DB_NAME, 'movies');
 }
 
-export async function getMoviesPaged(limit: number, pageNumber: number): Promise<Movie[] | null> {
+export async function getMoviesPaged(limit: number, pageNumber: number): Promise<Movie[]> {
     try {
          return await getDocuments(DB_NAME, 'movies', limit, pageNumber, {}, { _id: 0, title: 1, year: 1, poster: 1, plot: 1 }, {}) as Movie[];
     } catch (e) {

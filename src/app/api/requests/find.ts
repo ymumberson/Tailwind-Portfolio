@@ -2,14 +2,14 @@
 import db from "@/lib/mongodb";
 import { Collection, Sort } from "mongodb";
 
-export async function getCollectionCount(dbName: string, collectionName: string) {
+export async function getCollectionCount(dbName: string, collectionName: string): Promise<number> {
   try {
     const database = await db.getDb(dbName);
     let collectionCount = await database.collection(collectionName).estimatedDocumentCount({});
     return collectionCount;
   } catch (e) {
     console.error(`Failed to fetch collection count for ${collectionName}: `, e);
-    return null;
+    return 0;
   }
 }
 
