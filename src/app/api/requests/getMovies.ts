@@ -51,12 +51,21 @@ export async function getMoviesPaged(limit: number, pageNumber: number): Promise
         // Use a fixed projection to only return necessary fields
         const documents: object[] = await collection
             .find({})
-            .project({ _id: 0, title: 1, year: 1, poster: 1, plot: 1 })
+            .sort({ title: 1 })
+            .project({ _id: 1, title: 1, year: 1, poster: 1, plot: 1 })
             .limit(sanitizedLimit)
             .skip((sanitizedPageNumber - 1) * sanitizedLimit)
             .toArray();
         
-        return documents as Movie[];
+        const movies: Movie[] = documents.map((doc: any) => ({
+            _id: doc._id ? String(doc._id) : undefined,
+            title: doc.title,
+            year: doc.year,
+            poster: doc.poster,
+            plot: doc.plot,
+        }));
+
+        return movies;
     } catch (e) {
         console.error(`Failed to fetch documents from ${MOVIES_COLLECTION}: `, e);
         return null;
