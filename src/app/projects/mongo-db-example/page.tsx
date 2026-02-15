@@ -98,7 +98,7 @@ const MongoDbExample = () => {
     }
 
     return (
-        <Project name="MongoDB Example" description="This uses the MonboDB Atlas integration from Vercel to read and display data from MongoDB">
+        <Project name="MongoDB Example" description="This uses the MongoDB Atlas integration from Vercel to read and display data from MongoDB">
             <div className="flex flex-col">
                 <div className="flex flex-row gap-3">
                     <button onClick={previousPage} disabled={loading}>Previous</button>
