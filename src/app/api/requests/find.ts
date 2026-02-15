@@ -1,51 +1,26 @@
 "use server";
 import db from "@/lib/mongodb";
-import { Collection } from "mongodb";
+import { Collection, Sort } from "mongodb";
 
-export interface Movie {
-    title: string;
-    year: number;
-    poster: string;
-    plot: string;
-};
-
-export async function getAllMovies() {
+export async function getCollectionCount(dbName: string, collectionName: string) {
   try {
-    // Get the database instance
-    const database = await db.getDb();
-    // Send a ping to confirm a successful connection
-
-    let movies = await database.collection('movies').estimatedDocumentCount({});
-    return movies;
+    const database = await db.getDb(dbName);
+    let collectionCount = await database.collection(collectionName).estimatedDocumentCount({});
+    return collectionCount;
   } catch (e) {
-    console.error("Failed to fetch all movies: ", e);
+    console.error(`Failed to fetch collection count for ${collectionName}: `, e);
     return null;
   }
 }
 
-export async function getMovieCount(): Promise<number | null> {
+export async function getDocuments(dbName: string, collectionName: string, limit: number, pageNumber: number, query: object = {}, projectFields: object = {}, sortFields: Sort = {}): Promise<object[]> {
     try {
-        const database = await db.getDb();
-        let moviesCollection: Collection = database.collection('movies');
-        let count: number = await moviesCollection.estimatedDocumentCount({});
-        return count;
+        const database = await db.getDb(dbName);
+        let collection: Collection = database.collection(collectionName);
+        let documents: object[] = await collection.find(query).sort(sortFields).project(projectFields).limit(limit).skip((pageNumber-1)*limit).toArray();
+        return documents;
     } catch (e) {
-        console.error("Failed to fetch movie count: ", e);
-        return null;
-    }
-}
-
-export async function getLimitedMovies(limit: number, pageNumber: number): Promise<Movie[] | null> {
-    try {
-        const database = await db.getDb();
-        const query = {};
-        const projectFields = { _id: 0, title: 1, year: 1, poster: 1, plot: 1 };
-        const sortFields = {};
-        let moviesCollection: Collection = database.collection('movies');
-        let movies: Movie[] = await moviesCollection.find(query).sort(sortFields).project(projectFields).limit(limit).skip((pageNumber-1)*limit).toArray() as Movie[];
-        return movies;
-    } catch (e) {
-        console.error("Failed to fetch movies: ", e);
+        console.error(`Failed to fetch documents from ${collectionName}: `, e);
         return [];
     }
 }

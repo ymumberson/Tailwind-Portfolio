@@ -1,8 +1,7 @@
 'use client';
 import Project from "@/app/components/Project";
 import React, { useEffect } from "react";
-import { testDatabaseConnection } from "@/app/api/requests/testconnection";
-import { Movie, getAllMovies, getLimitedMovies, getMovieCount } from "@/app/api/requests/find";
+import { Movie, getMoviesPaged, getMovieCount } from "./utils";
 
 const MOVIES_PER_PAGE = 5;
 
@@ -58,7 +57,7 @@ const MongoDbExample = () => {
 
     async function handleGetMovies(currentPageNumber: number = 1) {
         setLoading(true);
-        const movies = await getLimitedMovies(MOVIES_PER_PAGE, currentPageNumber);
+        const movies = await getMoviesPaged(MOVIES_PER_PAGE, currentPageNumber);
         if (movies) {
             setMovies(movies);
             setError(null);
