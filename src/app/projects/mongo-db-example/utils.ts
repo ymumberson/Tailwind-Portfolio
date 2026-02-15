@@ -1,6 +1,5 @@
 "use client";
-import { getCollectionCount, getDocuments } from "@/app/api/requests/find";
-const DB_NAME = "sample_mflix";
+import { getMoviesCollectionCount, getMoviesPaged as getMoviesPagedFromDb } from "@/app/api/requests/find";
 
 export interface Movie {
     _id?: string;
@@ -12,7 +11,7 @@ export interface Movie {
 
 export async function getMovieCount(): Promise<number | null> {
     try {
-    return await getCollectionCount(DB_NAME, 'movies');
+        return await getMoviesCollectionCount();
     } catch (e) {
         console.error("Failed to fetch movie count: ", e);
         return null;
@@ -21,7 +20,7 @@ export async function getMovieCount(): Promise<number | null> {
 
 export async function getMoviesPaged(limit: number, pageNumber: number): Promise<Movie[] | null> {
     try {
-         return await getDocuments(DB_NAME, 'movies', limit, pageNumber, {}, { _id: 0, title: 1, year: 1, poster: 1, plot: 1 }, {}) as Movie[];
+        return await getMoviesPagedFromDb(limit, pageNumber) as Movie[];
     } catch (e) {
         console.error("Failed to fetch movies: ", e);
         return null;
