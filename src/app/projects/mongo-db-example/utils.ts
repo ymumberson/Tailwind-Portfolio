@@ -3,6 +3,7 @@ import { getCollectionCount, getDocuments } from "@/app/api/requests/find";
 const DB_NAME = "sample_mflix";
 
 export interface Movie {
+    _id?: string;
     title: string;
     year: number;
     poster: string;

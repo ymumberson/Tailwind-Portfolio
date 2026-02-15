@@ -110,7 +110,7 @@ const MongoDbExample = () => {
                 {!loading && error && <p className="text-red-500">{error}</p>}
                 {!loading && !error && movies && 
                     movies.map((movie: Movie, index: number) => {
-                        return <MovieCard key={index} movie={movie} />
+                        return <MovieCard key={movie._id || index} movie={movie} />
                     })}
                 </div>
             </div>
