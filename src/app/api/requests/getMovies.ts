@@ -2,22 +2,30 @@
 import db from "@/lib/mongodb";
 
 // Hardcoded database and collection for security
-const ALLOWED_DB = "sample_mflix";
-const ALLOWED_COLLECTION = "movies";
+const MOVIES_DB = "sample_mflix";
+const MOVIES_COLLECTION = "movies";
 const MAX_LIMIT = 100; // Maximum number of documents that can be fetched at once
 
-export async function getMoviesCollectionCount(): Promise<number | null> {
+export interface Movie {
+    _id?: string;
+    title: string;
+    year: number;
+    poster: string;
+    plot: string;
+};
+
+export async function getMoviesCount(): Promise<number | null> {
   try {
-    const database = await db.getDb(ALLOWED_DB);
-    let collectionCount = await database.collection(ALLOWED_COLLECTION).estimatedDocumentCount({});
+    const database = await db.getDb(MOVIES_DB);
+    let collectionCount = await database.collection(MOVIES_COLLECTION).estimatedDocumentCount({});
     return collectionCount;
   } catch (e) {
-    console.error(`Failed to fetch collection count for ${ALLOWED_COLLECTION}: `, e);
+    console.error(`Failed to fetch collection count for ${MOVIES_COLLECTION}: `, e);
     return null;
   }
 }
 
-export async function getMoviesPaged(limit: number, pageNumber: number): Promise<object[] | null> {
+export async function getMoviesPaged(limit: number, pageNumber: number): Promise<Movie[] | null> {
     try {
         // Validate inputs are numbers
         if (typeof limit !== 'number' || typeof pageNumber !== 'number' || !isFinite(limit) || !isFinite(pageNumber)) {
@@ -37,8 +45,8 @@ export async function getMoviesPaged(limit: number, pageNumber: number): Promise
             console.warn(`Page number was sanitized. Minimum page number is 1.`);
         }
         
-        const database = await db.getDb(ALLOWED_DB);
-        const collection = database.collection(ALLOWED_COLLECTION);
+        const database = await db.getDb(MOVIES_DB);
+        const collection = database.collection(MOVIES_COLLECTION);
         
         // Use a fixed projection to only return necessary fields
         const documents: object[] = await collection
@@ -48,9 +56,9 @@ export async function getMoviesPaged(limit: number, pageNumber: number): Promise
             .skip((sanitizedPageNumber - 1) * sanitizedLimit)
             .toArray();
         
-        return documents;
+        return documents as Movie[];
     } catch (e) {
-        console.error(`Failed to fetch documents from ${ALLOWED_COLLECTION}: `, e);
+        console.error(`Failed to fetch documents from ${MOVIES_COLLECTION}: `, e);
         return null;
     }
 }

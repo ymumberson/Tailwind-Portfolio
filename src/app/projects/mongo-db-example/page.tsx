@@ -1,7 +1,7 @@
 'use client';
 import Project from "@/app/components/Project";
 import React, { useEffect } from "react";
-import { Movie, getMoviesPaged, getMovieCount } from "./utils";
+import { Movie, getMoviesPaged, getMoviesCount } from "@/app/api/requests/getMovies";
 
 const MOVIES_PER_PAGE = 5;
 
@@ -68,7 +68,7 @@ const MongoDbExample = () => {
     };
     
     async function calculateTotalPages() {
-        const movieCount = await getMovieCount();
+        const movieCount = await getMoviesCount();
         if (movieCount !== null) {
             setTotalPages(Math.ceil(movieCount / MOVIES_PER_PAGE));
         } else {
