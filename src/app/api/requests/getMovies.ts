@@ -12,7 +12,7 @@ export interface Movie {
     year: number;
     poster: string;
     plot: string;
-};
+}
 
 export async function getMoviesCount(): Promise<number | null> {
   try {
