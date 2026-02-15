@@ -2,18 +2,18 @@
 import db from "@/lib/mongodb";
 import { Collection, Sort } from "mongodb";
 
-export async function getCollectionCount(dbName: string, collectionName: string): Promise<number> {
+export async function getCollectionCount(dbName: string, collectionName: string): Promise<number | null> {
   try {
     const database = await db.getDb(dbName);
     let collectionCount = await database.collection(collectionName).estimatedDocumentCount({});
     return collectionCount;
   } catch (e) {
     console.error(`Failed to fetch collection count for ${collectionName}: `, e);
-    return 0;
+    return null;
   }
 }
 
-export async function getDocuments(dbName: string, collectionName: string, limit: number, pageNumber: number, query: object = {}, projectFields: object = {}, sortFields: Sort = {}): Promise<object[]> {
+export async function getDocuments(dbName: string, collectionName: string, limit: number, pageNumber: number, query: object = {}, projectFields: object = {}, sortFields: Sort = {}): Promise<object[] | null> {
     try {
         const database = await db.getDb(dbName);
         let collection: Collection = database.collection(collectionName);
@@ -21,6 +21,6 @@ export async function getDocuments(dbName: string, collectionName: string, limit
         return documents;
     } catch (e) {
         console.error(`Failed to fetch documents from ${collectionName}: `, e);
-        return [];
+        return null;
     }
 }
