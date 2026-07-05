@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
   env: {
     OPEN_WEATHER_API_KEY: process.env.OPEN_WEATHER_API_KEY,
     GITHUB_READ_API_KEY: process.env.GITHUB_READ_API_KEY,
-  }
+  },
+  transpilePackages: ['three'],
 };
 
 export default nextConfig;
