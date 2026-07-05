@@ -1,15 +1,13 @@
 "use client"
 import Project from "@/app/components/Project";
-import React, { useRef } from "react";
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/Addons.js";
-import { OrbitControls } from "@react-three/drei";
+import React from "react";
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, useGLTF } from "@react-three/drei";
 
 function Scene() {
-    const gltf = useLoader(GLTFLoader, '/3D_Assets/Keyboard.glb');
+    const { scene }  = useGLTF('/3D_Assets/Keyboard.glb');
     return (
-        <primitive object={gltf.scene} scale={20} rotation={[Math.PI / 8, 0, 0]} position={[0,0,0]}/>
+        <primitive object={scene} scale={20} rotation={[Math.PI / 8, 0, 0]} position={[0,0,0]}/>
     );
 }
 

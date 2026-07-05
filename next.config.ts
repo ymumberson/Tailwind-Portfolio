@@ -1,8 +1,5 @@
 import type { NextConfig } from "next";
 
-const withTM = require('next-transpile-modules')(['three'])
-module.exports = withTM()
-
 const nextConfig: NextConfig = {
   basePath: '',
   env: {
