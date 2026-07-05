@@ -13,7 +13,10 @@ function Scene() {
 
 const ReactThreeFiberDemo = () => {
     return (
-        <Project name="React Three Fiber Demo" description="Demo of React Three Fiber.">
+        <Project
+        name="React Three Fiber Demo"
+        description="A short demo of loading a GLB into React Three Fiber. This demo has orbit controls to manupulate the model. The model is a simple keyboard I modelled in Blender."
+        >
             <div className="w-full h-[500px]">
             <Canvas>
                 <ambientLight intensity={Math.PI / 2} />
