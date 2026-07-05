@@ -14,6 +14,7 @@
     "@tabler/icons-react": "^3.30.0",
     "@tensorflow/tfjs": "^4.22.0",
     "@tensorflow/tfjs-node": "^4.22.0",
+    "@types/three": "^0.185.0",
     "axios": "^1.8.3",
     "mongodb": "^6.10.0",
     "next": "15.1.11",
