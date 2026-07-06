@@ -122,7 +122,27 @@ function CalculateWinnerClassName(winner: String) {
     }
 }
 
+interface PlayModeProps {
+    value: boolean;
+    setValue: React.Dispatch<React.SetStateAction<boolean>>;
+    falseText: string,
+    trueText: string
+}
+
+const PlayMode: React.FC<PlayModeProps> = ({ value, setValue, falseText, trueText }) => {
+    return (
+        <label className="inline-flex items-center cursor-pointer">
+            <span className="select-none text-sm font-medium text-heading">{falseText}</span>
+            <input type="checkbox" value="" onChange={() => setValue((val: boolean) => !val)} className="sr-only peer" checked={value}/>
+            <div className="relative mx-3 w-9 h-5 bg-neutral-quaternary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-soft dark:peer-focus:ring-brand-soft rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>
+            <span className="select-none text-sm font-medium text-heading">{trueText}</span>
+        </label>
+    );
+}
+
 export default function TicTacToe() {
+    const [singlePlayer, setSinglePlayer] = useState(true);
+    const [playAsNaughts, setPlayAsNaughts] = useState(false);
     const [history, setHistory] = useState([Array(9).fill("")]);
     const [currentMove, setCurrentMove] = useState(0);
     const xIsNext = currentMove % 2 === 0;
@@ -169,6 +189,10 @@ export default function TicTacToe() {
 
     return (
         <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
+            <div>
+                <PlayMode value={singlePlayer} setValue={setSinglePlayer} falseText="Two Player" trueText="Single Player"/>
+                {singlePlayer && <PlayMode value={playAsNaughts} setValue={setPlayAsNaughts} falseText="Crosses" trueText="Naughts"/>}
+            </div>
             <div className="flex flex-col sm:flex-row justify-center sm:gap-10 mb-0 p-0.5">
                 <div className="flex-shrink-0">
                     <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay} onPrevious={JumpToPrevious} onNext={JumpToNext} onReset={ResetGame}/>            
