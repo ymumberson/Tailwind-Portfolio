@@ -33,9 +33,10 @@ interface BoardProps {
     onReset: Function;
     singlePlayer: boolean;
     playAsNaughts: boolean;
+    botHard: boolean;
 }
 
-const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious, onNext, onReset, singlePlayer, playAsNaughts }) => {
+const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious, onNext, onReset, singlePlayer, playAsNaughts, botHard }) => {
     function handleClick(index: number) {
         if (squares[index] != "" || CalculateWinner(squares))
             return;
@@ -78,7 +79,12 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
             return;
 
         const timeout = setTimeout(() => {
-            botTurnEasy(squares, xIsNext, handlePlay);
+            if (botHard) {
+                botTurnHard(squares, xIsNext, handlePlay);
+            } else {
+                botTurnEasy(squares, xIsNext, handlePlay);
+            }
+            
         }, 1000);
 
         return () => clearTimeout(timeout);
@@ -115,27 +121,80 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
 }
 
 function botTurnEasy(squares: Array<string>, xIsNext: boolean, handlePlay: Function) {
-        const nextSquares = squares.slice();
+    const nextSquares = squares.slice();
 
-        let choices = [];
-        for (let i=0; i<squares.length; ++i) {
-            if (nextSquares[i] === "") {
-                choices.push(i);
-            }
+    let choices = [];
+    for (let i=0; i<squares.length; ++i) {
+        if (nextSquares[i] === "") {
+            choices.push(i);
+        }
+    }
+
+    if (choices.length === 0)
+        return -1;
+
+    let index = choices[Math.floor(Math.random() * choices.length)];
+    if (xIsNext) {
+        nextSquares[index] = "X";
+    } else {
+        nextSquares[index] = "O"
+    }
+
+    handlePlay(nextSquares);
+
+    return index;
+} 
+
+function botTurnHard(squares: Array<string>, xIsNext: boolean, handlePlay: Function) {
+    const nextSquares = squares.slice();
+
+    const lines = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+      ];
+      let index = -1;
+      for (let i = 0; i < lines.length; i++) {
+        const [a, b, c] = lines[i];
+
+        if (nextSquares[a] && nextSquares[a] === nextSquares[b] && !nextSquares[c]) {
+            index = c;
+            break;
         }
 
-        if (choices.length === 0)
-            return;
-
-        let index = choices[Math.floor(Math.random() * choices.length)];
-        if (xIsNext) {
-            nextSquares[index] = "X";
-        } else {
-            nextSquares[index] = "O"
+        if (nextSquares[c] && nextSquares[c] === nextSquares[b] && !nextSquares[a]) {
+            index = a;
+            break;
         }
 
-        handlePlay(nextSquares);
-    } 
+        if (nextSquares[a] && nextSquares[a] === nextSquares[c] && !nextSquares[b]) {
+            index = b;
+            break;
+        }
+      }
+
+    if (index === -1) {
+        if (!nextSquares[4])
+            index = 4;
+        else
+            index = botTurnEasy(squares, xIsNext, handlePlay);
+    }
+
+    if (xIsNext) {
+        nextSquares[index] = "X";
+    } else {
+        nextSquares[index] = "O"
+    }
+
+    handlePlay(nextSquares);
+
+    return index;
+}
 
 function CalculateWinner(squares: Array<string>) {
     const lines = [
@@ -189,6 +248,7 @@ const PlayMode: React.FC<PlayModeProps> = ({ value, setValue, falseText, trueTex
 export default function TicTacToe() {
     const [singlePlayer, setSinglePlayer] = useState(true);
     const [playAsNaughts, setPlayAsNaughts] = useState(false);
+    const [botHard, setBotHard] = useState(false);
     const [history, setHistory] = useState([Array(9).fill("")]);
     const [currentMove, setCurrentMove] = useState(0);
     const xIsNext = currentMove % 2 === 0;
@@ -243,6 +303,8 @@ export default function TicTacToe() {
                 <PlayMode value={singlePlayer} setValue={setSinglePlayer} falseText="Two Player" trueText="Single Player"/>
                 {' | '}
                 {singlePlayer && <PlayMode value={playAsNaughts} setValue={setPlayAsNaughts} falseText="X" trueText="O"/>}
+                {' | '}
+                {singlePlayer && <PlayMode value={botHard} setValue={setBotHard} falseText="Easy" trueText="Hard"/>}
             </div>
             <div className="flex flex-col sm:flex-row justify-center sm:gap-10 mb-0 p-0.5">
                 <div className="flex-shrink-0">
@@ -254,7 +316,8 @@ export default function TicTacToe() {
                         onNext={JumpToNext}
                         onReset={ResetGame}
                         singlePlayer={singlePlayer}
-                        playAsNaughts={playAsNaughts}/>            
+                        playAsNaughts={playAsNaughts}
+                        botHard={botHard}/>            
                 </div>
                 {!singlePlayer && <ol className="mt-2 sm:mt-0">{moves}</ol>}
             </div>
