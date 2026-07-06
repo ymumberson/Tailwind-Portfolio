@@ -1,7 +1,7 @@
 'use client';  // This marks the component as a Client Component
 
 import Project from "@/app/components/Project";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { IconChevronLeft, IconChevronRight, IconRefresh} from "@tabler/icons-react";
 
@@ -68,7 +68,7 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
     } else if (squares.every(elem => elem != "")) {
         status = `Game Over!`;
         gameOver = true;
-    } else if (!isPlayerTurn(playAsNaughts, xIsNext)) {
+    } else if (singlePlayer && !isPlayerTurn(playAsNaughts, xIsNext)) {
         status = `Bot is thinking: ${xIsNext ? "X" : "O"}`;
     } else {
         status = `Next player is: ${xIsNext ? "X" : "O"}`;
@@ -88,7 +88,7 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
         }, 1000);
 
         return () => clearTimeout(timeout);
-    }, [xIsNext, playAsNaughts, singlePlayer, squares, gameOver]);
+    }, [xIsNext, playAsNaughts, singlePlayer, botHard, squares, gameOver]);
 
 
     return (
@@ -120,12 +120,10 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
     );
 }
 
-function botTurnEasy(squares: Array<string>, xIsNext: boolean, handlePlay: Function) {
-    const nextSquares = squares.slice();
-
+function calculateRandomFreeSquare(squares: Array<string>, xIsNext: boolean, handlePlay: Function) {
     let choices = [];
     for (let i=0; i<squares.length; ++i) {
-        if (nextSquares[i] === "") {
+        if (squares[i] === "") {
             choices.push(i);
         }
     }
@@ -133,7 +131,13 @@ function botTurnEasy(squares: Array<string>, xIsNext: boolean, handlePlay: Funct
     if (choices.length === 0)
         return -1;
 
-    let index = choices[Math.floor(Math.random() * choices.length)];
+    return choices[Math.floor(Math.random() * choices.length)];
+}
+
+function botTurnEasy(squares: Array<string>, xIsNext: boolean, handlePlay: Function) {
+    const nextSquares = squares.slice();
+
+    let index = calculateRandomFreeSquare(squares, xIsNext, handlePlay);
     if (xIsNext) {
         nextSquares[index] = "X";
     } else {
@@ -179,10 +183,11 @@ function botTurnHard(squares: Array<string>, xIsNext: boolean, handlePlay: Funct
       }
 
     if (index === -1) {
-        if (!nextSquares[4])
+        if (!nextSquares[4]) {
             index = 4;
-        else
-            index = botTurnEasy(squares, xIsNext, handlePlay);
+        } else {
+            index = calculateRandomFreeSquare(squares, xIsNext, handlePlay);
+        }
     }
 
     if (xIsNext) {
