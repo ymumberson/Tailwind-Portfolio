@@ -1,7 +1,7 @@
 'use client';  // This marks the component as a Client Component
 
 import Project from "@/app/components/Project";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { IconChevronLeft, IconChevronRight, IconRefresh} from "@tabler/icons-react";
 
@@ -31,11 +31,16 @@ interface BoardProps {
     onPrevious: Function;
     onNext: Function;
     onReset: Function;
+    singlePlayer: boolean;
+    playAsNaughts: boolean;
 }
 
-const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious, onNext, onReset }) => {
+const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious, onNext, onReset, singlePlayer, playAsNaughts }) => {
     function handleClick(index: number) {
         if (squares[index] != "" || CalculateWinner(squares))
+            return;
+
+        if (singlePlayer && !isPlayerTurn(playAsNaughts, xIsNext))
             return;
 
         const nextSquares = squares.slice();
@@ -48,6 +53,34 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
         handlePlay(nextSquares);
     }
 
+    function botTurn() {
+        const nextSquares = squares.slice();
+
+        let index = -1;
+        for (let i=0; i<squares.length; ++i) {
+            if (nextSquares[i] === "") {
+                console.log(i);
+                index = i;
+                break;
+            }
+        }
+
+        if (index === -1)
+            return;
+
+        if (xIsNext) {
+            nextSquares[index] = "X";
+        } else {
+            nextSquares[index] = "O"
+        }
+
+        handlePlay(nextSquares);
+    }
+
+    function isPlayerTurn(playAsNaughts: boolean, xIsNext: boolean): boolean {
+        return (playAsNaughts && !xIsNext) || (!playAsNaughts && xIsNext);
+    }
+
     const winningSquares = CalculateWinner(squares);
     const winner = (winningSquares) ? squares[winningSquares[0]]: null;
     let status;
@@ -58,9 +91,18 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
     } else if (squares.every(elem => elem != "")) {
         status = `Game Over!`;
         gameOver = true;
+    } else if (!isPlayerTurn(playAsNaughts, xIsNext)) {
+        status = `Bot is thinking: ${xIsNext ? "X" : "O"}`;
     } else {
         status = `Next player is: ${xIsNext ? "X" : "O"}`;
     }
+
+    useEffect(() => {
+        if (!gameOver && singlePlayer && !isPlayerTurn(playAsNaughts, xIsNext))
+        setTimeout(() => {
+            botTurn();
+        }, 1000);
+    }, [xIsNext, playAsNaughts]);
 
     return (
         <>
@@ -191,11 +233,12 @@ export default function TicTacToe() {
         <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
             <div>
                 <PlayMode value={singlePlayer} setValue={setSinglePlayer} falseText="Two Player" trueText="Single Player"/>
-                {singlePlayer && <PlayMode value={playAsNaughts} setValue={setPlayAsNaughts} falseText="Crosses" trueText="Naughts"/>}
+                {' | '}
+                {singlePlayer && <PlayMode value={playAsNaughts} setValue={setPlayAsNaughts} falseText="X" trueText="O"/>}
             </div>
             <div className="flex flex-col sm:flex-row justify-center sm:gap-10 mb-0 p-0.5">
                 <div className="flex-shrink-0">
-                    <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay} onPrevious={JumpToPrevious} onNext={JumpToNext} onReset={ResetGame}/>            
+                    <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay} onPrevious={JumpToPrevious} onNext={JumpToNext} onReset={ResetGame} singlePlayer={singlePlayer} playAsNaughts={playAsNaughts}/>            
                 </div>
                 <ol className="mt-2 sm:mt-0">{moves}</ol>
             </div>
