@@ -1,7 +1,7 @@
 'use client';  // This marks the component as a Client Component
 
 import Project from "@/app/components/Project";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { IconChevronLeft, IconChevronRight, IconRefresh} from "@tabler/icons-react";
 
@@ -31,11 +31,17 @@ interface BoardProps {
     onPrevious: Function;
     onNext: Function;
     onReset: Function;
+    singlePlayer: boolean;
+    playAsNaughts: boolean;
+    botHard: boolean;
 }
 
-const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious, onNext, onReset }) => {
+const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious, onNext, onReset, singlePlayer, playAsNaughts, botHard }) => {
     function handleClick(index: number) {
         if (squares[index] != "" || CalculateWinner(squares))
+            return;
+
+        if (singlePlayer && !isPlayerTurn(playAsNaughts, xIsNext))
             return;
 
         const nextSquares = squares.slice();
@@ -48,6 +54,10 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
         handlePlay(nextSquares);
     }
 
+    function isPlayerTurn(playAsNaughts: boolean, xIsNext: boolean): boolean {
+        return (playAsNaughts && !xIsNext) || (!playAsNaughts && xIsNext);
+    }
+
     const winningSquares = CalculateWinner(squares);
     const winner = (winningSquares) ? squares[winningSquares[0]]: null;
     let status;
@@ -58,9 +68,28 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
     } else if (squares.every(elem => elem != "")) {
         status = `Game Over!`;
         gameOver = true;
+    } else if (singlePlayer && !isPlayerTurn(playAsNaughts, xIsNext)) {
+        status = `Bot is thinking: ${xIsNext ? "X" : "O"}`;
     } else {
         status = `Next player is: ${xIsNext ? "X" : "O"}`;
     }
+
+    useEffect(() => {
+        if (gameOver || !singlePlayer || isPlayerTurn(playAsNaughts, xIsNext))
+            return;
+
+        const timeout = setTimeout(() => {
+            if (botHard) {
+                botTurnHard(squares, xIsNext, handlePlay);
+            } else {
+                botTurnEasy(squares, xIsNext, handlePlay);
+            }
+            
+        }, 1000);
+
+        return () => clearTimeout(timeout);
+    }, [xIsNext, playAsNaughts, singlePlayer, botHard, squares, gameOver]);
+
 
     return (
         <>
@@ -89,6 +118,87 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
             </div>
         </>
     );
+}
+
+function calculateRandomFreeSquare(squares: Array<string>, xIsNext: boolean, handlePlay: Function) {
+    let choices = [];
+    for (let i=0; i<squares.length; ++i) {
+        if (squares[i] === "") {
+            choices.push(i);
+        }
+    }
+
+    if (choices.length === 0)
+        return -1;
+
+    return choices[Math.floor(Math.random() * choices.length)];
+}
+
+function botTurnEasy(squares: Array<string>, xIsNext: boolean, handlePlay: Function) {
+    const nextSquares = squares.slice();
+
+    let index = calculateRandomFreeSquare(squares, xIsNext, handlePlay);
+    if (xIsNext) {
+        nextSquares[index] = "X";
+    } else {
+        nextSquares[index] = "O"
+    }
+
+    handlePlay(nextSquares);
+
+    return index;
+} 
+
+function botTurnHard(squares: Array<string>, xIsNext: boolean, handlePlay: Function) {
+    const nextSquares = squares.slice();
+
+    const lines = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+      ];
+      let index = -1;
+      for (let i = 0; i < lines.length; i++) {
+        const [a, b, c] = lines[i];
+
+        if (nextSquares[a] && nextSquares[a] === nextSquares[b] && !nextSquares[c]) {
+            index = c;
+            break;
+        }
+
+        if (nextSquares[c] && nextSquares[c] === nextSquares[b] && !nextSquares[a]) {
+            index = a;
+            break;
+        }
+
+        if (nextSquares[a] && nextSquares[a] === nextSquares[c] && !nextSquares[b]) {
+            index = b;
+            break;
+        }
+      }
+
+    if (index === -1) {
+        if (!nextSquares[4]) {
+            index = 4;
+        } else {
+            index = calculateRandomFreeSquare(squares, xIsNext, handlePlay);
+        }
+    }
+
+    if (xIsNext) {
+        nextSquares[index] = "X";
+    } else {
+        nextSquares[index] = "O"
+    }
+
+    handlePlay(nextSquares);
+
+    return index;
 }
 
 function CalculateWinner(squares: Array<string>) {
@@ -122,7 +232,28 @@ function CalculateWinnerClassName(winner: String) {
     }
 }
 
+interface PlayModeProps {
+    value: boolean;
+    setValue: React.Dispatch<React.SetStateAction<boolean>>;
+    falseText: string,
+    trueText: string
+}
+
+const PlayMode: React.FC<PlayModeProps> = ({ value, setValue, falseText, trueText }) => {
+    return (
+        <label className="inline-flex items-center cursor-pointer p-2 border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+            <span className="select-none text-sm font-medium text-heading">{falseText}</span>
+            <input type="checkbox" value="" onChange={() => setValue((val: boolean) => !val)} className="sr-only peer" checked={value}/>
+            <div className="relative mx-3 w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>
+            <span className="select-none text-sm font-medium text-heading">{trueText}</span>
+        </label>
+    );
+}
+
 export default function TicTacToe() {
+    const [singlePlayer, setSinglePlayer] = useState(true);
+    const [playAsNaughts, setPlayAsNaughts] = useState(false);
+    const [botHard, setBotHard] = useState(false);
     const [history, setHistory] = useState([Array(9).fill("")]);
     const [currentMove, setCurrentMove] = useState(0);
     const xIsNext = currentMove % 2 === 0;
@@ -167,13 +298,33 @@ export default function TicTacToe() {
         )
     })
 
+    useEffect(() => {
+        ResetGame();
+    }, [singlePlayer, playAsNaughts]);
+
     return (
         <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
+            <div className="flex items-center flex-col pb-5">
+                <PlayMode value={singlePlayer} setValue={setSinglePlayer} falseText="Two Player" trueText="Single Player"/>
+                { singlePlayer && <div className="mt-3 flex gap-2">
+                    <PlayMode value={playAsNaughts} setValue={setPlayAsNaughts} falseText="First" trueText="Second"/>
+                    <PlayMode value={botHard} setValue={setBotHard} falseText="Easy" trueText="Hard"/>
+                </div>}
+            </div>
             <div className="flex flex-col sm:flex-row justify-center sm:gap-10 mb-0 p-0.5">
                 <div className="flex-shrink-0">
-                    <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay} onPrevious={JumpToPrevious} onNext={JumpToNext} onReset={ResetGame}/>            
+                    <Board
+                        xIsNext={xIsNext}
+                        squares={currentSquares}
+                        handlePlay={HandlePlay}
+                        onPrevious={JumpToPrevious}
+                        onNext={JumpToNext}
+                        onReset={ResetGame}
+                        singlePlayer={singlePlayer}
+                        playAsNaughts={playAsNaughts}
+                        botHard={botHard}/>            
                 </div>
-                <ol className="mt-2 sm:mt-0">{moves}</ol>
+                {!singlePlayer && <ol className="mt-2 sm:mt-0">{moves}</ol>}
             </div>
         </Project>
     );
