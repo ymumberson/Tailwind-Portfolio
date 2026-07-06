@@ -1,7 +1,7 @@
 'use client';  // This marks the component as a Client Component
 
 import Project from "@/app/components/Project";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import { IconChevronLeft, IconChevronRight, IconRefresh} from "@tabler/icons-react";
 
@@ -53,29 +53,6 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
         handlePlay(nextSquares);
     }
 
-    function botTurn() {
-        const nextSquares = squares.slice();
-
-        let choices = [];
-        for (let i=0; i<squares.length; ++i) {
-            if (nextSquares[i] === "") {
-                choices.push(i);
-            }
-        }
-
-        if (choices.length === 0)
-            return;
-
-        let index = choices[Math.floor(Math.random() * choices.length)];
-        if (xIsNext) {
-            nextSquares[index] = "X";
-        } else {
-            nextSquares[index] = "O"
-        }
-
-        handlePlay(nextSquares);
-    }
-
     function isPlayerTurn(playAsNaughts: boolean, xIsNext: boolean): boolean {
         return (playAsNaughts && !xIsNext) || (!playAsNaughts && xIsNext);
     }
@@ -97,11 +74,16 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
     }
 
     useEffect(() => {
-        if (!gameOver && singlePlayer && !isPlayerTurn(playAsNaughts, xIsNext))
-        setTimeout(() => {
-            botTurn();
+        if (gameOver || !singlePlayer || isPlayerTurn(playAsNaughts, xIsNext))
+            return;
+
+        const timeout = setTimeout(() => {
+            botTurnEasy(squares, xIsNext, handlePlay);
         }, 1000);
-    }, [xIsNext, playAsNaughts]);
+
+        return () => clearTimeout(timeout);
+    }, [xIsNext, playAsNaughts, singlePlayer, squares, gameOver]);
+
 
     return (
         <>
@@ -131,6 +113,29 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
         </>
     );
 }
+
+function botTurnEasy(squares: Array<string>, xIsNext: boolean, handlePlay: Function) {
+        const nextSquares = squares.slice();
+
+        let choices = [];
+        for (let i=0; i<squares.length; ++i) {
+            if (nextSquares[i] === "") {
+                choices.push(i);
+            }
+        }
+
+        if (choices.length === 0)
+            return;
+
+        let index = choices[Math.floor(Math.random() * choices.length)];
+        if (xIsNext) {
+            nextSquares[index] = "X";
+        } else {
+            nextSquares[index] = "O"
+        }
+
+        handlePlay(nextSquares);
+    } 
 
 function CalculateWinner(squares: Array<string>) {
     const lines = [
@@ -228,6 +233,10 @@ export default function TicTacToe() {
         )
     })
 
+    useEffect(() => {
+        ResetGame();
+    }, [singlePlayer, playAsNaughts]);
+
     return (
         <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
             <div>
@@ -237,9 +246,17 @@ export default function TicTacToe() {
             </div>
             <div className="flex flex-col sm:flex-row justify-center sm:gap-10 mb-0 p-0.5">
                 <div className="flex-shrink-0">
-                    <Board xIsNext={xIsNext} squares={currentSquares} handlePlay={HandlePlay} onPrevious={JumpToPrevious} onNext={JumpToNext} onReset={ResetGame} singlePlayer={singlePlayer} playAsNaughts={playAsNaughts}/>            
+                    <Board
+                        xIsNext={xIsNext}
+                        squares={currentSquares}
+                        handlePlay={HandlePlay}
+                        onPrevious={JumpToPrevious}
+                        onNext={JumpToNext}
+                        onReset={ResetGame}
+                        singlePlayer={singlePlayer}
+                        playAsNaughts={playAsNaughts}/>            
                 </div>
-                <ol className="mt-2 sm:mt-0">{moves}</ol>
+                {!singlePlayer && <ol className="mt-2 sm:mt-0">{moves}</ol>}
             </div>
         </Project>
     );
