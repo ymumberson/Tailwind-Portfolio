@@ -56,18 +56,17 @@ const Board: React.FC<BoardProps> = ({ xIsNext, squares, handlePlay, onPrevious,
     function botTurn() {
         const nextSquares = squares.slice();
 
-        let index = -1;
+        let choices = [];
         for (let i=0; i<squares.length; ++i) {
             if (nextSquares[i] === "") {
-                console.log(i);
-                index = i;
-                break;
+                choices.push(i);
             }
         }
 
-        if (index === -1)
+        if (choices.length === 0)
             return;
 
+        let index = choices[Math.floor(Math.random() * choices.length)];
         if (xIsNext) {
             nextSquares[index] = "X";
         } else {
