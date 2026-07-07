@@ -11,6 +11,7 @@ export default function Projects() {
             <Card title="Weather" href="/projects/weather" hrefText="See project" description="Fetching current weather data from https://openweathermap.org/ and displaying it." />
             <Card title="MongoDB Example" href="/projects/mongo-db-example" hrefText="See project" description="A simple example of using MongoDB Atlas." />
             <Card title="React Three Fiber Demo" href="/projects/react-three-fiber" hrefText="See project" description="A short demo of React Three Fiber." />
+            <Card title="Mastermind" href="/projects/mastermind" hrefText="See project" description="Making a simple version of the mastermind game." />
         </div>
       </div>
     );
