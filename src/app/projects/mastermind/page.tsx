@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 enum TileState {
     CORRECT = "Correct",
     INCORRECT_LOCATION = "Incorrect Location",
-    INCORECT_VALUE = "Incorrect Value",
+    INCORRECT_VALUE = "Incorrect Value",
 }
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -37,13 +37,13 @@ const Tile: React.FC<TileProps> = ({ tileState, text }) => {
         case TileState.INCORRECT_LOCATION:
             tileColour = "bg-yellow-700";
             break;
-        case TileState.INCORECT_VALUE:
+        case TileState.INCORRECT_VALUE:
         default:
             tileColour = "";
     }
 
     return (
-        <div className={`${tileColour} inline-flex items-center justify-center px-2 h-10 min-w-10 border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400`}>
+        <div className={`${tileColour} inline-flex items-center justify-center px-2 h-10 min-w-10 border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400 uppercase`}>
                 {text}
         </div>
     );
@@ -54,10 +54,37 @@ interface TilesProps {
     rowCount: number;
     tiles: string[];
     targetWord: string;
-    guess: string;
 } 
 
-const Tiles: React.FC<TilesProps> = ({ columnCount, rowCount, tiles, targetWord, guess }) => {
+const Tiles: React.FC<TilesProps> = ({ columnCount, rowCount, tiles, targetWord }) => {
+    const colours: TileState[] = Array(columnCount * rowCount).fill(TileState.INCORRECT_VALUE);
+
+    for (let i=0; i<rowCount; ++i) {
+        let target = targetWord.split("");
+        for (let j=0; j<columnCount; ++j) {
+            let index = i*columnCount + j;
+            if (target[j] === tiles[index]) {
+                colours[index] = TileState.CORRECT;
+                target[j] = "";
+            }
+        }
+        for (let j=0; j<columnCount; ++j) {
+            let index = i*columnCount + j;
+
+            if (tiles[index] === "")
+                break;
+
+            if (colours[index] === TileState.CORRECT)
+                continue;
+
+            let indexOf = target.indexOf(tiles[index]);
+            if (indexOf !== -1) {
+                colours[index] = TileState.INCORRECT_LOCATION;
+                target[indexOf] = "";
+            }
+        }
+    }
+
     return (
         <div className="inline-grid gap-2"
         style={{
@@ -67,16 +94,20 @@ const Tiles: React.FC<TilesProps> = ({ columnCount, rowCount, tiles, targetWord,
             {tiles.map((tile: string, index: number) => {
                 let guessIndex = index % columnCount;
 
-                let tileState = TileState.INCORECT_VALUE;
+                let tileState = TileState.INCORRECT_VALUE;
 
                 //TODO: Account for multiple of same character.
-                if (tile === "") {
-                    tileState = TileState.INCORECT_VALUE;
-                } else if (targetWord[guessIndex] === tile) {
-                    tileState = TileState.CORRECT;
-                } else if (targetWord.indexOf(tile) !== -1) {
-                    tileState = TileState.INCORRECT_LOCATION;
-                }
+                // if (tile === "") {
+                //     tileState = TileState.INCORECT_VALUE;
+                // } else if (targetWord[guessIndex] === tile) {
+                //     tileState = TileState.CORRECT;
+                // } else if (targetWord.indexOf(tile) !== -1) {
+                //     tileState = TileState.INCORRECT_LOCATION;
+                // }
+                // SASSY has 3 repeat characters
+                // ESSES also has 3
+
+                tileState = colours[index];
 
                 return <Tile text={tile} tileState={tileState} key={index}/>;
             })}
@@ -138,7 +169,7 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, 
                             maxLength={1}
                             required
                             disabled={inProgress}
-                            className="px-2 h-10 w-10 border-2 bg-gray-900 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400"/>
+                            className="px-2 h-10 w-10 border-2 bg-gray-900 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400 uppercase"/>
             })}
             </div>
             <Button text="Submit" type="submit" disabled={inProgress} className="w-full"/>
@@ -157,7 +188,7 @@ const Mastermind = () => {
     const numberOfGuesses = 6;
     const numberOfTiles = 5;
     const [tiles, setTiles] = useState(Array<string>(numberOfGuesses*numberOfTiles).fill("")); 
-    const [targetWord, setTargetWord] = useState("");
+    const [targetWord, setTargetWord] = useState("sassy");
     const [guess, setGuess] = useState("");
     const [guessCount, setGuessCount] = useState(0);
     const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.LOADING);
@@ -170,7 +201,7 @@ const Mastermind = () => {
         .then((text) => {
             let words = text.split("\n").filter((str: string) => str.length === 5);
             setDictionary(new Set(text.split("\n").filter((str: string) => str.length === 5)));
-            setTargetWord(words[Math.floor(Math.random() * words.length)]);
+            // setTargetWord(words[Math.floor(Math.random() * words.length)]);
             setGameStatus(GameStatus.IN_PROGRESS);
         });
     }, []);
@@ -217,7 +248,7 @@ const Mastermind = () => {
                     </button>
                 </div>
                 <div className="">
-                    <Tiles tiles={tiles} columnCount={numberOfTiles} rowCount={numberOfGuesses} targetWord={targetWord} guess={guess}/>
+                    <Tiles tiles={tiles} columnCount={numberOfTiles} rowCount={numberOfGuesses} targetWord={targetWord}/>
                     <div>
 
                     </div>
