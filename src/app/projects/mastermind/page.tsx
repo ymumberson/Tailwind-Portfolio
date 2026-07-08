@@ -1,6 +1,6 @@
 "use client";
 import Project from "@/app/components/Project";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 enum TileState {
     CORRECT = "Correct",
@@ -142,21 +142,39 @@ enum GameStatus {
     GAME_WON = "Game Won",
     GAME_OVER = "Game Over",
     IN_PROGRESS = "In Progress",
+    LOADING = "Loading",
 }
 
 const Mastermind = () => {
     const numberOfGuesses = 8;
     const numberOfTiles = 5;
     const [tiles, setTiles] = useState(Array<string>(numberOfGuesses*numberOfTiles).fill("")); 
-    const [targetWord, setTargetWord] = useState("apple");
+    const [targetWord, setTargetWord] = useState("Apple");
     const [guess, setGuess] = useState("");
     const [guessCount, setGuessCount] = useState(0);
-    const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.IN_PROGRESS);
+    const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.LOADING);
+    const [dictionary, setDictionary] = useState<Set<string>>(new Set());
+
+    // word list from: https://github.com/tabatkins/wordle-list
+    useEffect(() => {
+        fetch("/words.txt")
+        .then((res) => res.text())
+        .then((text) => {
+            let words = text.split("\n").filter((str: string) => str.length === 5);
+            setDictionary(new Set(text.split("\n").filter((str: string) => str.length === 5)));
+            setTargetWord(words[Math.floor(Math.random() * words.length)]);
+            setGameStatus(GameStatus.IN_PROGRESS);
+        });
+    }, []);
 
     function handleGuess(guess: string) {
-        if (gameStatus === GameStatus.GAME_WON || gameStatus === GameStatus.GAME_OVER ) {
+        if (gameStatus !== GameStatus.IN_PROGRESS) {
             return;
         }
+
+        guess = guess.toLowerCase();
+        if (!dictionary.has(guess))
+            return;
         
         if (guess === targetWord) {
             setGameStatus(GameStatus.GAME_WON);
@@ -177,7 +195,7 @@ const Mastermind = () => {
 
     return (
         <Project name="Mastermind" description="Description">
-            {gameStatus}
+            {gameStatus} {targetWord}
             <div className="">
                 <Tiles tiles={tiles} columnCount={numberOfTiles} rowCount={numberOfGuesses} targetWord={targetWord} guess={guess}/>
                 <div>
