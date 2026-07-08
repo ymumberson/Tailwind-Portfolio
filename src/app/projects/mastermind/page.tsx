@@ -92,24 +92,7 @@ const Tiles: React.FC<TilesProps> = ({ columnCount, rowCount, tiles, targetWord 
             gridTemplateRows: `repeat(${rowCount}, auto)`,
         }}>
             {tiles.map((tile: string, index: number) => {
-                let guessIndex = index % columnCount;
-
-                let tileState = TileState.INCORRECT_VALUE;
-
-                //TODO: Account for multiple of same character.
-                // if (tile === "") {
-                //     tileState = TileState.INCORECT_VALUE;
-                // } else if (targetWord[guessIndex] === tile) {
-                //     tileState = TileState.CORRECT;
-                // } else if (targetWord.indexOf(tile) !== -1) {
-                //     tileState = TileState.INCORRECT_LOCATION;
-                // }
-                // SASSY has 3 repeat characters
-                // ESSES also has 3
-
-                tileState = colours[index];
-
-                return <Tile text={tile} tileState={tileState} key={index}/>;
+                return <Tile text={tile} tileState={colours[index]} key={index}/>;
             })}
         </div>
     );
@@ -188,7 +171,7 @@ const Mastermind = () => {
     const numberOfGuesses = 6;
     const numberOfTiles = 5;
     const [tiles, setTiles] = useState(Array<string>(numberOfGuesses*numberOfTiles).fill("")); 
-    const [targetWord, setTargetWord] = useState("sassy");
+    const [targetWord, setTargetWord] = useState("");
     const [guess, setGuess] = useState("");
     const [guessCount, setGuessCount] = useState(0);
     const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.LOADING);
@@ -201,7 +184,7 @@ const Mastermind = () => {
         .then((text) => {
             let words = text.split("\n").filter((str: string) => str.length === 5);
             setDictionary(new Set(text.split("\n").filter((str: string) => str.length === 5)));
-            // setTargetWord(words[Math.floor(Math.random() * words.length)]);
+            setTargetWord(words[Math.floor(Math.random() * words.length)]);
             setGameStatus(GameStatus.IN_PROGRESS);
         });
     }, []);
