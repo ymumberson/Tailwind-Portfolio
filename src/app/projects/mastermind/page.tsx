@@ -31,10 +31,10 @@ const Tile: React.FC<TileProps> = ({ tileState, text }) => {
 
     switch (tileState) {
         case TileState.CORRECT:
-            tileColour = "bg-green-500";
+            tileColour = "bg-green-700";
             break;
         case TileState.INCORRECT_LOCATION:
-            tileColour = "bg-yellow-500";
+            tileColour = "bg-yellow-700";
             break;
         case TileState.INCORECT_VALUE:
         default:
@@ -86,11 +86,15 @@ const Tiles: React.FC<TilesProps> = ({ columnCount, rowCount, tiles, targetWord,
 interface InputRowProps {
     inputLength: number;
     setGuess: Function;
+    gameStatus: GameStatus;
+    targetWord: string;
 }
 
-const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess }) => {
+const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, targetWord }) => {
     const [userInput, setUserInput] = useState(Array(inputLength).fill(""));
     const inputRefs = useRef<(HTMLElement | null)[]>([]);
+    const inProgress = gameStatus !== GameStatus.IN_PROGRESS;
+    const gameOver = (gameStatus === GameStatus.GAME_OVER || gameStatus === GameStatus.GAME_WON);
     
     function handleValueChanged(index: number, value: string) {
         let str = value.replace(/[^a-zA-Z]/g, "");
@@ -125,15 +129,16 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess }) => {
                             ref={(elem) => {
                                 inputRefs.current[index] = elem;
                             }}
-                            value={userInput[index]}
+                            value={gameOver ? targetWord[index] : userInput[index]}
                             onChange={(e) => handleValueChanged(index, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(index, e)}
                             onFocus={(e) => e.target.select()}
                             maxLength={1}
                             required
-                            className="px-2 h-10 w-10 border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400"/>
+                            disabled={inProgress}
+                            className="px-2 h-10 w-10 border-2 bg-gray-900 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400"/>
             })}
-            <Button text="Submit" type="submit"/>
+            <Button text="Submit" type="submit" disabled={inProgress}/>
         </form>
     )
 }
@@ -146,7 +151,7 @@ enum GameStatus {
 }
 
 const Mastermind = () => {
-    const numberOfGuesses = 8;
+    const numberOfGuesses = 6;
     const numberOfTiles = 5;
     const [tiles, setTiles] = useState(Array<string>(numberOfGuesses*numberOfTiles).fill("")); 
     const [targetWord, setTargetWord] = useState("Apple");
@@ -182,8 +187,6 @@ const Mastermind = () => {
             setGameStatus(GameStatus.GAME_OVER);
         }
 
-        console.log(`${guess} != ${targetWord}`);
-
         let newTiles = tiles.slice();
         for (let i=0; i<guess.length; ++i) {
             newTiles[guessCount * numberOfTiles + i] = guess[i];
@@ -195,13 +198,12 @@ const Mastermind = () => {
 
     return (
         <Project name="Mastermind" description="Description">
-            {gameStatus} {targetWord}
             <div className="">
                 <Tiles tiles={tiles} columnCount={numberOfTiles} rowCount={numberOfGuesses} targetWord={targetWord} guess={guess}/>
                 <div>
 
                 </div>
-                <InputRow inputLength={numberOfTiles} setGuess={handleGuess}/>
+                <InputRow inputLength={numberOfTiles} setGuess={handleGuess} gameStatus={gameStatus} targetWord={targetWord}/>
             </div>
         </Project>
     );
