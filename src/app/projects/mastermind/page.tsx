@@ -68,6 +68,7 @@ const Tiles: React.FC<TilesProps> = ({ columnCount, rowCount, tiles, targetWord,
 
                 let tileState = TileState.INCORECT_VALUE;
 
+                //TODO: Account for multiple of same character.
                 if (tile === "") {
                     tileState = TileState.INCORECT_VALUE;
                 } else if (targetWord[guessIndex] === tile) {
@@ -111,7 +112,7 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess }) => {
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        setGuess(userInput.flat());
+        setGuess(userInput.reduce((prev, current) => prev + current, ""));
         setUserInput(Array(inputLength).fill(""));
         inputRefs.current[0]?.focus();
     }
@@ -137,6 +138,12 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess }) => {
     )
 }
 
+enum GameStatus {
+    GAME_WON = "Game Won",
+    GAME_OVER = "Game Over",
+    IN_PROGRESS = "In Progress",
+}
+
 const Mastermind = () => {
     const numberOfGuesses = 8;
     const numberOfTiles = 5;
@@ -144,10 +151,20 @@ const Mastermind = () => {
     const [targetWord, setTargetWord] = useState("apple");
     const [guess, setGuess] = useState("");
     const [guessCount, setGuessCount] = useState(0);
+    const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.IN_PROGRESS);
 
     function handleGuess(guess: string) {
-        if (guessCount >= numberOfGuesses) 
+        if (gameStatus === GameStatus.GAME_WON || gameStatus === GameStatus.GAME_OVER ) {
             return;
+        }
+        
+        if (guess === targetWord) {
+            setGameStatus(GameStatus.GAME_WON);
+        } else if (guessCount+1 >= numberOfGuesses) {
+            setGameStatus(GameStatus.GAME_OVER);
+        }
+
+        console.log(`${guess} != ${targetWord}`);
 
         let newTiles = tiles.slice();
         for (let i=0; i<guess.length; ++i) {
@@ -160,6 +177,7 @@ const Mastermind = () => {
 
     return (
         <Project name="Mastermind" description="Description">
+            {gameStatus}
             <div className="">
                 <Tiles tiles={tiles} columnCount={numberOfTiles} rowCount={numberOfGuesses} targetWord={targetWord} guess={guess}/>
                 <div>
