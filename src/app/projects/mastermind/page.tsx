@@ -1,5 +1,6 @@
 "use client";
 import Project from "@/app/components/Project";
+import { IconRefresh, IconWorldSearch } from "@tabler/icons-react";
 import React, { useEffect, useRef, useState } from "react";
 
 enum TileState {
@@ -122,7 +123,8 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, 
     }
 
     return (
-        <form onSubmit={handleSubmit} className="inline-flex gap-2 pt-5">
+        <form onSubmit={handleSubmit} className="flex flex-col w-fit">
+            <div className="inline-flex gap-2 pt-5 pb-2">
             {Array.from({length: inputLength}).map((_, index: number) => {
                 return <input
                             key={index}
@@ -138,7 +140,8 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, 
                             disabled={inProgress}
                             className="px-2 h-10 w-10 border-2 bg-gray-900 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400"/>
             })}
-            <Button text="Submit" type="submit" disabled={inProgress}/>
+            </div>
+            <Button text="Submit" type="submit" disabled={inProgress} className="w-full"/>
         </form>
     )
 }
@@ -154,7 +157,7 @@ const Mastermind = () => {
     const numberOfGuesses = 6;
     const numberOfTiles = 5;
     const [tiles, setTiles] = useState(Array<string>(numberOfGuesses*numberOfTiles).fill("")); 
-    const [targetWord, setTargetWord] = useState("Apple");
+    const [targetWord, setTargetWord] = useState("");
     const [guess, setGuess] = useState("");
     const [guessCount, setGuessCount] = useState(0);
     const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.LOADING);
@@ -196,14 +199,30 @@ const Mastermind = () => {
         setGuessCount(guessCount + 1);
     }
 
-    return (
-        <Project name="Mastermind" description="Description">
-            <div className="">
-                <Tiles tiles={tiles} columnCount={numberOfTiles} rowCount={numberOfGuesses} targetWord={targetWord} guess={guess}/>
-                <div>
+    function handleReset() {
+        setTiles(Array<string>(numberOfGuesses*numberOfTiles).fill(""));
+        const wordArray = [...dictionary];
+        setTargetWord(wordArray[Math.floor(Math.random() * wordArray.length)]);
+        setGameStatus(GameStatus.IN_PROGRESS);
+        setGuessCount(0);
+    }
 
+    return (
+        <Project name="Wordle" description="This is a simple clone of Wordle. It uses a local dictionary of all valid 5 letter words, and randomly picks one each time the page is refreshed. Warning that this has a much more random selection than Wordle and often picks very uncommon words.">
+            <div className="flex flex-col items-center justify-center">
+                <div className="flex w-60 p-2 justify-between">
+                    <h2>{gameStatus}</h2>
+                    <button onClick={() => handleReset()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+                        <IconRefresh size={30}/>
+                    </button>
                 </div>
-                <InputRow inputLength={numberOfTiles} setGuess={handleGuess} gameStatus={gameStatus} targetWord={targetWord}/>
+                <div className="">
+                    <Tiles tiles={tiles} columnCount={numberOfTiles} rowCount={numberOfGuesses} targetWord={targetWord} guess={guess}/>
+                    <div>
+
+                    </div>
+                    <InputRow inputLength={numberOfTiles} setGuess={handleGuess} gameStatus={gameStatus} targetWord={targetWord}/>
+                </div>
             </div>
         </Project>
     );
