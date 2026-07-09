@@ -151,7 +151,7 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, 
         e.preventDefault();
 
         if (gameOver) {
-            window.open(`https://www.merriam-webster.com/dictionary/${encodeURIComponent(targetWord)}`, "_blank", "noopener,noreferrer");
+            window.open(`https://www.collinsdictionary.com/dictionary/english/${encodeURIComponent(targetWord)}`, "_blank", "noopener,noreferrer");
         } else {
             setGuess(userInput.reduce((prev, current) => prev + current, ""));
             setUserInput(Array(inputLength).fill(""));
@@ -199,17 +199,57 @@ const Wordle = () => {
     const [guessCount, setGuessCount] = useState(0);
     const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.LOADING);
     const [dictionary, setDictionary] = useState<Set<string>>(new Set());
+    const [wordleWords, setWordleWords] = useState<Set<string>>(new Set());
 
-    // word list from: https://github.com/tabatkins/wordle-list
+    // // 
+    // useEffect(() => {
+    //     fetch("/wordle_answers.txt")
+    //     .then((res) => res.text())
+    //     .then((text) => {
+    //         let words = text.split(/\r?\n/).filter((str: string) => str.length === 5);
+    //         setWordleWords(new Set(words));
+    //         setTargetWord(words[Math.floor(Math.random() * words.length)]);
+    //         setGameStatus(GameStatus.IN_PROGRESS);
+    //     }).catch(() => setGameStatus(GameStatus.ERROR));
+    // }, []);
+
+    // // word list from: https://github.com/tabatkins/wordle-list
+    // useEffect(() => {
+    //     fetch("/words.txt")
+    //     .then((res) => res.text())
+    //     .then((text) => {
+    //         let words = text.split(/\r?\n/).filter((str: string) => str.length === 5);
+    //         setDictionary(new Set(words));
+    //         setGameStatus(GameStatus.IN_PROGRESS);
+    //     }).catch(() => setGameStatus(GameStatus.ERROR));
+    // }, []);
+
     useEffect(() => {
-        fetch("/words.txt")
-        .then((res) => res.text())
-        .then((text) => {
-            let words = text.split(/\r?\n/).filter((str: string) => str.length === 5);
-            setDictionary(new Set(words));
-            setTargetWord(words[Math.floor(Math.random() * words.length)]);
-            setGameStatus(GameStatus.IN_PROGRESS);
-        }).catch(() => setGameStatus(GameStatus.ERROR));
+        async function loadGame() {
+            try {
+                const [answersResponse, dictionaryResponse] = await Promise.all([
+                    fetch("/wordle_answers.txt"), // answer list from: https://gist.github.com/cfreshman/a03ef2cba789d8cf00c08f767e0fad7b
+                    fetch("/words.txt") // word list from: https://github.com/tabatkins/wordle-list
+                ]);
+
+                const [answersText, dictionaryText] = await Promise.all([
+                    answersResponse.text(),
+                    dictionaryResponse.text()
+                ])
+
+                const answers = answersText.split(/\r?\n/).filter((str: string) => str.length === 5);
+                const dictionary = dictionaryText.split(/\r?\n/).filter((str: string) => str.length === 5);
+
+                setWordleWords(new Set(answers));
+                setTargetWord(answers[Math.floor(Math.random() * answers.length)]);
+                setDictionary(new Set(dictionary));
+                setGameStatus(GameStatus.IN_PROGRESS);
+            } catch {
+                setGameStatus(GameStatus.ERROR);
+            }
+        }
+
+        loadGame();
     }, []);
 
     function handleGuess(guess: string) {
@@ -237,18 +277,18 @@ const Wordle = () => {
     }
 
     function handleReset() {
-        if (dictionary.size === 0)
+        if (wordleWords.size === 0)
             return;
 
         setTiles(Array<string>(numberOfGuesses*numberOfTiles).fill(""));
-        const wordArray = [...dictionary];
+        const wordArray = [...wordleWords];
         setTargetWord(wordArray[Math.floor(Math.random() * wordArray.length)]);
         setGameStatus(GameStatus.IN_PROGRESS);
         setGuessCount(0);
     }
 
     return (
-        <Project name="Wordle" description="This is a simple clone of Wordle. It uses a local dictionary of all valid 5 letter words, and randomly picks one each time the page is refreshed. Warning that this has a much more random selection than Wordle and often picks very uncommon words.">
+        <Project name="Wordle" description="This is a simple clone of Wordle. It uses a local dictionary of all valid 5 letter words, and randomly picks one each time the page is refreshed. After the game is completed, win or lose, you can press 'Open Definition' to open a dictionary in another window.">
             <div className="flex flex-col items-center justify-center">
                 <div className="flex w-60 p-2 justify-between items-center">
                     <h2>{gameStatus}</h2>
