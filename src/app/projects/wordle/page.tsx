@@ -1,6 +1,6 @@
 "use client";
 import Project from "@/app/components/Project";
-import { IconRefresh, IconWorldSearch } from "@tabler/icons-react";
+import { IconRefresh } from "@tabler/icons-react";
 import React, { useEffect, useRef, useState } from "react";
 
 enum TileState {
@@ -13,9 +13,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     text: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ text, onClick }) => {
+const Button: React.FC<ButtonProps> = ({ text, onClick, ...props }) => {
     return (
-        <button onClick={onClick} className="px-2 h-10 min-w-10 border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400">
+        <button {...props} onClick={onClick} className="px-2 h-10 min-w-10 border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400">
             {text}
         </button>
     );
@@ -43,7 +43,7 @@ const Tile: React.FC<TileProps> = ({ tileState, text }) => {
     }
 
     return (
-        <div className={`${tileColour} inline-flex items-center justify-center px-2 h-10 min-w-10 border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400 uppercase`}>
+        <div className={`${tileColour} inline-flex items-center justify-center px-2 h-10 min-w-10 border-2 text-gray-900 border-gray-800 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400 uppercase`}>
                 {text}
         </div>
     );
@@ -59,8 +59,19 @@ interface TilesProps {
 const Tiles: React.FC<TilesProps> = ({ columnCount, rowCount, tiles, targetWord }) => {
     const colours: TileState[] = Array(columnCount * rowCount).fill(TileState.INCORRECT_VALUE);
 
+    // Loop over each tile in the array row by row. TODO: In future this should not re-calculate existing rows
     for (let i=0; i<rowCount; ++i) {
-        let target = targetWord.split("");
+        let target = targetWord.split(""); // Create duplicate of target word so that we can mutate it
+
+        // This loop checks for exact matches and removes them from the target string.
+        // This is important for if we guess a letter twice, and one of them is a match.
+        // In this case we want to show one only one green tile, so we remove the letter
+        // to make sure that the orange tile doesn't match against it.
+        // For example, if the word was 'SASSY' and we guess 'STONE', then after this loop
+        // runs the remaning will be '_ASSY' (Where _ is actually ""). The idea here is that
+        // each time we colour a character, we remove it so that it isn't matched twice.
+        // It's important that we first check for exact matches, as the next check checks 
+        // the entire string each time.
         for (let j=0; j<columnCount; ++j) {
             let index = i*columnCount + j;
             if (target[j] === tiles[index]) {
@@ -68,6 +79,11 @@ const Tiles: React.FC<TilesProps> = ({ columnCount, rowCount, tiles, targetWord 
                 target[j] = "";
             }
         }
+
+        // This check then checks if the letter is anywhere in the string. Importantly, we've
+        // already removed the exact matches so we shouldn't get duplicate colours. Again, it's
+        // important that we remove characters from the target word after we match against them
+        // to ensure that each letter of the guess references a unique character from the target.
         for (let j=0; j<columnCount; ++j) {
             let index = i*columnCount + j;
 
@@ -100,15 +116,15 @@ const Tiles: React.FC<TilesProps> = ({ columnCount, rowCount, tiles, targetWord 
 
 interface InputRowProps {
     inputLength: number;
-    setGuess: Function;
+    setGuess: (guess: string) => void;
     gameStatus: GameStatus;
     targetWord: string;
 }
 
 const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, targetWord }) => {
     const [userInput, setUserInput] = useState(Array(inputLength).fill(""));
-    const inputRefs = useRef<(HTMLElement | null)[]>([]);
-    const inProgress = gameStatus !== GameStatus.IN_PROGRESS;
+    const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+    const inProgress = gameStatus === GameStatus.IN_PROGRESS;
     const gameOver = (gameStatus === GameStatus.GAME_OVER || gameStatus === GameStatus.GAME_WON);
     
     function handleValueChanged(index: number, value: string) {
@@ -151,11 +167,11 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, 
                             onFocus={(e) => e.target.select()}
                             maxLength={1}
                             required
-                            disabled={inProgress}
-                            className="px-2 h-10 w-10 border-2 bg-gray-900 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400 uppercase"/>
+                            disabled={!inProgress}
+                            className="px-2 h-10 w-10 border-2 bg-white dark:bg-gray-900 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400 uppercase"/>
             })}
             </div>
-            <Button text="Submit" type="submit" disabled={inProgress} className="w-full"/>
+            <Button text="Submit" type="submit" disabled={!inProgress} className="w-full"/>
         </form>
     )
 }
@@ -167,12 +183,11 @@ enum GameStatus {
     LOADING = "Loading",
 }
 
-const Mastermind = () => {
+const Worlde = () => {
     const numberOfGuesses = 6;
     const numberOfTiles = 5;
     const [tiles, setTiles] = useState(Array<string>(numberOfGuesses*numberOfTiles).fill("")); 
     const [targetWord, setTargetWord] = useState("");
-    const [guess, setGuess] = useState("");
     const [guessCount, setGuessCount] = useState(0);
     const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.LOADING);
     const [dictionary, setDictionary] = useState<Set<string>>(new Set());
@@ -242,4 +257,4 @@ const Mastermind = () => {
     );
 }
 
-export default Mastermind;
+export default Worlde;
