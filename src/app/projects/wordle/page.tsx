@@ -130,9 +130,11 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, 
     function handleValueChanged(index: number, value: string) {
         const str = value.replace(/[^a-zA-Z]/g, "").slice(0,1);
         
-        const arr = userInput.slice();
-        arr[index] = str;
-        setUserInput(arr);
+        setUserInput((prev) => {
+            const arr = prev.slice();
+            arr[index] = str;
+            return arr;
+        })
         
         if (str !== "" && index < inputLength - 1) {
             inputRefs.current[index+1]?.focus();
@@ -181,6 +183,7 @@ enum GameStatus {
     GAME_OVER = "Game Over",
     IN_PROGRESS = "In Progress",
     LOADING = "Loading",
+    ERROR = "Error",
 }
 
 const Wordle = () => {
@@ -201,7 +204,7 @@ const Wordle = () => {
             setDictionary(new Set(words));
             setTargetWord(words[Math.floor(Math.random() * words.length)]);
             setGameStatus(GameStatus.IN_PROGRESS);
-        });
+        }).catch(() => setGameStatus(GameStatus.ERROR));
     }, []);
 
     function handleGuess(guess: string) {
