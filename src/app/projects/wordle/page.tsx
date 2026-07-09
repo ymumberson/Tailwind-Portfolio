@@ -149,9 +149,14 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, 
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        setGuess(userInput.reduce((prev, current) => prev + current, ""));
-        setUserInput(Array(inputLength).fill(""));
-        inputRefs.current[0]?.focus();
+
+        if (gameOver) {
+            window.open(`https://www.merriam-webster.com/dictionary/${targetWord}`, "_blank")
+        } else {
+            setGuess(userInput.reduce((prev, current) => prev + current, ""));
+            setUserInput(Array(inputLength).fill(""));
+            inputRefs.current[0]?.focus();
+        }
     }
 
     return (
@@ -173,7 +178,7 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, 
                             className="px-2 h-10 w-10 border-2 bg-white dark:bg-gray-900 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400 uppercase"/>
             })}
             </div>
-            <Button text="Submit" type="submit" disabled={!inProgress} className="w-full"/>
+            <Button text={gameOver ? "Open Definition" : "Submit"} type="submit" className="w-full"/>
         </form>
     )
 }
@@ -247,18 +252,11 @@ const Wordle = () => {
     return (
         <Project name="Wordle" description="This is a simple clone of Wordle. It uses a local dictionary of all valid 5 letter words, and randomly picks one each time the page is refreshed. Warning that this has a much more random selection than Wordle and often picks very uncommon words.">
             <div className="flex flex-col items-center justify-center">
-                <div className="flex w-60 p-2 justify-between">
+                <div className="flex w-60 p-2 justify-between items-center">
                     <h2>{gameStatus}</h2>
-                    <div className="flex gap-2">
-                        {(gameStatus === GameStatus.GAME_OVER || gameStatus === GameStatus.GAME_WON) &&
-                            <button onClick={() => window.open(`https://www.merriam-webster.com/dictionary/${targetWord}`, "_blank")} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
-                                <IconSearch size={30}/>
-                            </button>
-                        }
-                        <button onClick={() => handleReset()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
-                            <IconRefresh size={30}/>
-                        </button>
-                    </div>
+                    <button onClick={() => handleReset()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+                        <IconRefresh size={30}/>
+                    </button>
                 </div>
                 <div className="">
                     <Tiles tiles={tiles} columnCount={numberOfTiles} rowCount={numberOfGuesses} targetWord={targetWord}/>
