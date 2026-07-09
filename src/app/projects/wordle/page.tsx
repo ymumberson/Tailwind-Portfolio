@@ -1,6 +1,6 @@
 "use client";
 import Project from "@/app/components/Project";
-import { IconRefresh } from "@tabler/icons-react";
+import { IconRefresh, IconSearch } from "@tabler/icons-react";
 import React, { useEffect, useRef, useState } from "react";
 
 enum TileState {
@@ -247,9 +247,16 @@ const Wordle = () => {
             <div className="flex flex-col items-center justify-center">
                 <div className="flex w-60 p-2 justify-between">
                     <h2>{gameStatus}</h2>
-                    <button onClick={() => handleReset()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
-                        <IconRefresh size={30}/>
-                    </button>
+                    <div className="flex gap-2">
+                        {(gameStatus === GameStatus.GAME_OVER || gameStatus === GameStatus.GAME_WON) &&
+                            <button onClick={() => window.open(`https://www.merriam-webster.com/dictionary/${targetWord}`)} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+                                <IconSearch size={30}/>
+                            </button>
+                        }
+                        <button onClick={() => handleReset()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+                            <IconRefresh size={30}/>
+                        </button>
+                    </div>
                 </div>
                 <div className="">
                     <Tiles tiles={tiles} columnCount={numberOfTiles} rowCount={numberOfGuesses} targetWord={targetWord}/>
