@@ -200,7 +200,7 @@ const Wordle = () => {
         fetch("/words.txt")
         .then((res) => res.text())
         .then((text) => {
-            let words = text.split("\n").filter((str: string) => str.length === 5);
+            let words = text.split(/\r?\n/).filter((str: string) => str.length === 5);
             setDictionary(new Set(words));
             setTargetWord(words[Math.floor(Math.random() * words.length)]);
             setGameStatus(GameStatus.IN_PROGRESS);
@@ -229,6 +229,8 @@ const Wordle = () => {
 
         setTiles(newTiles);
         setGuessCount(guessCount + 1);
+
+        console.log(guess);
     }
 
     function handleReset() {
