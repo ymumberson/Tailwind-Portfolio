@@ -13,9 +13,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     text: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ text, onClick, ...props }) => {
+const Button: React.FC<ButtonProps> = ({ text, onClick, className = "", ...props }) => {
     return (
-        <button {...props} onClick={onClick} className="px-2 h-10 min-w-10 border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400">
+        <button {...props} onClick={onClick} className={`px-2 h-10 min-w-10 border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400 ${className}`}>
             {text}
         </button>
     );
@@ -65,10 +65,10 @@ const Tiles: React.FC<TilesProps> = ({ columnCount, rowCount, tiles, targetWord 
 
         // This loop checks for exact matches and removes them from the target string.
         // This is important for if we guess a letter twice, and one of them is a match.
-        // In this case we want to show one only one green tile, so we remove the letter
+        // In this case we want to show only one green tile, so we remove the letter
         // to make sure that the orange tile doesn't match against it.
         // For example, if the word was 'SASSY' and we guess 'STONE', then after this loop
-        // runs the remaning will be '_ASSY' (Where _ is actually ""). The idea here is that
+        // runs the remaining will be '_ASSY' (Where _ is actually ""). The idea here is that
         // each time we colour a character, we remove it so that it isn't matched twice.
         // It's important that we first check for exact matches, as the next check checks 
         // the entire string each time.
@@ -128,9 +128,9 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, 
     const gameOver = (gameStatus === GameStatus.GAME_OVER || gameStatus === GameStatus.GAME_WON);
     
     function handleValueChanged(index: number, value: string) {
-        let str = value.replace(/[^a-zA-Z]/g, "");
+        const str = value.replace(/[^a-zA-Z]/g, "").slice(0,1);
         
-        let arr = userInput.slice();
+        const arr = userInput.slice();
         arr[index] = str;
         setUserInput(arr);
         
@@ -183,7 +183,7 @@ enum GameStatus {
     LOADING = "Loading",
 }
 
-const Worlde = () => {
+const Wordle = () => {
     const numberOfGuesses = 6;
     const numberOfTiles = 5;
     const [tiles, setTiles] = useState(Array<string>(numberOfGuesses*numberOfTiles).fill("")); 
@@ -198,7 +198,7 @@ const Worlde = () => {
         .then((res) => res.text())
         .then((text) => {
             let words = text.split("\n").filter((str: string) => str.length === 5);
-            setDictionary(new Set(text.split("\n").filter((str: string) => str.length === 5)));
+            setDictionary(new Set(words));
             setTargetWord(words[Math.floor(Math.random() * words.length)]);
             setGameStatus(GameStatus.IN_PROGRESS);
         });
@@ -229,6 +229,9 @@ const Worlde = () => {
     }
 
     function handleReset() {
+        if (dictionary.size === 0)
+            return;
+
         setTiles(Array<string>(numberOfGuesses*numberOfTiles).fill(""));
         const wordArray = [...dictionary];
         setTargetWord(wordArray[Math.floor(Math.random() * wordArray.length)]);
@@ -241,15 +244,12 @@ const Worlde = () => {
             <div className="flex flex-col items-center justify-center">
                 <div className="flex w-60 p-2 justify-between">
                     <h2>{gameStatus}</h2>
-                    <button onClick={() => handleReset()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+                    <button onClick={() => handleReset()} className="border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
                         <IconRefresh size={30}/>
                     </button>
                 </div>
                 <div className="">
                     <Tiles tiles={tiles} columnCount={numberOfTiles} rowCount={numberOfGuesses} targetWord={targetWord}/>
-                    <div>
-
-                    </div>
                     <InputRow inputLength={numberOfTiles} setGuess={handleGuess} gameStatus={gameStatus} targetWord={targetWord}/>
                 </div>
             </div>
@@ -257,4 +257,4 @@ const Worlde = () => {
     );
 }
 
-export default Worlde;
+export default Wordle;
