@@ -32,10 +32,10 @@ const Tile: React.FC<TileProps> = ({ tileState, text }) => {
 
     switch (tileState) {
         case TileState.CORRECT:
-            tileColour = "bg-green-700";
+            tileColour = "bg-green-500 dark:bg-green-700";
             break;
         case TileState.INCORRECT_LOCATION:
-            tileColour = "bg-yellow-700";
+            tileColour = "bg-yellow-500 dark:bg-yellow-700";
             break;
         case TileState.INCORRECT_VALUE:
         default:
