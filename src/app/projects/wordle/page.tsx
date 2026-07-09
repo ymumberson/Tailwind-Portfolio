@@ -219,13 +219,14 @@ const Wordle = () => {
                 ])
 
                 const answers = answersText.split(/\r?\n/).filter((str: string) => str.length === 5);
-                const dictionary = dictionaryText.split(/\r?\n/).filter((str: string) => str.length === 5);
+                const dictionaryWords = dictionaryText.split(/\r?\n/).filter((str: string) => str.length === 5);
 
                 setWordleWords(new Set(answers));
                 setTargetWord(answers[Math.floor(Math.random() * answers.length)]);
-                setDictionary(new Set(dictionary));
+                setDictionary(new Set(dictionaryWords));
                 setGameStatus(GameStatus.IN_PROGRESS);
-            } catch {
+            } catch (err) {
+                console.error(err);
                 setGameStatus(GameStatus.ERROR);
             }
         }
@@ -269,7 +270,7 @@ const Wordle = () => {
     }
 
     return (
-        <Project name="Wordle" description="This is a simple clone of Wordle. It uses a local dictionary of all valid 5 letter words, and randomly picks one each time the page is refreshed. After the game is completed, win or lose, you can press 'Open Definition' to open a dictionary in another window.">
+        <Project name="Wordle" description="This is a simple clone of Wordle. It chooses a target word from a Wordle-style answer list, while still allowing guesses from a local dictionary of valid 5 letter words. After the game is completed, win or lose, you can press 'Open Definition' to open a dictionary definition in another window.">
             <div className="flex flex-col items-center justify-center">
                 <div className="flex w-60 p-2 justify-between items-center">
                     <h2>{gameStatus}</h2>
