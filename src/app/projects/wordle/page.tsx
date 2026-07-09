@@ -1,6 +1,6 @@
 "use client";
 import Project from "@/app/components/Project";
-import { IconRefresh, IconSearch } from "@tabler/icons-react";
+import { IconRefresh } from "@tabler/icons-react";
 import React, { useEffect, useRef, useState } from "react";
 
 enum TileState {
@@ -151,7 +151,7 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, 
         e.preventDefault();
 
         if (gameOver) {
-            window.open(`https://www.merriam-webster.com/dictionary/${targetWord}`, "_blank")
+            window.open(`https://www.merriam-webster.com/dictionary/${encodeURIComponent(targetWord)}`, "_blank", "noopener,noreferrer");
         } else {
             setGuess(userInput.reduce((prev, current) => prev + current, ""));
             setUserInput(Array(inputLength).fill(""));
@@ -178,7 +178,7 @@ const InputRow: React.FC<InputRowProps> = ({ inputLength, setGuess, gameStatus, 
                             className="px-2 h-10 w-10 border-2 bg-white dark:bg-gray-900 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400 uppercase"/>
             })}
             </div>
-            <Button text={gameOver ? "Open Definition" : "Submit"} type="submit" className="w-full"/>
+            <Button text={gameOver ? "Open Definition" : "Submit"} type="submit" disabled={!gameOver && !inProgress} className="w-full"/>
         </form>
     )
 }
@@ -234,8 +234,6 @@ const Wordle = () => {
 
         setTiles(newTiles);
         setGuessCount(guessCount + 1);
-
-        console.log(guess);
     }
 
     function handleReset() {
