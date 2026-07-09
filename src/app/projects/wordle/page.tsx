@@ -201,29 +201,6 @@ const Wordle = () => {
     const [dictionary, setDictionary] = useState<Set<string>>(new Set());
     const [wordleWords, setWordleWords] = useState<Set<string>>(new Set());
 
-    // // 
-    // useEffect(() => {
-    //     fetch("/wordle_answers.txt")
-    //     .then((res) => res.text())
-    //     .then((text) => {
-    //         let words = text.split(/\r?\n/).filter((str: string) => str.length === 5);
-    //         setWordleWords(new Set(words));
-    //         setTargetWord(words[Math.floor(Math.random() * words.length)]);
-    //         setGameStatus(GameStatus.IN_PROGRESS);
-    //     }).catch(() => setGameStatus(GameStatus.ERROR));
-    // }, []);
-
-    // // word list from: https://github.com/tabatkins/wordle-list
-    // useEffect(() => {
-    //     fetch("/words.txt")
-    //     .then((res) => res.text())
-    //     .then((text) => {
-    //         let words = text.split(/\r?\n/).filter((str: string) => str.length === 5);
-    //         setDictionary(new Set(words));
-    //         setGameStatus(GameStatus.IN_PROGRESS);
-    //     }).catch(() => setGameStatus(GameStatus.ERROR));
-    // }, []);
-
     useEffect(() => {
         async function loadGame() {
             try {
@@ -231,6 +208,10 @@ const Wordle = () => {
                     fetch("/wordle_answers.txt"), // answer list from: https://gist.github.com/cfreshman/a03ef2cba789d8cf00c08f767e0fad7b
                     fetch("/words.txt") // word list from: https://github.com/tabatkins/wordle-list
                 ]);
+                
+                if (!answersResponse.ok || !dictionaryResponse.ok) {
+                    throw new Error("Failed to load the word lists");
+                }
 
                 const [answersText, dictionaryText] = await Promise.all([
                     answersResponse.text(),
