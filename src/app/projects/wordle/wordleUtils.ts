@@ -10,10 +10,12 @@ export function evaluateGuess(guess: string[], answer: string[]): TileState[] {
         throw new RangeError(`Guess (${guess.length}) and answer (${answer.length}) must be the same length`);
     }
 
+    answer = [...answer]; // Create duplicate of answer so that we can mutate it
+
     const columnCount = guess.length;
     const result: TileState[] = Array(columnCount).fill(TileState.INCORRECT_VALUE);
 
-    // This loop checks for exact matches and removes them from the target string.
+    // This loop checks for exact matches and removes them from the target string array.
     // This is important for if we guess a letter twice, and one of them is a match.
     // In this case we want to show only one green tile, so we remove the letter
     // to make sure that the orange tile doesn't match against it.

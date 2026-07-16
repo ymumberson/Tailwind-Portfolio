@@ -55,10 +55,11 @@ const Tiles: React.FC<TilesProps> = ({ columnCount, rowCount, tiles, targetWord 
     const colours: TileState[] = Array(columnCount * rowCount).fill(TileState.INCORRECT_VALUE);
 
     if (targetWord.length > 0) {
+        const targetWordArray = targetWord.split("");
         // Loop over each tile in the array row by row. TODO: In future this should not re-calculate existing rows
         for (let i=0; i<rowCount; ++i) {
             if (tiles[i*columnCount] === "") break; // If the first tile in the row is empty, we can stop checking rows
-            const guessEval = evaluateGuess(tiles.slice(i*columnCount, (i+1)*columnCount), targetWord.split(""));
+            const guessEval = evaluateGuess(tiles.slice(i*columnCount, (i+1)*columnCount), targetWordArray);
             for (let j=0; j<columnCount; ++j) {
                 colours[i*columnCount + j] = guessEval[j];
             }
