@@ -2,12 +2,7 @@
 import Project from "@/app/components/Project";
 import { IconRefresh } from "@tabler/icons-react";
 import React, { useEffect, useRef, useState } from "react";
-
-enum TileState {
-    CORRECT = "Correct",
-    INCORRECT_LOCATION = "Incorrect Location",
-    INCORRECT_VALUE = "Incorrect Value",
-}
+import { evaluateGuess, TileState } from "./wordleUtils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     text: string;
@@ -59,44 +54,14 @@ interface TilesProps {
 const Tiles: React.FC<TilesProps> = ({ columnCount, rowCount, tiles, targetWord }) => {
     const colours: TileState[] = Array(columnCount * rowCount).fill(TileState.INCORRECT_VALUE);
 
-    // Loop over each tile in the array row by row. TODO: In future this should not re-calculate existing rows
-    for (let i=0; i<rowCount; ++i) {
-        let target = targetWord.split(""); // Create duplicate of target word so that we can mutate it
-
-        // This loop checks for exact matches and removes them from the target string.
-        // This is important for if we guess a letter twice, and one of them is a match.
-        // In this case we want to show only one green tile, so we remove the letter
-        // to make sure that the orange tile doesn't match against it.
-        // For example, if the word was 'SASSY' and we guess 'STONE', then after this loop
-        // runs the remaining will be '_ASSY' (Where _ is actually ""). The idea here is that
-        // each time we colour a character, we remove it so that it isn't matched twice.
-        // It's important that we first check for exact matches, as the next check checks 
-        // the entire string each time.
-        for (let j=0; j<columnCount; ++j) {
-            let index = i*columnCount + j;
-            if (target[j] === tiles[index]) {
-                colours[index] = TileState.CORRECT;
-                target[j] = "";
-            }
-        }
-
-        // This check then checks if the letter is anywhere in the string. Importantly, we've
-        // already removed the exact matches so we shouldn't get duplicate colours. Again, it's
-        // important that we remove characters from the target word after we match against them
-        // to ensure that each letter of the guess references a unique character from the target.
-        for (let j=0; j<columnCount; ++j) {
-            let index = i*columnCount + j;
-
-            if (tiles[index] === "")
-                break;
-
-            if (colours[index] === TileState.CORRECT)
-                continue;
-
-            let indexOf = target.indexOf(tiles[index]);
-            if (indexOf !== -1) {
-                colours[index] = TileState.INCORRECT_LOCATION;
-                target[indexOf] = "";
+    if (targetWord.length > 0) {
+        const targetWordArray = targetWord.split("");
+        // Loop over each tile in the array row by row. TODO: In future this should not re-calculate existing rows
+        for (let i=0; i<rowCount; ++i) {
+            if (tiles[i*columnCount] === "") break; // If the first tile in the row is empty, we can stop checking rows
+            const guessEval = evaluateGuess(tiles.slice(i*columnCount, (i+1)*columnCount), targetWordArray);
+            for (let j=0; j<columnCount; ++j) {
+                colours[i*columnCount + j] = guessEval[j];
             }
         }
     }
