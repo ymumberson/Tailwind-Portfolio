@@ -69,10 +69,15 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
                     }
                 );
 
+                if (response.data.errors?.length) {
+                    setError(response.data.errors[0].message);
+                    return;
+                }
+
                 const weeks = response.data.data.user.contributionsCollection.contributionCalendar.weeks;
 
                 const contributionValues = weeks.flatMap((week: any) => 
-                    week.contributionDays.map((day: ContributionDay) => ({
+                    week.contributionDays.map((day: {date: string, contributionCount: number}) => ({
                         date: day.date,
                         count: day.contributionCount,
                     }))
