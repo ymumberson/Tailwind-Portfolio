@@ -1,7 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState } from "react";
 import axios from 'axios';
-import { IconUser } from "@tabler/icons-react";
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
 
@@ -17,9 +16,8 @@ interface ContributionDay {
 const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [commitsPerDay, setCommitsPerDay] = useState<ContributionDay[]>([]);
+    const [commitsPerDay, setCommitsPerDay] = useState<{date: string, count: number}[]>([]);
     const hasFetchedData = useRef(false);
-    let max = 1;
 
     useEffect(() => {
         const fetchContributions = async () => {
@@ -31,50 +29,14 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
             try {
                 setIsLoading(true);
 
-                const from = new Date();
-                from.setFullYear(from.getFullYear() -1);
-
-                const query = `
-                    query($username: String!, $from: DateTime!, $to: DateTime!) {
-                        user(login: $username) {
-                            contributionsCollection(from: $from, to: $to) {
-                                contributionCalendar {
-                                    weeks {
-                                        contributionDays {
-                                            date
-                                            contributionCount
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                `;
-
-                const response = await axios.post(
-                    "https://api.github.com/graphql",
-                    {
-                        query,
-                        variables: {
-                            username,
-                            from: from.toISOString(),
-                            to: new Date().toISOString(),
-                        },
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${process.env.GITHUB_READ_API_KEY}`,
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
+                const response = await axios.get("/api/github/contributions");
 
                 if (response.data.errors?.length) {
                     setError(response.data.errors[0].message);
                     return;
                 }
 
-                const weeks = response.data.data.user.contributionsCollection.contributionCalendar.weeks;
+                const weeks = response.data.weeks;
 
                 const contributionValues = weeks.flatMap((week: any) => 
                     week.contributionDays.map((day: {date: string, contributionCount: number}) => ({
@@ -84,9 +46,6 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
                 );
 
                 setCommitsPerDay(contributionValues);
-
-                const counts = contributionValues.map((v: { count: any; }) => v.count).filter((c: number) => c > 0);
-                max = Math.max(...counts);
             } catch (error: any) {
                 if (error.response?.data?.errors) {
                     setError(error.response.data.errors[0].message);
