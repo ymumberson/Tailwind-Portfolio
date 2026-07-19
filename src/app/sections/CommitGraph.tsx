@@ -1,7 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState } from "react";
 import axios from 'axios';
-import { IconUser } from "@tabler/icons-react";
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
 
@@ -9,82 +8,57 @@ interface UserProfilePhotoProps {
     username: string;
 }
 
-interface Repository {
-    owner: string;
-    name: string;
+interface ContributionDay {
+    date: string;
+    contributionCount: number;
 }
 
 const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [commitsPerDay, setCommitsPerDay] = useState<Record<string, number>>({});
+    const [commitsPerDay, setCommitsPerDay] = useState<{date: string, count: number}[]>([]);
     const hasFetchedData = useRef(false);
 
-    const fetchCommitsForRepository = async (owner: string, repo: string) => {
-        let pageNumber = 1;
-        let hasMorePages = true;
-
-        try {
-            while (hasMorePages) {
-                const response = await axios.get<Repository[]>(`https://api.github.com/repos/${owner}/${repo}/commits`,
-                {
-                    params: {
-                        author: username,
-                        per_page: 100,
-                        page: pageNumber,
-                    },
-                    headers: {
-                        Authorization: `${process.env.GITHUB_READ_API_KEY}`,
-                    },
-                })
-
-                if (response.headers['link'] && response.headers['link'].includes('rel="next"')) {
-                    hasMorePages = true;
-                    pageNumber += 1;
-                } else {
-                    hasMorePages = false;
-                }
-
-                response.data.forEach((commit: any) => {
-                    let commitDate = new Date(commit.commit.author.date).toDateString();
-                    setCommitsPerDay((prevCommitsPerDay) => ({
-                        ...prevCommitsPerDay,
-                        [commitDate]: (prevCommitsPerDay[commitDate] || 0) + 1,
-                    }));
-                })
-            }
-        } catch (error: any) {
-            setError(error.message);
-        }
-    }
-    
     useEffect(() => {
-        const fetchUserData = async () => {
+        const fetchContributions = async () => {
             if (hasFetchedData.current)
                 return;
 
+            hasFetchedData.current = true;
+
             try {
-                hasFetchedData.current = true;
                 setIsLoading(true);
-                setError(null);
-                const response = await axios.get<Repository[]>(`https://api.github.com/users/${username}/repos`,
-                {
-                    headers: {
-                        Authorization: `${process.env.GITHUB_READ_API_KEY}`,
-                    },
-                })
-                response.data.forEach((repo: any) => {
-                    fetchCommitsForRepository(repo.owner.login, repo.name);
-                })
+
+                const response = await axios.get("/api/github/contributions");
+
+                if (response.data.errors?.length) {
+                    setError(response.data.errors[0].message);
+                    return;
+                }
+
+                const weeks = response.data.weeks;
+
+                const contributionValues = weeks.flatMap((week: any) => 
+                    week.contributionDays.map((day: {date: string, contributionCount: number}) => ({
+                        date: day.date,
+                        count: day.contributionCount,
+                    }))
+                );
+
+                setCommitsPerDay(contributionValues);
             } catch (error: any) {
-                setError(error.message);
+                if (error.response?.data?.errors) {
+                    setError(error.response.data.errors[0].message);
+                } else {
+                    setError(error.message);
+                }
             } finally {
                 setIsLoading(false);
             }
         }
 
-        fetchUserData();
-    }, [])
+        fetchContributions();
+    }, [username])
 
     if (isLoading) {
         return <div className="w-full max-w-screen-sm md:max-w-screen-md animate-pulse"> 
@@ -108,12 +82,7 @@ const CommitHistory: React.FC<UserProfilePhotoProps> = ({ username }) => {
             <CalendarHeatmap
                 startDate={new Date(new Date().setFullYear(new Date().getFullYear() - 1))}
                 endDate={new Date()}
-                values={
-                    Object.keys(commitsPerDay).map((date) => ({
-                        date: date,
-                        count: commitsPerDay[date],
-                    }))
-                }
+                values={commitsPerDay}
                 gutterSize={2}
                 classForValue={(value) => {
                     if (!value || value.count === 0)
