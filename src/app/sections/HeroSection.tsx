@@ -1,7 +1,7 @@
 'use client';
 import React from "react";
 import { IconBrandGithub, IconBrandLinkedin } from "@tabler/icons-react";
-import { OrbitControls, useGLTF } from "@react-three/drei";
+import { Bounds, OrbitControls, useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 
 function Scene() {
@@ -21,15 +21,17 @@ const HeroSection = () => {
                 I'm a software engineer with experience in simulation, video game development, ray tracing, data visualisation, and machine learning.
             </p>
         </div>
-        <div className="h-[50vh] w-full">
-            <Canvas camera={{ fov: 60, position: [0, 1, 1.25]}}>
+        <div className="h-[40vh] w-full mb-10">
+            <Canvas camera={{ fov: 60, position: [0, 5, 12.5]}}>
                 <ambientLight intensity={Math.PI / 2} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                 <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
                 <React.Suspense fallback={null}>
-                    <Scene />
+                    <Bounds fit clip observe margin={1.2}>
+                        <Scene />
+                    </Bounds>
                 </React.Suspense>
-                <OrbitControls target={[0,0.5,0]} enableDamping/>
+                <OrbitControls makeDefault/>
             </Canvas>
         </div>
         <div className="flex justify-center gap-2">
