@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
+export const revalidate = 3600; // 1 hour
+
 export async function GET() {
     const username = "ymumberson";
 
