@@ -21,13 +21,13 @@ const HeroSection = () => {
                 I'm a software engineer with experience in simulation, video game development, ray tracing, data visualisation, and machine learning.
             </p>
         </div>
-        <div className="h-[40vh] w-full mb-10">
+        <div className="h-[40svh] w-full mb-10">
             <Canvas camera={{ fov: 60, position: [0, 5, 12.5]}}>
                 <ambientLight intensity={Math.PI / 2} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                 <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
                 <React.Suspense fallback={null}>
-                    <Bounds fit clip observe margin={1.2}>
+                    <Bounds fit clip margin={1.2}>
                         <Scene />
                     </Bounds>
                 </React.Suspense>
