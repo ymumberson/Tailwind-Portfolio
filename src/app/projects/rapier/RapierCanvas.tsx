@@ -1,8 +1,8 @@
 "use client";
 import { Box, OrbitControls, Sphere, Stats, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber"
-import { Physics, RigidBody } from "@react-three/rapier";
-import { Suspense, useEffect, useReducer, useRef, useState } from "react";
+import { CylinderCollider, Physics, RigidBody, RigidBodyApi } from "@react-three/rapier";
+import { Suspense, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 
@@ -16,11 +16,23 @@ interface GameObjectProps {
 
 const Cup: React.FC<GameObjectProps> = ({id, position, rotation, scale}) => {
     const { scene }  = useGLTF('/3D_Assets/SwanseaUniversityCup.glb');
-    const cup = clone(scene);
+    const cup = useMemo(() => clone(scene), [scene]);
+    const cupRef = useRef<RigidBodyApi>(null);
 
+    const onClick = () => {
+        if (cupRef.current) {
+            cupRef.current.applyImpulse({x:0, y:2, z:0}, true);
+        }
+    }
+
+
+    const cupHeight = 0.063409;
+    const cupRadius = 0.065 / 2;
     return (
-        <RigidBody position={position ?? [0,0,0]} scale={scale ?? 1} rotation={rotation ?? [0,0,0]} colliders="hull">
-            <primitive object={cup} rotation={[0,0,0]} position={[0,0,0]}/>
+        <RigidBody ref={cupRef} position={position ?? [0,0,0]} scale={scale ?? 1} rotation={rotation ?? [0,0,0]} colliders={false}>
+            <primitive onClick={onClick} object={cup} rotation={[0,0,0]} position={[0,0,0]}/>
+            <CylinderCollider args={[cupHeight / 2, cupRadius]} position={[0, cupHeight/2, 0]}/>
+            <CylinderCollider args={[0.0055, cupRadius - 0.01]} rotation={[Math.PI/2, 0, 0]} position={[cupRadius-0.004,cupHeight/2,0]} scale={[1,1.2,0.01]}/>
         </RigidBody>
     )
 }
@@ -51,7 +63,6 @@ const World = () => {
             {id: id, position: spawnLocation, scale: 10}
         )
         setCups(cupsCopy);
-        console.log(cupsCopy);
     }
 
     return (
@@ -61,24 +72,10 @@ const World = () => {
                 <directionalLight position={[-10, 10, 0]} intensity={0.4}/>
                 <OrbitControls />
                 
-                {/* <RigidBody position={[3, 10, 0]} colliders="ball">
-                    <Sphere>
-                        <meshStandardMaterial color="red"/>
-                    </Sphere>
-                </RigidBody> */}
-                
-                {/* <Cup position={[0,5,0]} scale={10}/>
-                <Cup position={[0,7,0]} scale={10}/> */}
-                {/* {
-                    Array.from({length: 10}, (_,i) => (
-                        <Cup
-                            key={i}
-                            position={[0, 2, 0]}
-                            scale={10}
-                        />
-                    ))
-                } */}
+                {/* Leaving in for testing single cup */}
+                {/* <Cup id={125314} position={[0,0.5,0]} scale={20}/> */}
 
+                {/* List of cubes */}
                 {cups.map((cup, i) => (
                     <Cup
                         key={cup.id}
@@ -87,12 +84,6 @@ const World = () => {
                         scale={cup.scale}
                     />
                 ))}
-
-                {/* <RigidBody position={[3,5,0]} scale={1}>
-                    <Box>
-                        <meshStandardMaterial color="blue"/>
-                    </Box>
-                </RigidBody> */}
 
                 {/* Floor */}
                 <RigidBody type="fixed">
