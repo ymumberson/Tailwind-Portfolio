@@ -3,6 +3,7 @@ import { Box, OrbitControls, Sphere, Stats, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber"
 import { CylinderCollider, Physics, RigidBody, RapierRigidBody } from "@react-three/rapier";
 import { Suspense, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { Mesh } from "three";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 
@@ -19,6 +20,15 @@ const Cup: React.FC<GameObjectProps> = ({id, position, rotation, scale}) => {
     const cup = useMemo(() => clone(scene), [scene]);
     const cupRef = useRef<RapierRigidBody>(null);
 
+    useEffect(() => {
+        cup.traverse((child) => {
+            if (child instanceof Mesh) {
+                child.castShadow = true;
+                // child.receiveShadow = true;
+            }
+        });
+    }, [cup]);
+
     const onClick = () => {
         if (cupRef.current) {
             cupRef.current.applyImpulse({x:0, y:2, z:0}, true);
@@ -30,7 +40,7 @@ const Cup: React.FC<GameObjectProps> = ({id, position, rotation, scale}) => {
     const cupRadius = 0.065 / 2;
     return (
         <RigidBody ref={cupRef} position={position ?? [0,0,0]} scale={scale ?? 1} rotation={rotation ?? [0,0,0]} colliders={false}>
-            <primitive onClick={onClick} object={cup} rotation={[0,0,0]} position={[0,0,0]}/>
+            <primitive castShadow onClick={onClick} object={cup}/>
             <CylinderCollider args={[cupHeight / 2, cupRadius]} position={[0, cupHeight/2, 0]}/>
             <CylinderCollider args={[0.0055, cupRadius - 0.01]} rotation={[Math.PI/2, 0, 0]} position={[cupRadius-0.004,cupHeight/2,0]} scale={[1,1.2,0.01]}/>
         </RigidBody>
@@ -68,8 +78,8 @@ const World = () => {
     return (
         <Physics gravity={[0, -9.81, 0]}>
             <>
-                <ambientLight intensity={0.5}/>
-                <directionalLight position={[-10, 10, 0]} intensity={0.4}/>
+                <ambientLight intensity={0.5} castShadow/>
+                <directionalLight position={[-10, 10, 0]} intensity={0.75} castShadow color={'#FFF4C9'}/>
                 <OrbitControls />
                 
                 {/* Leaving in for testing single cup */}
@@ -87,8 +97,8 @@ const World = () => {
 
                 {/* Floor */}
                 <RigidBody type="fixed">
-                    <Box position={[0,0,0]} args={[10,1,10]}>
-                        <meshStandardMaterial color="lawngreen"/>
+                    <Box position={[0,0,0]} args={[10,1,10]} receiveShadow>
+                        <meshStandardMaterial color="oldlace"/>
                     </Box>
                 </RigidBody>
             </>
@@ -98,9 +108,9 @@ const World = () => {
 
 const RapierCanvas = () => {
     return (
-        <Canvas shadows camera={{position: [10,10,10], fov: 30}}>
+        <Canvas shadows camera={{position: [-10,5,10], fov: 30}}>
             <Stats />
-            <color attach="background" args={['#F8F0E3']}/>
+            {/* <color attach="background" args={['#F8F0E3']}/> */}
             <Suspense>
                 <World />
             </Suspense>
