@@ -1,8 +1,8 @@
 'use client';
-import React, { useState } from "react";
+import React from "react";
 import { IconBrandGithub, IconBrandLinkedin } from "@tabler/icons-react";
 import { Bounds, OrbitControls, useGLTF } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 
 function Scene() {
     const { scene }  = useGLTF('/3D_Assets/SwanseaUniversityCup.glb');
