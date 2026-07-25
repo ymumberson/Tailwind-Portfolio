@@ -1,7 +1,7 @@
 "use client";
 import { Box, OrbitControls, Sphere, Stats, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber"
-import { CylinderCollider, Physics, RigidBody, RigidBodyApi } from "@react-three/rapier";
+import { CylinderCollider, Physics, RigidBody, RapierRigidBody } from "@react-three/rapier";
 import { Suspense, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
@@ -17,7 +17,7 @@ interface GameObjectProps {
 const Cup: React.FC<GameObjectProps> = ({id, position, rotation, scale}) => {
     const { scene }  = useGLTF('/3D_Assets/SwanseaUniversityCup.glb');
     const cup = useMemo(() => clone(scene), [scene]);
-    const cupRef = useRef<RigidBodyApi>(null);
+    const cupRef = useRef<RapierRigidBody>(null);
 
     const onClick = () => {
         if (cupRef.current) {
