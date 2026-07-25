@@ -47,16 +47,14 @@ const Cup: React.FC<GameObjectProps> = ({id, position, rotation, scale}) => {
     )
 }
 
-const World = () => {
+const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate}) => {
     const spawnLocation: vec3 = [0,5,0];
-    const maxCups = 20;
-    const spawnInterval = 1;
     const [cups, setCups] = useState<GameObjectProps[]>([{id: 0, position: spawnLocation, scale: 10}]);
     const [timer, setTimer] = useState(0);
 
     useFrame((_, deltaTime) => {
         let t = timer + deltaTime;
-        if (t >= spawnInterval) {
+        if (t >= itemSpawnRate) {
             t = 0;
             SpawnCup();
         }
@@ -66,7 +64,7 @@ const World = () => {
     function SpawnCup() {
         let cupsCopy = cups.slice();
         let id = cups.length > 0 ? cups[cups.length-1].id + 1 : 0;
-        if (cupsCopy.length >= maxCups) {
+        if (cupsCopy.length >= maxItems) {
             cupsCopy.splice(0, 1);
         }
         cupsCopy.push(
@@ -75,8 +73,15 @@ const World = () => {
         setCups(cupsCopy);
     }
 
+    // If the number of items allowed decreases then we need to clear additional items from the array.
+    useEffect(() => {
+        if (cups.length >= maxItems) {
+            setCups(cups.slice(cups.length - maxItems, cups.length));
+        }
+    }, [maxItems])
+
     return (
-        <Physics gravity={[0, -9.81, 0]}>
+        <Physics gravity={[0, -9.81, 0]} debug={debugMode}>
             <>
                 <ambientLight intensity={0.5} castShadow/>
                 <directionalLight position={[-10, 10, 0]} intensity={0.75} castShadow color={'#FFF4C9'}/>
@@ -86,7 +91,7 @@ const World = () => {
                 {/* <Cup id={125314} position={[0,0.5,0]} scale={20}/> */}
 
                 {/* List of cubes */}
-                {cups.map((cup, i) => (
+                {cups.map((cup) => (
                     <Cup
                         key={cup.id}
                         id={cup.id}
@@ -106,13 +111,19 @@ const World = () => {
     )
 }
 
-const RapierCanvas = () => {
+interface RapierCanvasProps {
+    debugMode: boolean;
+    maxItems: number;
+    itemSpawnRate: number;
+}
+
+const RapierCanvas: React.FC<RapierCanvasProps> = ({ debugMode = false, maxItems = 20, itemSpawnRate = 1 }) => {
     return (
         <Canvas shadows camera={{position: [-10,5,10], fov: 30}}>
-            <Stats />
+            {debugMode && <Stats />}
             {/* <color attach="background" args={['#F8F0E3']}/> */}
             <Suspense>
-                <World />
+                <World debugMode={debugMode} maxItems={maxItems} itemSpawnRate={itemSpawnRate}/>
             </Suspense>
         </Canvas>
     )

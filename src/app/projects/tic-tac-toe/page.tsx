@@ -4,6 +4,7 @@ import Project from "@/app/components/Project";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { IconChevronLeft, IconChevronRight, IconRefresh} from "@tabler/icons-react";
+import Toggle from "@/app/components/Toggle";
 
 interface SquareProps {
     value: string;
@@ -232,24 +233,6 @@ function CalculateWinnerClassName(winner: String) {
     }
 }
 
-interface PlayModeProps {
-    value: boolean;
-    setValue: React.Dispatch<React.SetStateAction<boolean>>;
-    falseText: string,
-    trueText: string
-}
-
-const PlayMode: React.FC<PlayModeProps> = ({ value, setValue, falseText, trueText }) => {
-    return (
-        <label className="inline-flex items-center cursor-pointer p-2 border-2 text-gray-900 hover:text-white border-gray-800 hover:bg-gray-900 focus-ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-md text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
-            <span className="select-none text-sm font-medium text-heading">{falseText}</span>
-            <input type="checkbox" value="" onChange={() => setValue((val: boolean) => !val)} className="sr-only peer" checked={value}/>
-            <div className="relative mx-3 w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>
-            <span className="select-none text-sm font-medium text-heading">{trueText}</span>
-        </label>
-    );
-}
-
 export default function TicTacToe() {
     const [singlePlayer, setSinglePlayer] = useState(true);
     const [playAsNaughts, setPlayAsNaughts] = useState(false);
@@ -305,10 +288,10 @@ export default function TicTacToe() {
     return (
         <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
             <div className="flex items-center flex-col pb-5">
-                <PlayMode value={singlePlayer} setValue={setSinglePlayer} falseText="Two Player" trueText="Single Player"/>
+                <Toggle value={singlePlayer} setValue={setSinglePlayer} falseText="Two Player" trueText="Single Player"/>
                 { singlePlayer && <div className="mt-3 flex gap-2">
-                    <PlayMode value={playAsNaughts} setValue={setPlayAsNaughts} falseText="First" trueText="Second"/>
-                    <PlayMode value={botHard} setValue={setBotHard} falseText="Easy" trueText="Hard"/>
+                    <Toggle value={playAsNaughts} setValue={setPlayAsNaughts} falseText="First" trueText="Second"/>
+                    <Toggle value={botHard} setValue={setBotHard} falseText="Easy" trueText="Hard"/>
                 </div>}
             </div>
             <div className="flex flex-col sm:flex-row justify-center sm:gap-10 mb-0 p-0.5">
