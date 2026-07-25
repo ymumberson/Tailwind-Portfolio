@@ -5,9 +5,15 @@ import { Bounds, OrbitControls, useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 
 function Scene() {
-    const { scene }  = useGLTF('/3D_Assets/PopulatedDesk.glb');
+    const { scene }  = useGLTF('/3D_Assets/SwanseaUniversityCup.glb');
     return (
-        <primitive object={scene} scale={1} rotation={[0, 0, 0]} position={[0,0,0]}/>
+        <group>
+            <mesh scale={0} position={[-0.055, 0.03, 0]}>
+                <boxGeometry />
+                <meshStandardMaterial />
+            </mesh>
+            <primitive object={scene} scale={1} rotation={[0, 0, 0]} position={[0,0,0]}/>
+        </group>
     );
 }
 
@@ -22,12 +28,12 @@ const HeroSection = () => {
             </p>
         </div>
         <div className="h-[40svh] w-full mb-10">
-            <Canvas camera={{ fov: 60, position: [0, 5, 12.5]}}>
+            <Canvas camera={{ fov: 35, position: [0, 0.2, 1]}}>
                 <ambientLight intensity={Math.PI / 2} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                 <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
                 <React.Suspense fallback={null}>
-                    <Bounds fit clip margin={1.2}>
+                    <Bounds fit clip margin={1}>
                         <Scene />
                     </Bounds>
                 </React.Suspense>
