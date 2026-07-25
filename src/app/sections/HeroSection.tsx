@@ -1,18 +1,19 @@
 'use client';
-import React from "react";
+import React, { useState } from "react";
 import { IconBrandGithub, IconBrandLinkedin } from "@tabler/icons-react";
 import { Bounds, OrbitControls, useGLTF } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 
 function Scene() {
     const { scene }  = useGLTF('/3D_Assets/SwanseaUniversityCup.glb');
+
     return (
         <group>
             <mesh scale={0} position={[-0.055, 0.03, 0]}>
                 <boxGeometry />
                 <meshStandardMaterial />
             </mesh>
-            <primitive object={scene} scale={1} rotation={[0, 0, 0]} position={[0,0,0]}/>
+            <primitive object={scene} scale={1} rotation={[0,0,0]} position={[0,0,0]}/>
         </group>
     );
 }
@@ -37,7 +38,7 @@ const HeroSection = () => {
                         <Scene />
                     </Bounds>
                 </React.Suspense>
-                <OrbitControls makeDefault/>
+                <OrbitControls makeDefault autoRotate autoRotateSpeed={0.5}/>
             </Canvas>
         </div>
         <div className="flex justify-center gap-2">
