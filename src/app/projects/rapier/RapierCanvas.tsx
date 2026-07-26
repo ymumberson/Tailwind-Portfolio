@@ -1,9 +1,8 @@
 "use client";
-import React from "react";
 import { Box, OrbitControls, Stats, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber"
 import { CylinderCollider, Physics, RigidBody, RapierRigidBody } from "@react-three/rapier";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Mesh } from "three";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
@@ -15,7 +14,7 @@ interface GameObjectProps {
     scale?: number;
 }
 
-const Cup: React.FC<GameObjectProps> = ({id, position, rotation, scale}) => {
+const Cup: React.FC<GameObjectProps> = ({position, rotation, scale}) => {
     const { scene }  = useGLTF('/3D_Assets/SwanseaUniversityCup.glb');
     const cup = useMemo(() => clone(scene), [scene]);
     const cupRef = useRef<RapierRigidBody>(null);
@@ -52,21 +51,20 @@ const Cup: React.FC<GameObjectProps> = ({id, position, rotation, scale}) => {
 const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate}) => {
     const spawnLocation: vec3 = [0,5,0];
     const [cups, setCups] = useState<GameObjectProps[]>([{id: 0, position: spawnLocation, scale: 10}]);
-    const [timer, setTimer] = useState(0);
+    const timer = useRef(0);
 
     useFrame((_, deltaTime) => {
-        let t = timer + deltaTime;
-        if (t >= itemSpawnRate) {
-            t = 0;
+        timer.current += deltaTime;
+        if (timer.current >= itemSpawnRate) {
+            timer.current = 0;
             SpawnCup();
         }
-        setTimer(t);
     });
 
     function SpawnCup() {
         let cupsCopy = cups.slice();
         let id = cups.length > 0 ? cups[cups.length-1].id + 1 : 0;
-        // If we're already at the limit then remove the fist cup and add a new cup to the end
+        // If we're already at the limit then remove the first cup and add a new cup to the end
         if (cupsCopy.length >= maxItems) {
             cupsCopy.splice(0, 1);
         }
@@ -122,7 +120,7 @@ const RapierCanvas: React.FC<RapierCanvasProps> = ({ debugMode = false, maxItems
     return (
         <Canvas shadows camera={{position: [-10,5,10], fov: 30}}>
             {debugMode && <Stats />}
-            <Suspense>
+            <Suspense fallback={null}>
                 <World debugMode={debugMode} maxItems={maxItems} itemSpawnRate={itemSpawnRate}/>
             </Suspense>
         </Canvas>
