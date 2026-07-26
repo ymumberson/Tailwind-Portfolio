@@ -83,7 +83,7 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
     return (
         <Physics gravity={[0, -9.81, 0]} debug={debugMode}>
             <>
-                <ambientLight intensity={0.5} castShadow/>
+                <ambientLight intensity={0.5}/>
                 <directionalLight position={[-10, 10, 0]} intensity={0.75} castShadow color={'#FFF4C9'}/>
                 <OrbitControls />
                 
