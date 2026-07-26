@@ -1,11 +1,10 @@
 "use client";
-import { Box, OrbitControls, Sphere, Stats, useGLTF } from "@react-three/drei";
+import { Box, OrbitControls, Stats, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber"
 import { CylinderCollider, Physics, RigidBody, RapierRigidBody } from "@react-three/rapier";
-import { Suspense, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Mesh } from "three";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
-
 
 type vec3 = [x: number, y: number, z:number];
 interface GameObjectProps {
@@ -24,7 +23,7 @@ const Cup: React.FC<GameObjectProps> = ({id, position, rotation, scale}) => {
         cup.traverse((child) => {
             if (child instanceof Mesh) {
                 child.castShadow = true;
-                // child.receiveShadow = true;
+                // child.receiveShadow = true; // Might want enabled in future but causes issues for now
             }
         });
     }, [cup]);
@@ -36,12 +35,14 @@ const Cup: React.FC<GameObjectProps> = ({id, position, rotation, scale}) => {
     }
 
 
-    const cupHeight = 0.063409;
-    const cupRadius = 0.065 / 2;
+    const cupHeight = 0.063409; // Specific for this cup, took these from Blender.
+    const cupRadius = 0.065 / 2; // Specific for this cup, took these from Blender.
     return (
         <RigidBody ref={cupRef} position={position ?? [0,0,0]} scale={scale ?? 1} rotation={rotation ?? [0,0,0]} colliders={false}>
             <primitive castShadow onClick={onClick} object={cup}/>
+            {/* Main cup collider */}
             <CylinderCollider args={[cupHeight / 2, cupRadius]} position={[0, cupHeight/2, 0]}/>
+            {/* Cup handle collider */}
             <CylinderCollider args={[0.0055, cupRadius - 0.01]} rotation={[Math.PI/2, 0, 0]} position={[cupRadius-0.004,cupHeight/2,0]} scale={[1,1.2,0.01]}/>
         </RigidBody>
     )
@@ -64,13 +65,15 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
     function SpawnCup() {
         let cupsCopy = cups.slice();
         let id = cups.length > 0 ? cups[cups.length-1].id + 1 : 0;
+        // If we're already at the limit then remove the fist cup and add a new cup to the end
         if (cupsCopy.length >= maxItems) {
             cupsCopy.splice(0, 1);
         }
-        cupsCopy.push(
+        cupsCopy.push( // Creates new cup
             {id: id, position: spawnLocation, scale: 10}
         )
         setCups(cupsCopy);
+        // Note that we could probably implement object pooling here but would need to ensure React gets notified.
     }
 
     // If the number of items allowed decreases then we need to clear additional items from the array.
@@ -86,9 +89,6 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
                 <ambientLight intensity={0.5}/>
                 <directionalLight position={[-10, 10, 0]} intensity={0.75} castShadow color={'#FFF4C9'}/>
                 <OrbitControls />
-                
-                {/* Leaving in for testing single cup */}
-                {/* <Cup id={125314} position={[0,0.5,0]} scale={20}/> */}
 
                 {/* List of cubes */}
                 {cups.map((cup) => (
@@ -121,7 +121,6 @@ const RapierCanvas: React.FC<RapierCanvasProps> = ({ debugMode = false, maxItems
     return (
         <Canvas shadows camera={{position: [-10,5,10], fov: 30}}>
             {debugMode && <Stats />}
-            {/* <color attach="background" args={['#F8F0E3']}/> */}
             <Suspense>
                 <World debugMode={debugMode} maxItems={maxItems} itemSpawnRate={itemSpawnRate}/>
             </Suspense>
