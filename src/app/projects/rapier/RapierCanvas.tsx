@@ -54,6 +54,11 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
     const timer = useRef(0);
 
     useFrame((_, deltaTime) => {
+        if (maxItems <= 0 || !Number.isFinite(itemSpawnRate) || itemSpawnRate < 0) {
+             timer.current = 0;
+             return;
+         }
+
         timer.current += deltaTime;
         if (timer.current >= itemSpawnRate) {
             timer.current = 0;
