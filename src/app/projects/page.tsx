@@ -12,6 +12,7 @@ export default function Projects() {
             <Card title="MongoDB Example" href="/projects/mongo-db-example" hrefText="See project" description="A simple example of using MongoDB Atlas." />
             <Card title="React Three Fiber Demo" href="/projects/react-three-fiber" hrefText="See project" description="A short demo of React Three Fiber." />
             <Card title="Wordle" href="/projects/wordle" hrefText="See project" description="Making a simple clone of Wordle." />
+            <Card title="Rapier" href="/projects/rapier" hrefText="See project" description="Testing out the Rapier physics engine." />
         </div>
       </div>
     );
