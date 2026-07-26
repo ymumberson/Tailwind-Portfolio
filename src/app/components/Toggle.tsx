@@ -1,8 +1,11 @@
+"use client";
+import React from "react";
+
 interface ToggleProps {
     value: boolean;
     setValue: React.Dispatch<React.SetStateAction<boolean>>;
     falseText: string,
-    trueText: string
+    trueText: string;
     className?: string;
 }
 

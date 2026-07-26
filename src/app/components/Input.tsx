@@ -1,3 +1,6 @@
+"use client";
+import React from "react";
+
 interface InputProps<T extends string | number> extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange" | "type"> {
     value: T;
     onChange: (value: T) => void;

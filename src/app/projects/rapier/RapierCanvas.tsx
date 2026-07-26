@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { Box, OrbitControls, Stats, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber"
 import { CylinderCollider, Physics, RigidBody, RapierRigidBody } from "@react-three/rapier";
