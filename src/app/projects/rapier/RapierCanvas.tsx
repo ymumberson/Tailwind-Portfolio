@@ -1,10 +1,12 @@
 "use client";
 import { Box, OrbitControls, Stats, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber"
-import { CylinderCollider, Physics, RigidBody, RapierRigidBody } from "@react-three/rapier";
+import { CylinderCollider, Physics, RigidBody, RapierRigidBody, CollisionEnterPayload } from "@react-three/rapier";
 import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Mesh } from "three";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
+
+const RIGIDBODY_CATCHER_NAME = "Collision_Catcher";
 
 type vec3 = [x: number, y: number, z:number];
 interface GameObjectProps {
@@ -12,12 +14,16 @@ interface GameObjectProps {
     position?: vec3;
     rotation?: vec3;
     scale?: number;
+    handleCollision?: (payload: CollisionEnterPayload) => void;
 }
 
-const Cup: React.FC<GameObjectProps> = ({position, rotation, scale}) => {
+const Cup: React.FC<GameObjectProps> = ({position, rotation, scale, handleCollision}) => {
     const { scene }  = useGLTF('/3D_Assets/SwanseaUniversityCup.glb');
     const cup = useMemo(() => clone(scene), [scene]);
     const cupRef = useRef<RapierRigidBody>(null);
+    const clickForce = {x:0, y:2, z:0};
+    const cupHeight = 0.063409; // Specific for this cup, took these from Blender.
+    const cupRadius = 0.065 / 2; // Specific for this cup, took these from Blender.
 
     useEffect(() => {
         cup.traverse((child) => {
@@ -30,15 +36,12 @@ const Cup: React.FC<GameObjectProps> = ({position, rotation, scale}) => {
 
     const onClick = () => {
         if (cupRef.current) {
-            cupRef.current.applyImpulse({x:0, y:2, z:0}, true);
+            cupRef.current.applyImpulse(clickForce, true);
         }
     }
 
-
-    const cupHeight = 0.063409; // Specific for this cup, took these from Blender.
-    const cupRadius = 0.065 / 2; // Specific for this cup, took these from Blender.
     return (
-        <RigidBody ref={cupRef} position={position ?? [0,0,0]} scale={scale ?? 1} rotation={rotation ?? [0,0,0]} colliders={false}>
+        <RigidBody ref={cupRef} position={position ?? [0,0,0]} scale={scale ?? 1} rotation={rotation ?? [0,0,0]} colliders={false} onCollisionEnter={handleCollision}>
             <primitive castShadow onClick={onClick} object={cup}/>
             {/* Main cup collider */}
             <CylinderCollider args={[cupHeight / 2, cupRadius]} position={[0, cupHeight/2, 0]}/>
@@ -50,6 +53,8 @@ const Cup: React.FC<GameObjectProps> = ({position, rotation, scale}) => {
 
 const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate}) => {
     const spawnLocation: vec3 = [0,5,0];
+    const floorWidth = 10;
+    const spawnBounds = floorWidth * 0.8;
     const [cups, setCups] = useState<GameObjectProps[]>([{id: 0, position: spawnLocation, scale: 10}]);
     const timer = useRef(0);
 
@@ -80,6 +85,16 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
         // Note that we could probably implement object pooling here but would need to ensure React gets notified.
     }
 
+    const handleCollision = (payload: CollisionEnterPayload) => {
+        if (!payload) return;
+
+        if (payload.other.rigidBodyObject?.name === RIGIDBODY_CATCHER_NAME) {
+            payload.target.rigidBody?.setTranslation({x: Math.random() * spawnBounds - (spawnBounds/2), y: spawnLocation[1], z: Math.random() * spawnBounds - (spawnBounds/2)}, true);
+            payload.target.rigidBody?.setAngvel({x:0, y:0, z:0}, true);
+            payload.target.rigidBody?.setLinvel({x:0, y:0, z:0}, true);
+        }
+    }
+
     // If the number of items allowed decreases then we need to clear additional items from the array.
     useEffect(() => {
         if (cups.length >= maxItems) {
@@ -101,13 +116,21 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
                         id={cup.id}
                         position={cup.position}
                         scale={cup.scale}
+                        handleCollision={handleCollision}
                     />
                 ))}
 
                 {/* Floor */}
                 <RigidBody type="fixed">
-                    <Box position={[0,0,0]} args={[10,1,10]} receiveShadow>
+                    <Box position={[0,0,0]} args={[floorWidth,1,floorWidth]} receiveShadow>
                         <meshStandardMaterial color="oldlace"/>
+                    </Box>
+                </RigidBody>
+
+                {/* RigidBody Catcher */}
+                <RigidBody type="fixed" name={RIGIDBODY_CATCHER_NAME}>
+                    <Box position={[0,-10,0]} args={[100,1,100]}>
+                        <meshStandardMaterial transparent opacity={0}/>
                     </Box>
                 </RigidBody>
             </>
