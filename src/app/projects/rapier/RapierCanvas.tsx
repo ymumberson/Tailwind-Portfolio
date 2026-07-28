@@ -87,9 +87,12 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
 
     const handleCollision = (payload: CollisionEnterPayload) => {
         if (!payload) return;
-
+        
+        // Respawns the cup on top of the initial floor at a random position (In bounds)
         if (payload.other.rigidBodyObject?.name === RIGIDBODY_CATCHER_NAME) {
+            // Moves cup to random location above floor
             payload.target.rigidBody?.setTranslation({x: Math.random() * spawnBounds - (spawnBounds/2), y: spawnLocation[1], z: Math.random() * spawnBounds - (spawnBounds/2)}, true);
+            // Removed angular and linear velocity to stop cup flying off
             payload.target.rigidBody?.setAngvel({x:0, y:0, z:0}, true);
             payload.target.rigidBody?.setLinvel({x:0, y:0, z:0}, true);
         }
