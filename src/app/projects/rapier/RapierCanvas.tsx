@@ -52,10 +52,11 @@ const Cup: React.FC<GameObjectProps> = ({position, rotation, scale, handleCollis
 }
 
 const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate}) => {
-    const spawnLocation: vec3 = [0,5,0];
+    const defaultSpawnLocation: vec3 = [0,5,0];
     const floorWidth = 10;
+    const cupScale = 10;
     const spawnBounds = floorWidth * 0.8;
-    const [cups, setCups] = useState<GameObjectProps[]>([{id: 0, position: spawnLocation, scale: 10}]);
+    const [cups, setCups] = useState<GameObjectProps[]>([{id: 0, position: defaultSpawnLocation, scale: 10}]);
     const timer = useRef(0);
 
     useFrame((_, deltaTime) => {
@@ -71,16 +72,23 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
         }
     });
 
-    function SpawnCup() {
+    function SpawnCup(numCupsToSpawn: number = 1, spawnLocation: vec3 = defaultSpawnLocation) {
         let cupsCopy = cups.slice();
-        let id = cups.length > 0 ? cups[cups.length-1].id + 1 : 0;
-        // If we're already at the limit then remove the first cup and add a new cup to the end
-        if (cupsCopy.length >= maxItems) {
-            cupsCopy.splice(0, 1);
+
+        for (let i=0; i<numCupsToSpawn; ++i) {
+            // Take ID of last cup and add one to it to generate a unique ID.
+            let id = cups.length > 0 ? cups[cups.length-1].id + 1 : 0;
+            
+            // If we're already at the limit then remove the first cup and add a new cup to the end
+            if (cupsCopy.length >= maxItems) {
+                cupsCopy.splice(0, 1);
+            }
+
+            cupsCopy.push( // Creates new cup
+                {id: id, position: spawnLocation, scale: cupScale}
+            )
         }
-        cupsCopy.push( // Creates new cup
-            {id: id, position: spawnLocation, scale: 10}
-        )
+
         setCups(cupsCopy);
         // Note that we could probably implement object pooling here but would need to ensure React gets notified.
     }
@@ -91,7 +99,7 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
         // Respawns the cup on top of the initial floor at a random position (In bounds)
         if (payload.other.rigidBodyObject?.name === RIGIDBODY_CATCHER_NAME) {
             // Moves cup to random location above floor
-            payload.target.rigidBody?.setTranslation({x: Math.random() * spawnBounds - (spawnBounds/2), y: spawnLocation[1], z: Math.random() * spawnBounds - (spawnBounds/2)}, true);
+            payload.target.rigidBody?.setTranslation({x: Math.random() * spawnBounds - (spawnBounds/2), y: defaultSpawnLocation[1], z: Math.random() * spawnBounds - (spawnBounds/2)}, true);
             // Removed angular and linear velocity to stop cup flying off
             payload.target.rigidBody?.setAngvel({x:0, y:0, z:0}, true);
             payload.target.rigidBody?.setLinvel({x:0, y:0, z:0}, true);
