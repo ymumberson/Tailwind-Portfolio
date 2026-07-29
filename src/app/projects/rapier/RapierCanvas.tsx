@@ -1,5 +1,5 @@
 "use client";
-import { Box, OrbitControls, Stats, useGLTF } from "@react-three/drei";
+import { Box, Instance, Instances, OrbitControls, Stats, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber"
 import { CylinderCollider, Physics, RigidBody, RapierRigidBody, CollisionEnterPayload } from "@react-three/rapier";
 import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
@@ -73,40 +73,43 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
     });
 
     function SpawnCup(numCupsToSpawn: number = 1, spawnLocation: vec3 = defaultSpawnLocation) {
-        let cupsCopy = cups.slice();
+        setCups(oldCups => {
+            const cupsCopy = [...oldCups];
 
-        const maxCupsPerRow = 9;
-        let cupsPerRow = Math.min(maxCupsPerRow, Math.sqrt(numCupsToSpawn));
-        let cupHeight = 1;
-        let cupWidth = 1;
-        const horizontalOffset = -(cupWidth) * cupsPerRow / 2;
-        for (let i=0; i<numCupsToSpawn; ++i) {
-            // Take ID of last cup and add one to it to generate a unique ID.
-            let id = cupsCopy.length > 0 ? cupsCopy[cupsCopy.length-1].id + 1 : 0;
-            
-            // If we're already at the limit then remove the first cup and add a new cup to the end
-            if (cupsCopy.length >= maxItems) {
-                cupsCopy.splice(0, 1);
+            // Values used for calulating the offset of cups when spawning multiple.
+            const maxCupsPerRow = 9;
+            let cupsPerRow = Math.min(maxCupsPerRow, Math.sqrt(numCupsToSpawn));
+            let cupHeight = 1;
+            let cupWidth = 1;
+            const horizontalOffset = -(cupWidth) * cupsPerRow / 2;
+
+            for (let i=0; i<numCupsToSpawn; ++i) {
+                // Take ID of last cup and add one to it to generate a unique ID.
+                let id = cupsCopy.length > 0 ? cupsCopy[cupsCopy.length-1].id + 1 : 0;
+                
+                // If we're already at the limit then remove the first cup and add a new cup to the end
+                if (cupsCopy.length >= maxItems) {
+                    cupsCopy.splice(0, 1);
+                }
+
+                let cupSpawnLocation: vec3 = spawnLocation;
+
+                if (numCupsToSpawn > 1) {
+                    // Spawn cups in a cube to ensure they don't overlap each other
+                    let y = Math.floor(i / (cupsPerRow*cupsPerRow));
+                    let remainder = i - (cupsPerRow * cupsPerRow * y);
+                    let z = Math.floor(remainder / cupsPerRow);
+                    let x = remainder % cupsPerRow;
+                    cupSpawnLocation = [spawnLocation[0] + horizontalOffset + (cupWidth)*x, spawnLocation[1] + (cupHeight)*y, spawnLocation[2] + horizontalOffset + (cupWidth)*z]
+                }
+
+                cupsCopy.push( // Creates new cup
+                    {id: id, position: cupSpawnLocation, scale: cupScale}
+                )
             }
 
-            let cupSpawnLocation: vec3 = spawnLocation;
-
-            if (numCupsToSpawn > 1) {
-                // Spawn cups in a cube to ensure they don't overlap each other
-                let y = Math.floor(i / (cupsPerRow*cupsPerRow));
-                let remainder = i - (cupsPerRow * cupsPerRow * y);
-                let z = Math.floor(remainder / cupsPerRow);
-                let x = remainder % cupsPerRow;
-                cupSpawnLocation = [spawnLocation[0] + horizontalOffset + (cupWidth)*x, spawnLocation[1] + (cupHeight)*y, spawnLocation[2] + horizontalOffset + (cupWidth)*z]
-            }
-
-            cupsCopy.push( // Creates new cup
-                {id: id, position: cupSpawnLocation, scale: cupScale}
-            )
-        }
-
-        setCups(cupsCopy);
-        // Note that we could probably implement object pooling here but would need to ensure React gets notified.
+            return cupsCopy;
+        });
     }
 
     const handleCollision = (payload: CollisionEnterPayload) => {
