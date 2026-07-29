@@ -51,7 +51,7 @@ const Cup: React.FC<GameObjectProps> = ({position, rotation, scale, handleCollis
     )
 }
 
-const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate}) => {
+const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate, itemSpawnRequest, setItemSpawnRequest}) => {
     const defaultSpawnLocation: vec3 = [0,5,0];
     const floorWidth = 10;
     const cupScale = 10;
@@ -75,17 +75,33 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
     function SpawnCup(numCupsToSpawn: number = 1, spawnLocation: vec3 = defaultSpawnLocation) {
         let cupsCopy = cups.slice();
 
+        const maxCupsPerRow = 9;
+        let cupsPerRow = Math.min(maxCupsPerRow, Math.sqrt(numCupsToSpawn));
+        let cupHeight = 1;
+        let cupWidth = 1;
+        const horizontalOffset = -(cupWidth) * cupsPerRow / 2;
         for (let i=0; i<numCupsToSpawn; ++i) {
             // Take ID of last cup and add one to it to generate a unique ID.
-            let id = cups.length > 0 ? cups[cups.length-1].id + 1 : 0;
+            let id = cupsCopy.length > 0 ? cupsCopy[cupsCopy.length-1].id + 1 : 0;
             
             // If we're already at the limit then remove the first cup and add a new cup to the end
             if (cupsCopy.length >= maxItems) {
                 cupsCopy.splice(0, 1);
             }
 
+            let cupSpawnLocation: vec3 = spawnLocation;
+
+            if (numCupsToSpawn > 1) {
+                // Spawn cups in a cube to ensure they don't overlap each other
+                let y = Math.floor(i / (cupsPerRow*cupsPerRow));
+                let remainder = i - (cupsPerRow * cupsPerRow * y);
+                let z = Math.floor(remainder / cupsPerRow);
+                let x = remainder % cupsPerRow;
+                cupSpawnLocation = [spawnLocation[0] + horizontalOffset + (cupWidth)*x, spawnLocation[1] + (cupHeight)*y, spawnLocation[2] + horizontalOffset + (cupWidth)*z]
+            }
+
             cupsCopy.push( // Creates new cup
-                {id: id, position: spawnLocation, scale: cupScale}
+                {id: id, position: cupSpawnLocation, scale: cupScale}
             )
         }
 
@@ -106,12 +122,18 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
         }
     }
 
-    // If the number of items allowed decreases then we need to clear additional items from the array.
+    
     useEffect(() => {
+        // If the number of items allowed decreases then we need to clear additional items from the array.
         if (cups.length >= maxItems) {
             setCups(cups.slice(cups.length - maxItems, cups.length));
         }
-    }, [maxItems])
+
+        if (itemSpawnRequest > 0) {
+            SpawnCup(itemSpawnRequest);
+            setItemSpawnRequest(0);
+        }
+    }, [maxItems, itemSpawnRequest])
 
     return (
         <Physics gravity={[0, -9.81, 0]} debug={debugMode}>
@@ -153,14 +175,16 @@ interface RapierCanvasProps {
     debugMode: boolean;
     maxItems: number;
     itemSpawnRate: number;
+    itemSpawnRequest: number;
+    setItemSpawnRequest: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const RapierCanvas: React.FC<RapierCanvasProps> = ({ debugMode = false, maxItems = 20, itemSpawnRate = 1 }) => {
+const RapierCanvas: React.FC<RapierCanvasProps> = ({ debugMode = false, maxItems = 20, itemSpawnRate = 1, itemSpawnRequest = 0, setItemSpawnRequest }) => {
     return (
         <Canvas shadows camera={{position: [-10,5,10], fov: 30}}>
             {debugMode && <Stats />}
             <Suspense fallback={null}>
-                <World debugMode={debugMode} maxItems={maxItems} itemSpawnRate={itemSpawnRate}/>
+                <World debugMode={debugMode} maxItems={maxItems} itemSpawnRate={itemSpawnRate} itemSpawnRequest={itemSpawnRequest} setItemSpawnRequest={setItemSpawnRequest}/>
             </Suspense>
         </Canvas>
     )
