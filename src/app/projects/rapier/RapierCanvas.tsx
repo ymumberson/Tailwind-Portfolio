@@ -77,17 +77,21 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
         });
     }
     
+    // Handles removing extra cups if the maximum number of cups has changed
     useEffect(() => {
         // If the number of items allowed decreases then we need to clear additional items from the array.
         if (cups.length > maxItems) {
             setCups(cups.slice(cups.length - maxItems, cups.length));
         }
+    }, [maxItems, cups])
+    
+    // Handles spawning a new cup if a request has been made
+    useEffect(() => {
+        if (itemSpawnRequest <= 0) return;
 
-        if (itemSpawnRequest > 0) {
-            SpawnCup(itemSpawnRequest);
-            setItemSpawnRequest(0);
-        }
-    }, [maxItems, itemSpawnRequest, cups])
+        SpawnCup(itemSpawnRequest);
+        setItemSpawnRequest(0);
+    }, [itemSpawnRequest])
 
     return (
         <Physics gravity={[0, -9.81, 0]} debug={debugMode}>
