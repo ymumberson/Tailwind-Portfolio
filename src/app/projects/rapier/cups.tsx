@@ -1,9 +1,18 @@
 import { Instance, Instances, useGLTF } from "@react-three/drei";
-import { GameObjectProps, RIGIDBODY_CATCHER_NAME, vec3 } from "./RapierCanvas";
 import React, { useRef } from "react";
 import { CollisionEnterPayload, CylinderCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { Mesh } from "three";
 
+export const RIGIDBODY_CATCHER_NAME = "Collision_Catcher";
+
+export type vec3 = [x: number, y: number, z:number];
+export interface GameObjectProps {
+    id: number;
+    position?: vec3;
+    rotation?: vec3;
+    scale?: number;
+    handleCollision?: (payload: CollisionEnterPayload) => void;
+}
 
 const Cup: React.FC<GameObjectProps> = ({position, rotation, scale, handleCollision}) => {
     const clickForce = {x:0, y:2, z:0};

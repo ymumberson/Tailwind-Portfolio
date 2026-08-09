@@ -3,18 +3,7 @@ import { Box, OrbitControls, Stats } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber"
 import { Physics, RigidBody, CollisionEnterPayload } from "@react-three/rapier";
 import React, { Suspense, useEffect, useRef, useState } from "react";
-import { Cups } from "./cups";
-
-export const RIGIDBODY_CATCHER_NAME = "Collision_Catcher";
-
-export type vec3 = [x: number, y: number, z:number];
-export interface GameObjectProps {
-    id: number;
-    position?: vec3;
-    rotation?: vec3;
-    scale?: number;
-    handleCollision?: (payload: CollisionEnterPayload) => void;
-}
+import { Cups, GameObjectProps, RIGIDBODY_CATCHER_NAME, vec3 } from "./cups";
 
 const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate, itemSpawnRequest, setItemSpawnRequest}) => {
     const defaultSpawnLocation: vec3 = [0,5,0];
@@ -85,7 +74,7 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
         if (cups.length > maxItems) {
             setCups(cups.slice(cups.length - maxItems, cups.length));
         }
-    }, [maxItems, cups])
+    }, [maxItems])
     
     // Handles spawning a new cup if a request has been made
     useEffect(() => {
