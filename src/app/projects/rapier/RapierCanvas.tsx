@@ -1,15 +1,14 @@
 "use client";
-import { Box, Instance, Instances, OrbitControls, Stats, useGLTF } from "@react-three/drei";
+import { Box, OrbitControls, Stats } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber"
-import { CylinderCollider, Physics, RigidBody, RapierRigidBody, CollisionEnterPayload } from "@react-three/rapier";
+import { Physics, RigidBody, CollisionEnterPayload } from "@react-three/rapier";
 import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { Mesh } from "three";
-import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
+import { Cups } from "./cups";
 
-const RIGIDBODY_CATCHER_NAME = "Collision_Catcher";
+export const RIGIDBODY_CATCHER_NAME = "Collision_Catcher";
 
-type vec3 = [x: number, y: number, z:number];
-interface GameObjectProps {
+export type vec3 = [x: number, y: number, z:number];
+export interface GameObjectProps {
     id: number;
     position?: vec3;
     rotation?: vec3;
@@ -17,44 +16,7 @@ interface GameObjectProps {
     handleCollision?: (payload: CollisionEnterPayload) => void;
 }
 
-const Cup: React.FC<GameObjectProps> = ({position, rotation, scale, handleCollision}) => {
-    const { scene }  = useGLTF('/3D_Assets/SwanseaUniversityCup.glb');
-    const cup = useMemo(() => clone(scene), [scene]);
-    const cupRef = useRef<RapierRigidBody>(null);
-    const clickForce = {x:0, y:2, z:0};
-    const cupHeight = 0.063409; // Specific for this cup, took these from Blender.
-    const cupRadius = 0.065 / 2; // Specific for this cup, took these from Blender.
-
-    // useEffect(() => {
-    //     cup.traverse((child) => {
-    //         if (child instanceof Mesh) {
-    //             child.castShadow = true;
-    //             // child.receiveShadow = true; // Might want enabled in future but causes issues for now
-    //         }
-    //     });
-    // }, [cup]);
-
-    const onClick = () => {
-        if (cupRef.current) {
-            cupRef.current.applyImpulse(clickForce, true);
-        }
-    }
-
-    return (
-        <RigidBody ref={cupRef} position={position ?? [0,0,0]} scale={(scale ?? 1)} rotation={rotation ?? [0,0,0]} colliders={false} onCollisionEnter={handleCollision}>
-            {/* <primitive castShadow onClick={onClick} object={cup}/> */}
-            {/* Cup mesh */}
-            <Instance castShadow onClick={onClick} scale={0.032}/>
-            {/* Main cup collider */}
-            <CylinderCollider args={[cupHeight / 2, cupRadius]} position={[0, cupHeight/2, 0]}/>
-            {/* Cup handle collider */}
-            <CylinderCollider args={[0.0055, cupRadius - 0.01]} rotation={[Math.PI/2, 0, 0]} position={[cupRadius-0.004,cupHeight/2,0]} scale={[1,1.2,0.01]}/>
-        </RigidBody>
-    )
-}
-
 const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate, itemSpawnRequest, setItemSpawnRequest}) => {
-    const { scene, nodes, materials }  = useGLTF('/3D_Assets/SwanseaUniversityCup.glb');
     const defaultSpawnLocation: vec3 = [0,5,0];
     const floorWidth = 10;
     const cupScale = 10;
@@ -114,20 +76,6 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
             return cupsCopy;
         });
     }
-
-    const handleCollision = (payload: CollisionEnterPayload) => {
-        if (!payload) return;
-        
-        // Respawns the cup on top of the initial floor at a random position (In bounds)
-        if (payload.other.rigidBodyObject?.name === RIGIDBODY_CATCHER_NAME) {
-            // Moves cup to random location above floor
-            payload.target.rigidBody?.setTranslation({x: Math.random() * spawnBounds - (spawnBounds/2), y: defaultSpawnLocation[1], z: Math.random() * spawnBounds - (spawnBounds/2)}, true);
-            // Removed angular and linear velocity to stop cup flying off
-            payload.target.rigidBody?.setAngvel({x:0, y:0, z:0}, true);
-            payload.target.rigidBody?.setLinvel({x:0, y:0, z:0}, true);
-        }
-    }
-
     
     useEffect(() => {
         // If the number of items allowed decreases then we need to clear additional items from the array.
@@ -148,18 +96,8 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
                 <directionalLight position={[-10, 10, 0]} intensity={0.75} castShadow color={'#FFF4C9'}/>
                 <OrbitControls />
 
-                {/* List of cups, with meshes instanced */}
-                <Instances key={maxItems} limit={maxItems} range={maxItems} geometry={(nodes.PROP_CUP_03 as Mesh).geometry} material={materials.MAT_CUP_03}>
-                    {cups.map((cup) => (
-                        <Cup
-                            key={cup.id}
-                            id={cup.id}
-                            position={cup.position}
-                            scale={cup.scale}
-                            handleCollision={handleCollision}
-                        />
-                    ))}
-                </Instances>
+                {/* Cups */}
+                <Cups cups={cups} maxItems={maxItems} spawnBounds={spawnBounds} defaultSpawnLocation={defaultSpawnLocation} />
 
                 {/* Floor */}
                 <RigidBody type="fixed">
