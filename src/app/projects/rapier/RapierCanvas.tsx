@@ -38,12 +38,14 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
     });
 
     function SpawnCup(numCupsToSpawn: number = 1, spawnLocation: vec3 = defaultSpawnLocation) {
+        if (maxItems <= 0 || numCupsToSpawn <= 0) return;
+        
         setCups(oldCups => {
             const cupsCopy = [...oldCups];
 
             // Values used for calulating the offset of cups when spawning multiple.
             const maxCupsPerRow = 9;
-            let cupsPerRow = Math.min(maxCupsPerRow, Math.sqrt(numCupsToSpawn));
+            let cupsPerRow = Math.min(maxCupsPerRow, Math.floor(Math.sqrt(numCupsToSpawn)));
             let cupHeight = 1;
             let cupWidth = 1;
             const horizontalOffset = -(cupWidth) * cupsPerRow / 2;
