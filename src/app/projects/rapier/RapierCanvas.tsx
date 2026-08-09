@@ -25,14 +25,14 @@ const Cup: React.FC<GameObjectProps> = ({position, rotation, scale, handleCollis
     const cupHeight = 0.063409; // Specific for this cup, took these from Blender.
     const cupRadius = 0.065 / 2; // Specific for this cup, took these from Blender.
 
-    useEffect(() => {
-        cup.traverse((child) => {
-            if (child instanceof Mesh) {
-                child.castShadow = true;
-                // child.receiveShadow = true; // Might want enabled in future but causes issues for now
-            }
-        });
-    }, [cup]);
+    // useEffect(() => {
+    //     cup.traverse((child) => {
+    //         if (child instanceof Mesh) {
+    //             child.castShadow = true;
+    //             // child.receiveShadow = true; // Might want enabled in future but causes issues for now
+    //         }
+    //     });
+    // }, [cup]);
 
     const onClick = () => {
         if (cupRef.current) {
@@ -41,8 +41,10 @@ const Cup: React.FC<GameObjectProps> = ({position, rotation, scale, handleCollis
     }
 
     return (
-        <RigidBody ref={cupRef} position={position ?? [0,0,0]} scale={scale ?? 1} rotation={rotation ?? [0,0,0]} colliders={false} onCollisionEnter={handleCollision}>
-            <primitive castShadow onClick={onClick} object={cup}/>
+        <RigidBody ref={cupRef} position={position ?? [0,0,0]} scale={(scale ?? 1)} rotation={rotation ?? [0,0,0]} colliders={false} onCollisionEnter={handleCollision}>
+            {/* <primitive castShadow onClick={onClick} object={cup}/> */}
+            {/* Cup mesh */}
+            <Instance castShadow onClick={onClick} scale={0.032}/>
             {/* Main cup collider */}
             <CylinderCollider args={[cupHeight / 2, cupRadius]} position={[0, cupHeight/2, 0]}/>
             {/* Cup handle collider */}
@@ -52,6 +54,7 @@ const Cup: React.FC<GameObjectProps> = ({position, rotation, scale, handleCollis
 }
 
 const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate, itemSpawnRequest, setItemSpawnRequest}) => {
+    const { scene, nodes, materials }  = useGLTF('/3D_Assets/SwanseaUniversityCup.glb');
     const defaultSpawnLocation: vec3 = [0,5,0];
     const floorWidth = 10;
     const cupScale = 10;
@@ -128,7 +131,7 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
     
     useEffect(() => {
         // If the number of items allowed decreases then we need to clear additional items from the array.
-        if (cups.length >= maxItems) {
+        if (cups.length > maxItems) {
             setCups(cups.slice(cups.length - maxItems, cups.length));
         }
 
@@ -136,7 +139,7 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
             SpawnCup(itemSpawnRequest);
             setItemSpawnRequest(0);
         }
-    }, [maxItems, itemSpawnRequest])
+    }, [maxItems, itemSpawnRequest, cups])
 
     return (
         <Physics gravity={[0, -9.81, 0]} debug={debugMode}>
@@ -145,16 +148,18 @@ const World: React.FC<RapierCanvasProps> = ({ debugMode, maxItems, itemSpawnRate
                 <directionalLight position={[-10, 10, 0]} intensity={0.75} castShadow color={'#FFF4C9'}/>
                 <OrbitControls />
 
-                {/* List of cubes */}
-                {cups.map((cup) => (
-                    <Cup
-                        key={cup.id}
-                        id={cup.id}
-                        position={cup.position}
-                        scale={cup.scale}
-                        handleCollision={handleCollision}
-                    />
-                ))}
+                {/* List of cups, with meshes instanced */}
+                <Instances key={maxItems} limit={maxItems} range={maxItems} geometry={(nodes.PROP_CUP_03 as Mesh).geometry} material={materials.MAT_CUP_03}>
+                    {cups.map((cup) => (
+                        <Cup
+                            key={cup.id}
+                            id={cup.id}
+                            position={cup.position}
+                            scale={cup.scale}
+                            handleCollision={handleCollision}
+                        />
+                    ))}
+                </Instances>
 
                 {/* Floor */}
                 <RigidBody type="fixed">
