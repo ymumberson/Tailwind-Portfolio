@@ -17,7 +17,7 @@ interface ControlsProps {
     setItemSpawnRequest: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Controls: React.FC<ControlsProps> = ({ debugMode, setDebugMode, maxItems, setMaxItems, itemSpawnRate, setItemSpawnRate, itemSpawnRequest, setItemSpawnRequest }) => {
+const Controls: React.FC<ControlsProps> = ({ debugMode, setDebugMode, maxItems, setMaxItems, itemSpawnRate, setItemSpawnRate, setItemSpawnRequest }) => {
     return (
         <div className="flex w-full flex-col md:flex-row justify-center pb-8 gap-1">
             <div className="w-full md:w-fit flex gap-1">

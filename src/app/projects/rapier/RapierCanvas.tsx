@@ -2,7 +2,7 @@
 import { Box, OrbitControls, Stats } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber"
 import { Physics, RigidBody, CollisionEnterPayload } from "@react-three/rapier";
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { Cups } from "./cups";
 
 export const RIGIDBODY_CATCHER_NAME = "Collision_Catcher";

@@ -1,6 +1,6 @@
 import { Instance, Instances, useGLTF } from "@react-three/drei";
 import { GameObjectProps, RIGIDBODY_CATCHER_NAME, vec3 } from "./RapierCanvas";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { CollisionEnterPayload, CylinderCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { Mesh } from "three";
 
