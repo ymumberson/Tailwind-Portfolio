@@ -44,7 +44,6 @@
     "typescript": "^5"
   },
   "allowScripts": {
-    "@tensorflow/tfjs-node@4.22.0": true,
     "core-js@3.29.1": true,
     "unrs-resolver@1.11.1": true
   }

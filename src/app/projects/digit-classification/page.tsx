@@ -29,10 +29,10 @@ interface DigitCanvasProps {
     width: number;
     scale: number;
     canvasRef: React.RefObject<HTMLCanvasElement | null>;
-    setUpdatePrediction: React.Dispatch<React.SetStateAction<boolean>>;
+    makePrediction: () => void;
 }
 
-const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setUpdatePrediction }) => {
+const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, makePrediction }) => {
     const [strokes, setStrokes] = useState<Stroke[]>([]);
     const [lines, setLines] = useState<Line[]>([]);
     const [mouseDown, setMouseDown] = useState(false);
@@ -99,7 +99,7 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setU
         setBegin({x: 0, y: 0});
         setStrokes([]);
         setLines([]);
-        setUpdatePrediction(true);
+        makePrediction();
     }
 
     const Draw = () => {
@@ -127,11 +127,11 @@ const DigitCanvas: React.FC<DigitCanvasProps> = ({ width, scale, canvasRef, setU
         context?.moveTo(line.start.x, line.start.y);
         context?.lineTo(line.end.x, line.end.y);
         context?.stroke();
-        setUpdatePrediction(true);
     }
     
     useEffect(() => {
         Draw();
+        makePrediction();
     }, [lines]);
 
     React.useEffect(() => {
@@ -195,11 +195,27 @@ const PredictionClass: React.FC<PredictionClassProps> = ({ classID, predictionVa
 
 interface PredictionCanvasProps {
     canvasRef: React.RefObject<HTMLCanvasElement | null>;
-    updatePrediction: boolean;
-    setUpdatePrediction: React.Dispatch<React.SetStateAction<boolean>>;
+    predictions: PredictionClassProps[];
 }
 
-const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePrediction, setUpdatePrediction }) => {
+const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, predictions }) => {
+    return (
+        <div className="flex flex-col justify-top mt-5 w-auto md:mt-0 md:ml-10">
+            <div className="flex flex-col">
+                {
+                    predictions.map((prediction, index) => (
+                        <PredictionClass key={index} classID={prediction.classID} predictionValue={prediction.predictionValue} highestPrediction={prediction.highestPrediction}/>
+                    ))
+                }
+            </div>
+        </div>
+    );
+}
+
+const DigitClassification = () => {
+    const canvasRef = useRef<HTMLCanvasElement | null>(null)
+    // const [updatePrediction, setUpdatePrediction] = useState(false);
+
     const [predictions, setPredictions] = useState<PredictionClassProps[]>(Array.from({ length: 10}, (_, index) => ({ classID: index.toString(), predictionValue: 0, highestPrediction: false })));
     const [model, setModel] = useState<tf.LayersModel>();
 
@@ -208,18 +224,12 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePr
             try {
                 const loadedModel = await tf.loadLayersModel("/Digit_NN_tfjs/model.json");
                 setModel(loadedModel);
-                setUpdatePrediction(true);
                 MakePrediction();
             } catch (error) {
                 console.error("Error loading model:", error)
             }
         })();
-    });
-
-    useEffect(() => {
-        if (updatePrediction)
-            MakePrediction();
-    }, [updatePrediction]);
+    }, []);
 
     const MakePrediction = async () => {
         if (model && canvasRef) {
@@ -277,33 +287,14 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePr
             setPredictions(newPredictions);
 
             inputTensor.dispose();
-            predictionTensor.dispose();
-
-            setUpdatePrediction(false);
+            (Array.isArray(output) ? output : [output]).forEach((t) => t.dispose());
         }
     }
 
     return (
-        <div className="flex flex-col justify-top mt-5 w-auto md:mt-0 md:ml-10">
-            <div className="flex flex-col">
-                {
-                    predictions.map((prediction, index) => (
-                        <PredictionClass key={index} classID={prediction.classID} predictionValue={prediction.predictionValue} highestPrediction={prediction.highestPrediction}/>
-                    ))
-                }
-            </div>
-        </div>
-    );
-}
-
-const DigitClassification = () => {
-    const canvasRef = useRef<HTMLCanvasElement | null>(null)
-    const [updatePrediction, setUpdatePrediction] = useState(false);
-
-    return (
         <Project className="flex flex-col md:flex-row" name="Digit Classification" description="Attempting to classify hand-drawn digits by using a Neural Network trained on the MNIST hand-drawn digits dataset. Digits can be from 0 to 9, however, the model will always predict one of these values. This is the reason that even the empty canvas predicts to a digit.">
-            <DigitCanvas width={28} scale={11} canvasRef={canvasRef} setUpdatePrediction={setUpdatePrediction}/>
-            <PredictionCanvas canvasRef={canvasRef} updatePrediction={updatePrediction} setUpdatePrediction={setUpdatePrediction}/>
+            <DigitCanvas width={28} scale={11} canvasRef={canvasRef} makePrediction={MakePrediction}/>
+            <PredictionCanvas canvasRef={canvasRef} predictions={predictions}/>
         </Project>
     );
 }
