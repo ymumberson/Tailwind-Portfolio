@@ -188,7 +188,7 @@ const PredictionClass: React.FC<PredictionClassProps> = ({ classID, predictionVa
     return (
         <div className={`border flex flex-row gap-2 bg-gray-100 text-gray-800 text-sm px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-300 ${highestPrediction ? "font-bold border-gray-500 dark:border-white" : "font-medium dark:border-gray-500"}`}>
             <span className="">{classID}</span>
-            <span>{predictionValue}</span>
+            <span>{Math.round(predictionValue*100)}%</span>
         </div>
     )
 }
@@ -200,7 +200,7 @@ interface PredictionCanvasProps {
 }
 
 const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePrediction, setUpdatePrediction }) => {
-    const [predictions, setPredictions] = useState<PredictionClassProps[]>(Array.from({ length: 9}, (_, index) => ({ classID: index.toString(), predictionValue: 0, highestPrediction: false })));
+    const [predictions, setPredictions] = useState<PredictionClassProps[]>(Array.from({ length: 10}, (_, index) => ({ classID: index.toString(), predictionValue: 0, highestPrediction: false })));
     const [model, setModel] = useState<tf.LayersModel>();
 
     useEffect(() => {
@@ -214,7 +214,7 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePr
                 console.error("Error loading model:", error)
             }
         })();
-    }, []);
+    });
 
     useEffect(() => {
         if (updatePrediction)
@@ -252,24 +252,32 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, updatePr
 
             const inputTensor = tf.tensor(pixels, [1, 28, 28, 1]);
 
-            const prediction = await model.predict(inputTensor);
+            const output = model.predict(inputTensor);
 
-            const predictionString = prediction.toString();
-            const predictionValues = predictionString.slice(14, predictionString.length-3).split(',');
-
+            const predictionTensor = Array.isArray(output) ? output[0] : output;
+            const predictionValues = await predictionTensor.data();
+            
             let newPredictions: PredictionClassProps[] = []
             let maxPredictionIndex = 0;
-            for (let i=0; i<predictionValues.length; ++i) {
-                let y: number = +predictionValues[i];
-                let predictionClassProp: PredictionClassProps = {classID: i.toString(), predictionValue: y, highestPrediction: false};
-                newPredictions.push(predictionClassProp);
 
-                let maxPrediction: number = +predictionValues[maxPredictionIndex];
-                if (y > maxPrediction)
+            for (let i=0; i<predictionValues.length; ++i) {
+                const y: number = +predictionValues[i];
+
+                newPredictions.push({
+                    classID: i.toString(),
+                    predictionValue: y,
+                    highestPrediction: false,
+                })
+
+                if (y > predictionValues[maxPredictionIndex]) {
                     maxPredictionIndex = i;
+                }
             }
             newPredictions[maxPredictionIndex].highestPrediction = true;
             setPredictions(newPredictions);
+
+            inputTensor.dispose();
+            predictionTensor.dispose();
 
             setUpdatePrediction(false);
         }
