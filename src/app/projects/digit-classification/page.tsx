@@ -214,8 +214,6 @@ const PredictionCanvas: React.FC<PredictionCanvasProps> = ({ canvasRef, predicti
 
 const DigitClassification = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
-    // const [updatePrediction, setUpdatePrediction] = useState(false);
-
     const [predictions, setPredictions] = useState<PredictionClassProps[]>(Array.from({ length: 10}, (_, index) => ({ classID: index.toString(), predictionValue: 0, highestPrediction: false })));
     const [model, setModel] = useState<tf.LayersModel>();
 
