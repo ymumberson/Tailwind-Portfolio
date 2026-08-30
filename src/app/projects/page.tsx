@@ -1,8 +1,11 @@
-import React from "react";
 import Card from "../components/Card";
 import { IconBrandGithub } from "@tabler/icons-react";
+import { getPinnedProjects } from "@/lib/github";
 
-export default function Projects() {
+
+export default async function Projects() {
+    const projects = await getPinnedProjects();
+
     return (
       <div className="sm:px-16 xl:px-48">
         <h1 className="text-center mb-4 text-3xl font-extrabold tracking-light leading-none text-gray-900 md:text-4xl lg:text-5xl dark:text-white">
@@ -18,13 +21,11 @@ export default function Projects() {
             </a>
         </div>
         <div className="flex flex-col items-center gap-2">
-            <Card title="Rapier" href="/playground/rapier" hrefText="See project" description="Testing out the Rapier physics engine." />
-            <Card title="Wordle" href="/playground/wordle" hrefText="See project" description="Making a simple clone of Wordle." />
-            <Card title="React Three Fiber Demo" href="/playground/react-three-fiber" hrefText="See project" description="A short demo of React Three Fiber." />
-            <Card title="MongoDB Example" href="/playground/mongo-db-example" hrefText="See project" description="A simple example of using MongoDB Atlas." />
-            <Card title="Weather" href="/playground/weather" hrefText="See project" description="Fetching current weather data from https://openweathermap.org/ and displaying it." />
-            <Card title="Digit Classification" href="/playground/digit-classification" hrefText="See project" description="Attempting to classify hand-drawn digits by using a Neural Network trained on the MNIST hand-drawn digits dataset. Digits can be from 0 to 9, however, the model will always predict one of these values. This is the reason that even the empty canvas predicts to a digit." />
-            <Card title="Tic-Tac-Toe" href="/playground/tic-tac-toe" hrefText="See project" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe" />
+            {
+                projects.map((project: any) => (
+                    <Card key={project.url} title={project.name} href={`/projects/${project.name}`} hrefText="See project" description={project.description}/>
+                ))
+            }
         </div>
       </div>
     );
