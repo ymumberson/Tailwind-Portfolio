@@ -17,14 +17,6 @@ export default async function ProjectPage({
     }
 
     return (
-        // <article>
-        // <h1>{project.name}</h1>
-
-        // {project.description && <p>{project.description}</p>}
-
-        // <Markdown>{project.readme}</Markdown>
-        // </article>
-
         <Project name={project.name} description={project.description ?? ""}>
             <div className="flex flex-col justify-center">
                 <Markdown>{project.readme}</Markdown>
