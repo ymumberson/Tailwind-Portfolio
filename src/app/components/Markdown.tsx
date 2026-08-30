@@ -14,6 +14,7 @@ export default function Markdown({
         <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}
+            skipHtml
             components={{
                 img({ src, alt }) {
                 if (typeof src !== "string" || !src) {

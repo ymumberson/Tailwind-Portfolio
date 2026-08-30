@@ -14,16 +14,6 @@ type Repository = {
   topics: string[];
 };
 
-type PinnedProjectsResponse = {
-  data: {
-    user: {
-      pinnedItems: {
-        nodes: Repository[];
-      };
-    };
-  };
-};
-
 const pinnedProjectsQuery = `
   query PinnedProjects($username: String!) {
     user(login: $username) {
@@ -58,6 +48,12 @@ const pinnedProjectsQuery = `
 `;
 
 export async function getPinnedProjects(): Promise<Repository[]> {
+    if (!process.env.GITHUB_READ_API_KEY || !process.env.GITHUB_USERNAME) {
+     throw new Error(
+       "Missing GitHub env vars: GITHUB_READ_API_KEY and/or GITHUB_USERNAME"
+     );
+   }
+
   const response = await fetch(GITHUB_API, {
     method: "POST",
     headers: {

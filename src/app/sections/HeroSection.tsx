@@ -22,7 +22,7 @@ const HeroSection = () => {
             </a>
             <a href="https://github.com/ymumberson" className="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#24292F]/60 mb-2 gap-1">
                 <IconBrandGithub size={20}/>
-                Github
+                GitHub
             </a>
         </div>
     </section>

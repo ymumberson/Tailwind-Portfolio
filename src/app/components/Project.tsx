@@ -18,7 +18,7 @@ const Project: React.FC<ProjectProps> = ({ name, description, topics, gitHubUrl,
             <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">{description}</p> 
             {gitHubUrl && 
                 <div className="w-full flex items-center justify-center">
-                    <a href="https://github.com/ymumberson" className="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#24292F]/60 gap-1">
+                    <a href={gitHubUrl} className="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#24292F]/60 gap-1">
                         <IconBrandGithub size={20}/>
                         {name}
                     </a>

@@ -12,18 +12,18 @@ export default async function Projects() {
           Projects
         </h1>
         <p className="mx-auto text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 max-w-lg">
-          These are larger more complete projects, but are mostly non-interactive. This list is a subset fetched from my GitHub, but you can click the button below to see all of my projects.
+          These are larger projects than the playground projects, but are mostly non-interactive. This list is a subset fetched from my GitHub, but you can click the button below to see all of my projects.
         </p>
         <div className="w-full flex justify-center my-4">
             <a href="https://github.com/ymumberson" className="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#24292F]/60 mb-2 gap-1">
                 <IconBrandGithub size={20}/>
-                Github
+                GitHub
             </a>
         </div>
         <div className="flex flex-col items-center gap-2">
             {
                 projects.map((project: any) => (
-                    <Card key={project.url} title={project.name} href={`/projects/${project.name}`} hrefText="See project" description={project.description} topics={project.topics}/>
+                    <Card key={project.url} title={project.name} href={`/projects/${project.name}`} hrefText="See project" description={project.description ?? ""} topics={project.topics}/>
                 ))
             }
         </div>

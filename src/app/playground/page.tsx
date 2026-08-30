@@ -7,7 +7,7 @@ export default function Playground() {
           Playground
         </h1>
         <p className="mx-auto mb-8 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 max-w-lg">
-          These are small coding experiements to learn something new, with a focus on being interactive.
+          These are small coding experiments to learn something new, with a focus on being interactive.
         </p>
         <div className="flex flex-col items-center gap-2">
             <Card title="Rapier" href="/playground/rapier" hrefText="See project" description="Testing out the Rapier physics engine." topics={['Typescript', 'React', 'Rapier', 'Physics', 'ReactThreeFiber']}/>
