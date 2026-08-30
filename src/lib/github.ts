@@ -1,5 +1,3 @@
-// src/lib/github.ts
-
 const GITHUB_API = "https://api.github.com/graphql";
 
 type Repository = {
@@ -13,6 +11,7 @@ type Repository = {
   owner: {
     login: string;
   };
+  topics: string[];
 };
 
 type PinnedProjectsResponse = {
@@ -35,9 +34,19 @@ const pinnedProjectsQuery = `
             description
             url
             stargazerCount
+
             primaryLanguage {
               name
             }
+
+            repositoryTopics(first: 20) {
+              nodes {
+                topic {
+                  name
+                }
+              }
+            }
+
             owner {
               login
             }
@@ -70,9 +79,18 @@ export async function getPinnedProjects(): Promise<Repository[]> {
     throw new Error("Failed to fetch GitHub projects");
   }
 
-  const result: PinnedProjectsResponse = await response.json();
+  const result = await response.json();
 
-  return result.data.user.pinnedItems.nodes;
+  if (result.errors) {
+    throw new Error(result.errors[0]?.message ?? "GitHub API error");
+  }
+
+  return result.data.user.pinnedItems.nodes.map((project: any) => ({
+    ...project,
+    topics: project.repositoryTopics.nodes.map(
+      (node: { topic: { name: string } }) => node.topic.name
+    ),
+  }));
 }
 
 export async function getProject(slug: string) {

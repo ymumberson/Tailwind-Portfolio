@@ -17,7 +17,7 @@ export default async function ProjectPage({
     }
 
     return (
-        <Project name={project.name} description={project.description ?? ""} gitHubUrl={project.url}>
+        <Project name={project.name} description={project.description ?? ""} gitHubUrl={project.url} topics={project.topics}>
             <div className="flex flex-col justify-center">
                 <Markdown>{project.readme}</Markdown>
             </div>

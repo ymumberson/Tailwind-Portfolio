@@ -23,7 +23,7 @@ export default async function Projects() {
         <div className="flex flex-col items-center gap-2">
             {
                 projects.map((project: any) => (
-                    <Card key={project.url} title={project.name} href={`/projects/${project.name}`} hrefText="See project" description={project.description}/>
+                    <Card key={project.url} title={project.name} href={`/projects/${project.name}`} hrefText="See project" description={project.description} topics={project.topics}/>
                 ))
             }
         </div>
