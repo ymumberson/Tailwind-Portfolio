@@ -16,6 +16,7 @@ const ReactThreeFiberDemo = () => {
         <Project
         name="React Three Fiber Demo"
         description="A short demo of loading a GLB into React Three Fiber. This demo has orbit controls to manipulate the model. The model is a simple keyboard I modelled in Blender."
+        topics={['Typescript', 'React', 'ReactThreeFiber']}
         >
             <div className="w-full h-[500px]">
             <Canvas>

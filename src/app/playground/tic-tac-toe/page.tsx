@@ -286,7 +286,7 @@ export default function TicTacToe() {
     }, [singlePlayer, playAsNaughts]);
 
     return (
-        <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe">
+        <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe" topics={['Typescript', 'React', 'Bot']}>
             <div className="flex items-center flex-col pb-5">
                 <Toggle value={singlePlayer} setValue={setSinglePlayer} falseText="Two Player" trueText="Single Player"/>
                 { singlePlayer && <div className="mt-3 flex gap-2">

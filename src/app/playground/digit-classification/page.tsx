@@ -186,7 +186,7 @@ interface PredictionClassProps {
 
 const PredictionClass: React.FC<PredictionClassProps> = ({ classID, predictionValue, highestPrediction }) => {
     return (
-        <div className={`border flex flex-row gap-2 bg-gray-100 text-gray-800 text-sm px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-300 ${highestPrediction ? "font-bold border-gray-500 dark:border-white" : "font-medium dark:border-gray-500"}`}>
+        <div className={`min-w-20 border flex flex-row gap-2 bg-gray-100 text-gray-800 text-sm px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-300 ${highestPrediction ? "font-bold border-gray-500 dark:border-white" : "font-medium dark:border-gray-500"}`}>
             <span className="">{classID}</span>
             <span>{Math.round(predictionValue*100)}%</span>
         </div>
@@ -290,9 +290,11 @@ const DigitClassification = () => {
     }
 
     return (
-        <Project className="flex flex-col md:flex-row" name="Digit Classification" description="Attempting to classify hand-drawn digits by using a Neural Network trained on the MNIST hand-drawn digits dataset. Digits can be from 0 to 9, however, the model will always predict one of these values. This is the reason that even the empty canvas predicts to a digit.">
-            <DigitCanvas width={28} scale={11} canvasRef={canvasRef} makePrediction={MakePrediction}/>
-            <PredictionCanvas canvasRef={canvasRef} predictions={predictions}/>
+        <Project className="flex flex-col md:flex-row" name="Digit Classification" description="Attempting to classify hand-drawn digits by using a Neural Network trained on the MNIST hand-drawn digits dataset. Digits can be from 0 to 9, however, the model will always predict one of these values. This is the reason that even the empty canvas predicts to a digit." topics={['Typescript', 'React', 'Machine Learning', 'TensorflowJS', 'MNIST', 'Classification']}>
+            <div className="md:flex md:justify-center md:w-full">
+                <DigitCanvas width={28} scale={11} canvasRef={canvasRef} makePrediction={MakePrediction}/>
+                <PredictionCanvas canvasRef={canvasRef} predictions={predictions}/>
+            </div>
         </Project>
     );
 }

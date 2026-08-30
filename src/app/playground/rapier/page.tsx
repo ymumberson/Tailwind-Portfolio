@@ -42,6 +42,7 @@ const Rapier = () => {
         <Project
             name="Rapier"
             description="Testing out the Rapier physics engine alongside React Three Fiber. This demo uses the cup model with 2 simple cylinder colliders to try and improve performance. This means that each cup is a RigidBody with 2 colliders. You can click on any of the cups to make them jump into the air. Enable debug mode to see the colliders and frame rate, or change the spawn settings. Max items controls how many items can be on the screen, and spawn rate controls how many seconds there are between item spawns. Otherwise this uses the standard OrbitControls so you can pan and zoom etc."
+            topics={['Typescript', 'React', 'Rapier', 'Physics', 'ReactThreeFiber']}
         >
             <Controls debugMode={debugMode} setDebugMode={setDebugMode} maxItems={maxItems} setMaxItems={setMaxItems} itemSpawnRate={itemSpawnRate} setItemSpawnRate={setItemSpawnRate} itemSpawnRequest={itemSpawnRequest} setItemSpawnRequest={setItemSpawnRequest}/>
             <div className="h-[500px]">

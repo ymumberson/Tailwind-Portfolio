@@ -1,4 +1,4 @@
-import { TileState, evaluateGuess } from "@/app/projects/wordle/wordleUtils";
+import { TileState, evaluateGuess } from "@/app/playground/wordle/wordleUtils";
 
 describe('Wordle guess evaluation', () => {
     it('should evaluate a guess correctly', () => {

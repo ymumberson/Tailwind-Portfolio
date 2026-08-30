@@ -1,18 +1,31 @@
-import React from "react";
 import Card from "../components/Card";
+import { IconBrandGithub } from "@tabler/icons-react";
+import { getPinnedProjects } from "@/lib/github";
 
-export default function Projects() {
+
+export default async function Projects() {
+    const projects = await getPinnedProjects();
+
     return (
       <div className="sm:px-16 xl:px-48">
-        <h1 className="text-center mb-4 text-3xl font-extrabold tracking-light leading-none text-gray-900 md:text-4xl lg:text-5xl dark:text-white">Projects</h1>
+        <h1 className="text-center mb-4 text-3xl font-extrabold tracking-light leading-none text-gray-900 md:text-4xl lg:text-5xl dark:text-white">
+          Projects
+        </h1>
+        <p className="mx-auto text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 max-w-lg">
+          These are larger projects than the playground projects, but are mostly non-interactive. This list is a subset fetched from my GitHub, but you can click the button below to see all of my projects.
+        </p>
+        <div className="w-full flex justify-center my-4">
+            <a href="https://github.com/ymumberson" className="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#24292F]/60 mb-2 gap-1">
+                <IconBrandGithub size={20}/>
+                GitHub
+            </a>
+        </div>
         <div className="flex flex-col items-center gap-2">
-            <Card title="Rapier" href="/projects/rapier" hrefText="See project" description="Testing out the Rapier physics engine." />
-            <Card title="Wordle" href="/projects/wordle" hrefText="See project" description="Making a simple clone of Wordle." />
-            <Card title="React Three Fiber Demo" href="/projects/react-three-fiber" hrefText="See project" description="A short demo of React Three Fiber." />
-            <Card title="MongoDB Example" href="/projects/mongo-db-example" hrefText="See project" description="A simple example of using MongoDB Atlas." />
-            <Card title="Weather" href="/projects/weather" hrefText="See project" description="Fetching current weather data from https://openweathermap.org/ and displaying it." />
-            <Card title="Digit Classification" href="/projects/digit-classification" hrefText="See project" description="Attempting to classify hand-drawn digits by using a Neural Network trained on the MNIST hand-drawn digits dataset. Digits can be from 0 to 9, however, the model will always predict one of these values. This is the reason that even the empty canvas predicts to a digit." />
-            <Card title="Tic-Tac-Toe" href="/projects/tic-tac-toe" hrefText="See project" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe" />
+            {
+                projects.map((project: any) => (
+                    <Card key={project.url} title={project.name} href={`/projects/${project.name}`} hrefText="See project" description={project.description ?? ""} topics={project.topics}/>
+                ))
+            }
         </div>
       </div>
     );
