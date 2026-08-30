@@ -16,15 +16,19 @@ const Card: React.FC<CardProps> = ({ title, description, topics, href, hrefText 
         <div className="w-full max-w-sm md:max-w-xl lg:max-w-3xl p-6 border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
             <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{title}</h2>
             <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">{description}</p>
-            {topics && topics.length > 0 &&
-                <div className="flex justify-center mb-3">
-                    <Topics topics={topics}/>
-                </div>
-            }
+            
             <Link href={href} className="inline-flex font-medium items-center text-blue-600 hover:underline">
                 {hrefText}
                 <IconArrowNarrowRight size={20}/>
             </Link>
+            {topics && topics.length > 0 &&
+                <div>
+                    <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+                    <div className="mt-4 flex justify-center">
+                        <Topics topics={topics}/>
+                    </div>
+                </div>
+            }
         </div>
     );
 }

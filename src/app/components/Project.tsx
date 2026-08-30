@@ -24,12 +24,17 @@ const Project: React.FC<ProjectProps> = ({ name, description, topics, gitHubUrl,
                     </a>
                 </div>
             }
-            {topics && topics.length > 0 &&
-                <div className="mt-4 flex justify-center">
-                    <Topics topics={topics}/>
+            {topics && topics.length > 0 ? (
+                <div className="my-3">
+                    <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700" />
+                    <div className="mt-4 flex justify-center">
+                        <Topics topics={topics} />
+                    </div>
+                    <hr className="h-px my-3 mb-8 bg-gray-200 border-0 dark:bg-gray-700" />
                 </div>
-            }
-            <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+            ) : (
+                <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+            )}
             <div className={`text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 ${className}`}>
                 {children}
             </div>
