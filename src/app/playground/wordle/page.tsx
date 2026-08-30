@@ -224,7 +224,7 @@ const Wordle = () => {
     }
 
     return (
-        <Project name="Wordle" description="This is a simple clone of Wordle. It chooses a target word from a Wordle-style answer list, while still allowing guesses from a local dictionary of valid 5 letter words. After the game is completed, win or lose, you can press 'Open Definition' to open a dictionary definition in another window.">
+        <Project name="Wordle" description="This is a simple clone of Wordle. It chooses a target word from a Wordle-style answer list, while still allowing guesses from a local dictionary of valid 5 letter words. After the game is completed, win or lose, you can press 'Open Definition' to open a dictionary definition in another window." topics={['Typescript', 'React']}>
             <div className="flex flex-col items-center justify-center">
                 <div className="flex w-60 p-2 justify-between items-center">
                     <h2>{gameStatus}</h2>

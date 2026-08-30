@@ -149,7 +149,7 @@ const WeatherPage = () => {
     const { data, error } = useSWR('dataKey', fetchData);
 
     return (
-        <Project name="Weather" description="Fetching current weather data from https://openweathermap.org/ and displaying it.">
+        <Project name="Weather" description="Fetching current weather data from https://openweathermap.org/ and displaying it." topics={['Typescript', 'React', 'REST API']}>
             {error && <ErrorMsg error={error} />}
             {!error && !data && <Loading />}
             {!error && data && <Weather data={data}/>}
