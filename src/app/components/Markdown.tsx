@@ -2,6 +2,7 @@
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 export default function Markdown({
   children,
@@ -9,39 +10,41 @@ export default function Markdown({
   children: string;
 }) {
   return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      components={{
-        img({ src, alt, ...props }) {
-          if (typeof src !== "string" || !src) {
-            return null;
-          }
+    <div className="prose prose-lg max-w-none dark:prose-invert">
+        <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
+            components={{
+                img({ src, alt }) {
+                if (typeof src !== "string" || !src) {
+                    return null;
+                }
 
-          let imageSrc = src;
+                let imageSrc = src;
 
-        if (
-            src.startsWith("https://github.com/") &&
-            src.includes("/blob/")
-        ) {
-            imageSrc = src
-                .replace(
-                "https://github.com/",
-                "https://media.githubusercontent.com/media/"
-                )
-                .replace("/blob/", "/");
-        }
+                if (
+                    src.startsWith("https://github.com/") &&
+                    src.includes("/blob/")
+                ) {
+                    imageSrc = src
+                    .replace(
+                        "https://github.com/",
+                        "https://media.githubusercontent.com/media/"
+                    )
+                    .replace("/blob/", "/");
+                }
 
-          return (
-            <img
-              src={imageSrc}
-              alt={alt ?? ""}
-              {...props}
-            />
-          );
-        },
-      }}
-    >
-      {children}
-    </ReactMarkdown>
+                return (
+                    <img
+                    src={imageSrc}
+                    alt={alt ?? ""}
+                    />
+                );
+                },
+            }}
+            >
+                {children}
+        </ReactMarkdown>
+    </div>
   );
 }

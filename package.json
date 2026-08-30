@@ -24,12 +24,14 @@
     "react-dom": "^19.2.8",
     "react-markdown": "^10.1.0",
     "recharts": "^3.10.1",
+    "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "swr": "^2.5.0",
     "three": "^0.185.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
+    "@tailwindcss/typography": "^0.5.20",
     "@types/jest": "^30.0.0",
     "@types/node": "^26.2.0",
     "@types/react": "^19.2.18",
