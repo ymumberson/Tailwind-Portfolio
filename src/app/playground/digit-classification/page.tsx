@@ -291,8 +291,10 @@ const DigitClassification = () => {
 
     return (
         <Project className="flex flex-col md:flex-row" name="Digit Classification" description="Attempting to classify hand-drawn digits by using a Neural Network trained on the MNIST hand-drawn digits dataset. Digits can be from 0 to 9, however, the model will always predict one of these values. This is the reason that even the empty canvas predicts to a digit." topics={['Typescript', 'React', 'Machine Learning', 'TensorflowJS', 'MNIST', 'Classification']}>
-            <DigitCanvas width={28} scale={11} canvasRef={canvasRef} makePrediction={MakePrediction}/>
-            <PredictionCanvas canvasRef={canvasRef} predictions={predictions}/>
+            <div className="md:flex md:justify-center md:w-full">
+                <DigitCanvas width={28} scale={11} canvasRef={canvasRef} makePrediction={MakePrediction}/>
+                <PredictionCanvas canvasRef={canvasRef} predictions={predictions}/>
+            </div>
         </Project>
     );
 }
