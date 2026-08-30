@@ -6,9 +6,9 @@ import Project from "@/app/components/Project";
 export default async function ProjectPage({
     params,
 }: {
-    params: { slug: string };
+    params: Promise<{ slug: string }>;
 }) {
-    const { slug } = params;
+    const { slug } = await params;
 
     const project = await getProject(slug);
 
