@@ -1,5 +1,3 @@
-"use client";
-
 const colours = [
   "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
   "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300",
