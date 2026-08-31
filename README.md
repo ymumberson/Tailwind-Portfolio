@@ -6,7 +6,7 @@ The site brings together my experience and larger projects alongside a collectio
 
 **Live site:** [ymumberson.com](https://www.ymumberson.com)
 
-![Portfolio homepage](./public/screenshots/PortfolioSiteRapierDemo.png)
+![Portfolio homepage](./public/screenshots/RapierDemo.gif)
 
 ## About
 
