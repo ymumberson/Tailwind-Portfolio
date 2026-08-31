@@ -1,0 +1,93 @@
+{
+    "title": "Playground",
+    "description": "A collection of small interactive projects and coding experiments built to explore new technologies, techniques, and ideas.",
+    "projects": {
+        "rapier": {
+            "title": "Rapier Physics",
+            "summary": "An interactive experiment exploring physics simulation with Rapier and React Three Fiber.",
+            "description": "An experiment combining the Rapier physics engine with React Three Fiber to explore real-time physics simulation in the browser. The scene consists of dynamically spawned cups, with each cup represented as a RigidBody using two simple cylinder colliders. The simplified collision geometry is used to reduce the computational cost of simulating a large number of objects. Cups can be interacted with directly by clicking them to launch them into the air. The demo also includes controls for adjusting the maximum number of objects and spawn rate, as well as a debug mode for visualising colliders and monitoring the frame rate. The scene can be explored using the standard OrbitControls.",
+            "topics": [
+                "TypeScript",
+                "React",
+                "React Three Fiber",
+                "Rapier",
+                "Physics Simulation"
+            ]
+        },
+        "wordle": {
+            "title": "Wordle",
+            "summary": "A browser-based Wordle clone with a larger vocabulary for valid guesses and built-in word definitions.",
+            "description": "A small recreation of the popular Wordle word game, built to explore interactive UI development and game logic with React. A target word is selected from a list of Wordle-style answers, while guesses are validated against a larger local dictionary of five-letter words. Once a game has finished, players can open the definition of the target word in a separate window. The project focuses on recreating the core game loop while adding a few features around word validation and discovering the meaning of the answer.",
+            "topics": [
+                "TypeScript",
+                "React",
+                "Game Development",
+                "Word Games"
+            ]
+        },
+        "react-three-fiber": {
+            "title": "React Three Fiber Demo",
+            "summary": "An interactive 3D scene demonstrating GLB model loading and camera controls with React Three Fiber.",
+            "description": "A small experiment exploring 3D rendering in React using React Three Fiber. The project loads a GLB model into a WebGL scene and provides interactive OrbitControls for rotating, panning, and zooming around the model. The showcased model is a keyboard created in Blender, providing a simple example of taking a custom 3D asset from modelling into an interactive web experience.",
+            "topics": [
+                "TypeScript",
+                "React",
+                "React Three Fiber",
+                "Three.js",
+                "3D Graphics",
+                "Blender"
+            ]
+        },
+        "mongo-db-example": {
+            "title": "MongoDB Example",
+            "summary": "A small full-stack example demonstrating how a Next.js application can read data from MongoDB Atlas.",
+            "description": "A simple example of connecting a web application to MongoDB Atlas and retrieving data from a database. The project demonstrates using a cloud-hosted MongoDB database as a data source for a Next.js application, with the retrieved data displayed on the page. It was created to explore the process of integrating an external database into a modern web application and working with persistent data rather than relying solely on local or static content.",
+            "topics": [
+                "TypeScript",
+                "React",
+                "Next.js",
+                "MongoDB",
+                "MongoDB Atlas",
+                "Database"
+            ]
+        },
+        "weather": {
+            "title": "Weather",
+            "summary": "A weather application that retrieves current conditions from the OpenWeather API and displays them in the browser.",
+            "description": "A small web application demonstrating how to consume an external REST API from a React application. The project retrieves current weather information from OpenWeather and presents the returned data through a simple interactive interface. It was built as an experiment in working with external APIs, handling asynchronous requests, and transforming API responses into useful UI content.",
+            "topics": [
+                "TypeScript",
+                "React",
+                "REST API",
+                "API Integration",
+                "OpenWeather"
+            ]
+        },
+        "digit-classification": {
+            "title": "Digit Classification",
+            "summary": "An interactive neural network experiment that attempts to recognise hand-drawn digits from 0 to 9.",
+            "description": "An interactive machine learning experiment for classifying hand-drawn digits using a neural network trained on the MNIST handwritten digit dataset. Users can draw a digit on a canvas and have the trained model predict which number it represents. Since the classifier always produces one of the ten possible digit classes, even an empty or unclear canvas will still result in a prediction. The project explores the process of bringing a machine learning model into an interactive browser-based application.",
+            "topics": [
+                "TypeScript",
+                "React",
+                "Machine Learning",
+                "TensorFlow",
+                "MNIST",
+                "Neural Networks",
+                "Classification"
+            ]
+        },
+        "tic-tac-toe": {
+            "title": "Tic-Tac-Toe",
+            "summary": "A React implementation of Tic-Tac-Toe based on the official React tutorial, extended with additional gameplay features.",
+            "description": "A browser-based implementation of Tic-Tac-Toe built while following the official React tutorial. The project was then extended beyond the tutorial with additional functionality, including a computer-controlled opponent. It serves as a small exploration of React state management, component-based UI design, and implementing the rules and game logic for a simple turn-based game.",
+            "topics": [
+                "TypeScript",
+                "React",
+                "Game Development",
+                "State Management",
+                "Computer Bot"
+            ]
+        }
+    }
+}

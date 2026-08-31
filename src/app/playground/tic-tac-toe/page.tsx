@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { IconChevronLeft, IconChevronRight, IconRefresh} from "@tabler/icons-react";
 import Toggle from "@/app/components/Toggle";
+import content from "@/content/playground.json";
 
 interface SquareProps {
     value: string;
@@ -241,6 +242,7 @@ export default function TicTacToe() {
     const [currentMove, setCurrentMove] = useState(0);
     const xIsNext = currentMove % 2 === 0;
     const currentSquares = history[currentMove];
+    const { projects } = content;
 
     function HandlePlay(nextSquares: Array<string>) {
         const nextHistory = [...history.slice(0, currentMove+1), nextSquares];
@@ -286,7 +288,11 @@ export default function TicTacToe() {
     }, [singlePlayer, playAsNaughts]);
 
     return (
-        <Project name="Tic-Tac-Toe" description="Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe" topics={['Typescript', 'React', 'Bot']}>
+        <Project
+            name={projects["tic-tac-toe"].title}
+            description={projects["tic-tac-toe"].description}
+            topics={projects["tic-tac-toe"].topics}
+        >
             <div className="flex items-center flex-col pb-5">
                 <Toggle value={singlePlayer} setValue={setSinglePlayer} falseText="Two Player" trueText="Single Player"/>
                 { singlePlayer && <div className="mt-3 flex gap-2">

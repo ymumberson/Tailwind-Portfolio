@@ -3,6 +3,7 @@ import Project from "@/app/components/Project";
 import React from "react";
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from "@react-three/drei";
+import content from "@/content/playground.json";
 
 function Scene() {
     const { scene }  = useGLTF('/3D_Assets/Keyboard.glb');
@@ -12,11 +13,13 @@ function Scene() {
 }
 
 const ReactThreeFiberDemo = () => {
+    const { projects } = content;
+
     return (
         <Project
-        name="React Three Fiber Demo"
-        description="A short demo of loading a GLB into React Three Fiber. This demo has orbit controls to manipulate the model. The model is a simple keyboard I modelled in Blender."
-        topics={['Typescript', 'React', 'ReactThreeFiber']}
+        name={projects["react-three-fiber"].title}
+        description={projects["react-three-fiber"].description}
+        topics={projects["react-three-fiber"].topics}
         >
             <div className="w-full h-[500px]">
             <Canvas>

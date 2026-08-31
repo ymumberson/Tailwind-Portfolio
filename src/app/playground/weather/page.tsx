@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { IconSunrise, IconSunset, IconWind, IconCloud, IconDroplet, IconSnowflake } from "@tabler/icons-react";
 import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { KelvinToCelsius } from "./utils";
+import content from "@/content/playground.json";
 
 const fetchData = async () => {
     const lat = "52.1951";
@@ -147,9 +148,14 @@ const Weather = (data: any) => {
 
 const WeatherPage = () => {
     const { data, error } = useSWR('dataKey', fetchData);
+    const { projects } = content;
 
     return (
-        <Project name="Weather" description="Fetching current weather data from https://openweathermap.org/ and displaying it." topics={['Typescript', 'React', 'REST API']}>
+        <Project
+            name={projects.weather.title}
+            description={projects.weather.description}
+            topics={projects.weather.topics}
+        >
             {error && <ErrorMsg error={error} />}
             {!error && !data && <Loading />}
             {!error && data && <Weather data={data}/>}

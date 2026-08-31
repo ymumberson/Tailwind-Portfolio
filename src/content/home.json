@@ -1,0 +1,80 @@
+{
+    "hero": {
+        "title": "Hi, I'm Yoshan!",
+        "description": "I'm a software engineer who enjoys building interactive and technically challenging software, with experience spanning simulation, graphics, game development, data visualisation, and machine learning."
+    },
+
+    "overview": {
+        "title": "Overview",
+        "description": "I'm a software engineer with a background in Computer Science and a particular interest in solving problems that sit at the intersection of software engineering and visual computing. I've worked with C++, C#, Java, Python, and TypeScript across projects involving real-time simulation, 3D graphics, game development, ray tracing, machine learning, and data visualisation. I enjoy learning new technologies, experimenting with ideas, and working through difficult problems until I find a solution. I also value collaborative development and enjoy discussing different approaches to a problem before turning an idea into working software.",
+
+        "skills": [
+            {
+                "name": "Unity",
+                "icon": "unity"
+            },
+            {
+                "name": "Simulation",
+                "icon": "simulation"
+            },
+            {
+                "name": "Graphics",
+                "icon": "graphics"
+            },
+            {
+                "name": "Game Development",
+                "icon": "game-development"
+            },
+            {
+                "name": "Data Visualisation",
+                "icon": "data-visualisation"
+            },
+            {
+                "name": "Machine Learning",
+                "icon": "machine-learning"
+            }
+        ]
+    },
+
+    "experience": {
+        "title": "Experience",
+        "description": "My experience spans professional software development, teaching, and academic research, with a consistent focus on building software and exploring technically challenging problems.",
+
+        "timeline": [
+            {
+                "date": "October 2023 - Present",
+                "role": "Software Engineer",
+                "company": "VACAC",
+                "experience": [
+                    "Develop virtual experiences and interactive applications using Unity.",
+                    "Build automation tools in Python to support 3D animation workflows.",
+                    "Create and integrate 3D animations and assets using Blender.",
+                    "Work as part of a team to design, develop, test, and refine software solutions."
+                ]
+            },
+            {
+                "date": "February 2023 - June 2023",
+                "role": "Teaching Assistant",
+                "company": "Swansea University",
+                "experience": [
+                    "Supported practical teaching for video game programming and mobile development modules.",
+                    "Explained programming and software development concepts to students with different levels of experience.",
+                    "Helped students debug code and solve coursework problems through one-to-one guidance.",
+                    "Developed the ability to communicate technical concepts clearly and adapt explanations to different audiences."
+                ]
+            },
+            {
+                "date": "September 2019 - June 2023",
+                "role": "Computer Science M.Sci.",
+                "company": "Swansea University",
+                "experience": [
+                    "Studied a broad range of computer science topics including software engineering, graphics, artificial intelligence, data visualisation, and game development.",
+                    "Conducted research into photon mapping and global illumination as part of a project exploring physically based rendering techniques.",
+                    "Developed an agent-based simulation for generating social networks within a simulated city environment.",
+                    "Designed and implemented data visualisations both individually and as part of a team.",
+                    "Applied machine learning techniques to point-cloud data captured using an Xbox Kinect to investigate object recognition."
+                ]
+            }
+        ]
+    }
+}
