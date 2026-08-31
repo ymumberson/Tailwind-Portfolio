@@ -1,0 +1,44 @@
+{
+    "hero": {
+        "title": "Hi, I'm Yoshan!",
+        "description": "I'm a software engineer with experience in simulation, video game development, ray tracing, data visualisation, and machine learning."
+    },
+    "overview": {
+        "title": "Overview",
+        "description": "Software engineer at VACAC. Passionate about software development, with experience in C, C++, C#, and Java. Often push myself outside of my comfort zone, and keep trying new ideas until I solve the problem. Work great in a team, always willing to do my part and discuss the pros and cons of ideas."
+    },
+    "experience": {
+        "timeline": [
+            {
+                "date": "October 2023 - Present",
+                "role": "Software Engineer",
+                "company": "VACAC",
+                "experience": [
+                    "Develop virtual experiences in Unity.",
+                    "Develop automation tools in Python for 3D animation.",
+                    "Create 3D animations in Blender."
+                ]
+            },
+            {
+                "date": "February 2023 - June 2023",
+                "role": "Teaching Assistant",
+                "company": "Swansea University",
+                "experience": [
+                    "Lab demonstrator for a module on video games programming and a module on mobile development.",
+                    "Explain difficult concepts from lectures to students, and help them with coursework difficulties.",
+                    "Debug students' code on the fly, and give one-to-one assistance."
+                ]
+            },
+            {
+                "date": "September 2019 - June 2023",
+                "role": "Computer Science Msci",
+                "company": "Swansea University",
+                "experience": [
+                    "Conducting research on advanced topics such as simulating global illumination via photon mapping, and simulating social network generation via agent-based city simulations.",
+                    "Designing data visualisation both individually and in groups, starting from analysing the problem and ending in implementing the solution.",
+                    "Applying machine learning to advanced areas such as identifying objects in a room through point-clouds taken using the Xbox Kinect."
+                ]
+            }
+        ]
+    }
+}

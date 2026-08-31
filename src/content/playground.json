@@ -1,0 +1,80 @@
+{
+    "title": "Playground",
+    "description": "These are small coding experiments to learn something new, with a focus on being interactive.",
+    "projects": [
+        {
+            "title": "Rapier",
+            "summary": "Testing out the Rapier physics engine.",
+            "description": "Testing out the Rapier physics engine alongside React Three Fiber. This demo uses the cup model with 2 simple cylinder colliders to try and improve performance. This means that each cup is a RigidBody with 2 colliders. You can click on any of the cups to make them jump into the air. Enable debug mode to see the colliders and frame rate, or change the spawn settings. Max items controls how many items can be on the screen, and spawn rate controls how many seconds there are between item spawns. Otherwise this uses the standard OrbitControls so you can pan and zoom etc.",
+            "topics": [
+                "Typescript",
+                "React",
+                "Rapier",
+                "Physics",
+                "React Three Fiber"
+            ]
+        },
+        {
+            "title": "Wordle",
+            "summary": "Making a simple clone of Wordle.",
+            "description": "This is a simple clone of Wordle. It chooses a target word from a Wordle-style answer list, while still allowing guesses from a local dictionary of valid 5 letter words. After the game is completed, win or lose, you can press 'Open Definition' to open a dictionary definition in another window.",
+            "topics": [
+                "Typescript",
+                "React"
+            ]
+        },
+        {
+            "title": "React Three Fiber Demo",
+            "summary": "A short demo of React Three Fiber.",
+            "description": "A short demo of loading a GLB into React Three Fiber. This demo has orbit controls to manipulate the model. The model is a simple keyboard I modelled in Blender.",
+            "topics": [
+                "Typescript",
+                "React",
+                "React Three Fiber"
+            ]
+        },
+        {
+            "title": "MongoDB Example",
+            "summary": "A simple example of using MongoDB Atlas.",
+            "description": "This uses the MongoDB Atlas integration from Vercel to read and display data from MongoDB.",
+            "topics": [
+                "Typescript",
+                "React",
+                "MongoDB"
+            ]
+        },
+        {
+            "title": "Weather",
+            "summary": "Fetching current weather data from https://openweathermap.org/ and displaying it.",
+            "description": "Fetching current weather data from https://openweathermap.org/ and displaying it.",
+            "topics": [
+                "Typescript",
+                "React",
+                "REST API"
+            ]
+        },
+        {
+            "title": "Digit Classification",
+            "summary": "Attempting to classify hand-drawn digits by using a Neural Network trained on the MNIST hand-drawn digits dataset. Digits can be from 0 to 9, however, the model will always predict one of these values. This is the reason that even the empty canvas predicts to a digit.",
+            "description": "Attempting to classify hand-drawn digits by using a Neural Network trained on the MNIST hand-drawn digits dataset. Digits can be from 0 to 9, however, the model will always predict one of these values. This is the reason that even the empty canvas predicts to a digit.",
+            "topics": [
+                "Typescript",
+                "React",
+                "Machine Learning",
+                "TensorFlow",
+                "MNIST",
+                "Classification"
+            ]
+        },
+        {
+            "title": "Tic-Tac-Toe",
+            "summary": "Following the Tic-Tac-Toe tutorial from https://react.dev/learn/tutorial-tic-tac-toe, and adding a few extras.",
+            "description": "",
+            "topics": [
+                "Typescript",
+                "React",
+                "Computer Bot"
+            ]
+        }
+    ]
+}
