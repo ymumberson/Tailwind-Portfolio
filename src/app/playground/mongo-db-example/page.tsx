@@ -2,6 +2,7 @@
 import Project from "@/app/components/Project";
 import React, { useEffect } from "react";
 import { Movie, getMoviesPaged, getMoviesCount } from "@/app/api/requests/getMovies";
+import content from "@/content/playground.json";
 
 const MOVIES_PER_PAGE = 5;
 
@@ -54,6 +55,7 @@ const MongoDbExample = () => {
     const [movies, setMovies] = React.useState<Movie[]>();
     const [pageNumber, setPageNumber] = React.useState<number>(1);
     const [totalPages, setTotalPages] = React.useState<number>(0);
+    const { projects } = content;
 
     async function handleGetMovies(currentPageNumber: number = 1) {
         setLoading(true);
@@ -98,7 +100,11 @@ const MongoDbExample = () => {
     }
 
     return (
-        <Project name="MongoDB Example" description="This uses the MongoDB Atlas integration from Vercel to read and display data from MongoDB" topics={['Typescript', 'React', 'MongoDB']}>
+        <Project
+            name={projects["mongo-db-example"].title}
+            description={projects["mongo-db-example"].description}
+            topics={projects["mongo-db-example"].topics}
+        >
             <div className="flex flex-col">
                 <div className="flex flex-row gap-3">
                     <button onClick={previousPage} disabled={loading}>Previous</button>

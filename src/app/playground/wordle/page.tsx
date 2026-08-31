@@ -4,6 +4,7 @@ import { IconRefresh } from "@tabler/icons-react";
 import React, { useEffect, useRef, useState } from "react";
 import { evaluateGuess, TileState } from "./wordleUtils";
 import Button from "@/app/components/Button";
+import content from "@/content/playground.json";
 
 interface TileProps {
     text: string;
@@ -154,6 +155,7 @@ const Wordle = () => {
     const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.LOADING);
     const [dictionary, setDictionary] = useState<Set<string>>(new Set());
     const [wordleWords, setWordleWords] = useState<Set<string>>(new Set());
+    const { projects } = content;
 
     useEffect(() => {
         async function loadGame() {
@@ -224,7 +226,11 @@ const Wordle = () => {
     }
 
     return (
-        <Project name="Wordle" description="This is a simple clone of Wordle. It chooses a target word from a Wordle-style answer list, while still allowing guesses from a local dictionary of valid 5 letter words. After the game is completed, win or lose, you can press 'Open Definition' to open a dictionary definition in another window." topics={['Typescript', 'React']}>
+        <Project
+            name={projects.wordle.title}
+            description={projects.wordle.description}
+            topics={projects.wordle.topics}
+        >
             <div className="flex flex-col items-center justify-center">
                 <div className="flex w-60 p-2 justify-between items-center">
                     <h2>{gameStatus}</h2>

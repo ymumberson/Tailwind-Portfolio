@@ -4,6 +4,7 @@ import Project from "@/app/components/Project";
 import { IconChevronLeft, IconChevronRight, IconRefresh } from "@tabler/icons-react";
 import React, { useEffect, useRef, useState } from "react";
 import * as tf from '@tensorflow/tfjs';
+import content from "@/content/playground.json";
 
 interface Vec2 {
     x: number;
@@ -216,6 +217,7 @@ const DigitClassification = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [predictions, setPredictions] = useState<PredictionClassProps[]>(Array.from({ length: 10}, (_, index) => ({ classID: index.toString(), predictionValue: 0, highestPrediction: false })));
     const [model, setModel] = useState<tf.LayersModel>();
+    const { projects } = content;
 
     useEffect(() => {
         (async () => {
@@ -290,7 +292,12 @@ const DigitClassification = () => {
     }
 
     return (
-        <Project className="flex flex-col md:flex-row" name="Digit Classification" description="Attempting to classify hand-drawn digits by using a Neural Network trained on the MNIST hand-drawn digits dataset. Digits can be from 0 to 9, however, the model will always predict one of these values. This is the reason that even the empty canvas predicts to a digit." topics={['Typescript', 'React', 'Machine Learning', 'TensorflowJS', 'MNIST', 'Classification']}>
+        <Project
+            className="flex flex-col md:flex-row"
+            name={projects["digit-classification"].title}
+            description={projects["digit-classification"].description}
+            topics={projects["digit-classification"].topics}
+        >
             <div className="md:flex md:justify-center md:w-full">
                 <DigitCanvas width={28} scale={11} canvasRef={canvasRef} makePrediction={MakePrediction}/>
                 <PredictionCanvas canvasRef={canvasRef} predictions={predictions}/>
