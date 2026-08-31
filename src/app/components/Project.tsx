@@ -13,8 +13,8 @@ interface ProjectProps {
 
 const Project: React.FC<ProjectProps> = ({ name, description, topics, gitHubUrl, children, className="" }) => {
     return (
-        <div className="p-6 border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-            <h1 className="mb-4 text-4xl font-extrabold tracking-light leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">{name}</h1>
+        <div className="break-words p-6 border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+            <h1 className="mb-4 text-3xl font-extrabold tracking-light leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">{name}</h1>
             <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">{description}</p> 
             {gitHubUrl && 
                 <div className="w-full flex items-center justify-center">
