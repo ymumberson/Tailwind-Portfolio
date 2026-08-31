@@ -142,7 +142,7 @@ The live version is available at:
 
 ## Why I Built It
 
-This project started as a way of building my own portfolio, but I wanted it to be more than a collection of static pages. I wanted interactive projects that I could show people on my phone when they ask **So what do you actually do for a living?**.
+This project started as a way of building my own portfolio, but I wanted it to be more than a collection of static pages. I wanted interactive projects that I could show people on my phone when they ask **So what do you actually do for a living?**
 
 I enjoy working on projects where there is something technical to explore, particularly graphics, simulation, visualisation, and interactive software. The playground gives me somewhere to experiment with those ideas in the browser and keep the results in one place.
 
