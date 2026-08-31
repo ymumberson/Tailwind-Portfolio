@@ -7,7 +7,7 @@ export default function Playground() {
         <h1 className="text-center mb-4 text-3xl font-extrabold tracking-light leading-none text-gray-900 md:text-4xl lg:text-5xl dark:text-white">
           {content.title}
         </h1>
-        <p className="mx-auto mb-8 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 max-w-lg">
+        <p className="text-center mx-auto mb-8 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 max-w-lg">
           {content.description}
         </p>
         <div className="flex flex-col items-center gap-2">
