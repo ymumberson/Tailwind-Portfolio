@@ -16,7 +16,7 @@ export default function Playground() {
                 <Card
                   key={slug}
                   title={project.title}
-                  href={project.href}
+                  href={`/playground/${slug}`}
                   hrefText="See project"
                   description={project.summary ?? project.description}
                   topics={project.topics}
