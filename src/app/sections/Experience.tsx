@@ -1,4 +1,5 @@
 import React from "react";
+import content from "@/content/home.json";
 
 interface TimelineElementProps {
     date: string;
@@ -22,41 +23,26 @@ const TimelineElement: React.FC<TimelineElementProps> = ({ date, jobRole, compan
 }
 
 const Experience = () => {
+    const { experience } = content;
+
     return (
         <section>
-            <h1 className="sm:px-16 xl:px-48 mb-4 text-4xl font-extrabold tracking-light leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Experience</h1>
+            <h1 className="sm:px-16 xl:px-48 mb-4 text-4xl font-extrabold tracking-light leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+                {experience.title}
+            </h1>
             <div className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
                 <ol className="relative border-s border-gray-200 dark:border-gray-700">
-                <TimelineElement 
-                        date="October 2023 - Present" 
-                        jobRole="Software Engineer" 
-                        company="VACAC" 
-                        notes={[
-                            "Develop virtual experiences in Unity.",
-                            "Develop automation tools in Python for 3D animation.",
-                            "Create 3D animations in Blender."
-                        ]}
-                    />
-                    <TimelineElement 
-                        date="February 2023 - June 2023" 
-                        jobRole="Teaching Assistant" 
-                        company="Swansea University" 
-                        notes={[
-                            "Lab demonstrator for a module on video games programming and a module on mobile development.",
-                            "Explain difficult concepts from lectures to students, and help them with coursework difficulties.",
-                            "Debug students' code on the fly, and give one-to-one assistance."
-                        ]}
-                    />
-                    <TimelineElement 
-                        date="September 2019 - June 2023" 
-                        jobRole="Computer Science Msci" 
-                        company="Swansea University" 
-                        notes={[
-                            "Conducting research on advanced topics such as simulating global illumination via photon mapping, and simulating social network generation via agent-based city simulations.",
-                            "Designing data visualisation both individually and in groups, starting from analysing the problem and ending in implementing the solution.",
-                            "Applying machine learning to advanced areas such as identifying objects in a room through point-clouds taken using the Xbox Kinect."
-                        ]}
-                    />
+                    {
+                        experience.timeline.map((item) => (
+                            <TimelineElement
+                                key={item.date}
+                                date={item.date}
+                                jobRole={item.role}
+                                company={item.company}
+                                notes={item.experience}
+                            />
+                        ))
+                    }
                 </ol>
             </div>
         </section>

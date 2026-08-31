@@ -5,9 +5,37 @@
     },
     "overview": {
         "title": "Overview",
-        "description": "Software engineer at VACAC. Passionate about software development, with experience in C, C++, C#, and Java. Often push myself outside of my comfort zone, and keep trying new ideas until I solve the problem. Work great in a team, always willing to do my part and discuss the pros and cons of ideas."
+        "description": "Software engineer at VACAC. Passionate about software development, with experience in C, C++, C#, and Java. Often push myself outside of my comfort zone, and keep trying new ideas until I solve the problem. Work great in a team, always willing to do my part and discuss the pros and cons of ideas.",
+        "skills": [
+            {
+                "name": "Unity",
+                "icon": "unity"
+            },
+            {
+                "name": "Simulation",
+                "icon": "simulation"
+            },
+            {
+                "name": "Ray Tracing",
+                "icon": "ray-tracing"
+            },
+            {
+                "name": "Data Visualisation",
+                "icon": "data-visualisation"
+            },
+            {
+                "name": "Machine Learning",
+                "icon": "machine-learning"
+            },
+            {
+                "name": "Blender",
+                "icon": "blender"
+            }
+        ]
     },
     "experience": {
+        "title": "Experience",
+        "description": "",
         "timeline": [
             {
                 "date": "October 2023 - Present",
