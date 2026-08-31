@@ -1,5 +1,5 @@
 import React from "react";
-import {IconBrandUnity, IconPrismLight, IconPlanet, IconChartHistogram, IconBrain, IconBrandBlender, TablerIcon} from "@tabler/icons-react";
+import {IconBrandUnity, IconPrismLight, IconPlanet, IconChartHistogram, IconBrain, IconBrandBlender, TablerIcon, IconPolygon, IconDeviceGamepad2} from "@tabler/icons-react";
 import content from "@/content/home.json";
 
 const techIcons = {
@@ -9,6 +9,8 @@ const techIcons = {
     "data-visualisation": IconChartHistogram,
     "machine-learning": IconBrain,
     "blender": IconBrandBlender,
+    "graphics": IconPolygon,
+    "game-development": IconDeviceGamepad2
 };
 
 interface TechCardProps {
