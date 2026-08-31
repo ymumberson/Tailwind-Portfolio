@@ -22,7 +22,7 @@ const TechCard = ({ techIcon: IconComponent, techName }: TechCardProps) => {
     return (
         <div className="max-w-sm p-6 border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
             <IconComponent className="w-full" size={100}/>
-            <h2 className="text-center mt-2 mb-2 md:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <h2 className="text-center mt-2 mb-2 text-lg md:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                 {techName}
             </h2>
         </div>
